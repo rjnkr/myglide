@@ -15,8 +15,13 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    Timer(Duration(seconds: 5), () => MyNavigator.goToIntro(context));
+    Timer(Duration(seconds: 5), nextPage);
   }
+
+  void nextPage() {
+    MyNavigator.goToIntro(context);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
         fit: StackFit.expand,
         children: <Widget>[
           Container(
-            decoration: BoxDecoration(color: Color.fromRGBO(62,72,190,1)),
+            decoration: BoxDecoration(color: Color.fromRGBO(18,37,81,1)),
           ),
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -37,7 +42,7 @@ class _SplashScreenState extends State<SplashScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       CircleAvatar(
-                        backgroundColor: Color.fromRGBO(247, 206, 0, 1),
+                        backgroundColor: Color.fromRGBO(254, 204, 47, 1),
                         radius: 50.0,
                         child: Icon(
                           Icons.border_color,

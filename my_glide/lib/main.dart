@@ -6,6 +6,7 @@ import 'package:my_glide/pages/splash_screen.dart';
 
 var routes = <String, WidgetBuilder>{
   "/home": (BuildContext context) => HomeScreen(), 
+//  "/login": (BuildContext context) => LoginScreen(), 
  // "/intro": (BuildContext context) => IntroScreen(), 
 };
 
