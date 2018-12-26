@@ -39,11 +39,7 @@ class _SplashScreenState extends State<SplashScreen> {
                       CircleAvatar(
                         backgroundColor: Color.fromRGBO(247, 206, 0, 1),
                         radius: 50.0,
-                        child: Icon(
-                          Icons.border_color,
-                          color: Colors.black,
-                          size: 50.0,
-                        ),
+                        child: Image.asset('assets/images/silzweef.png' ),
                       ),
                       Padding(
                         padding: EdgeInsets.only(top: 10.0),
