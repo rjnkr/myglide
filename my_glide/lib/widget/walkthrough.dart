@@ -46,7 +46,7 @@ class WalkthroughState extends State<Walkthrough>
 
   @override
   Widget build(BuildContext context) {
-    return new Container(
+    return Container(
       padding: EdgeInsets.all(20.0),
       child: Material(
         animationDuration: Duration(milliseconds: 500),
@@ -56,10 +56,10 @@ class WalkthroughState extends State<Walkthrough>
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            new Transform(
+            Transform(
               transform:
-                  new Matrix4.translationValues(animation.value, 0.0, 0.0),
-              child: new Text(
+                  Matrix4.translationValues(animation.value, 0.0, 0.0),
+              child: Text(
                 widget.title,
                 style: TextStyle(
                     fontSize: 20.0,
@@ -67,10 +67,10 @@ class WalkthroughState extends State<Walkthrough>
                     color: Colors.black),
               ),
             ),
-            new Transform(
+            Transform(
               transform:
-                  new Matrix4.translationValues(animation.value, 0.0, 0.0),
-              child: new Text(widget.content,
+                  Matrix4.translationValues(animation.value, 0.0, 0.0),
+              child: Text(widget.content,
                   softWrap: true,
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -78,7 +78,7 @@ class WalkthroughState extends State<Walkthrough>
                       fontSize: 15.0,
                       color: Colors.black)),
             ),
-            new Icon(
+            Icon(
               widget.imageIcon,
               size: 100.0,
               color: widget.imagecolor,

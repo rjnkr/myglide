@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:my_glide/utils/my_glide_const.dart';
 import 'package:my_glide/utils/my_navigator.dart';
+import 'package:my_glide/utils/my_glide_logo.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -13,13 +14,16 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     Timer(Duration(seconds: 5), nextPage);
   }
 
   void nextPage() {
-    MyNavigator.goToIntro(context);
+    //TODO: check if user is already logged in
+    if (true)
+      MyNavigator.goToLogin(context);
+    else
+      MyNavigator.goToHome(context);
   }
 
 
@@ -30,47 +34,26 @@ class _SplashScreenState extends State<SplashScreen> {
         fit: StackFit.expand,
         children: <Widget>[
           Container(
-            decoration: BoxDecoration(color: Color.fromRGBO(18,37,81,1)),
+            decoration: BoxDecoration(color: MyGlideConst.BlueRGB),
           ),
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Expanded(
                 flex: 2,
-                child: Container(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      CircleAvatar(
-                        backgroundColor: Color.fromRGBO(254, 204, 47, 1),
-                        radius: 50.0,
-                        child: Image.asset('assets/images/silzweef.png' ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 10.0),
-                      ),
-                      Text(
-                        MyGlideConst.name,
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 24.0),
-                      )
-                    ],
-                  ),
-                ),
+                child: MyGlideLogo()
               ),
               Expanded(
                 flex: 1,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    CircularProgressIndicator(),
+                    CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(MyGlideConst.YellowRGB)),
                     Padding(
                       padding: EdgeInsets.only(top: 20.0),
                     ),
                     Text(
-                      MyGlideConst.store,
+                      MyGlideConst.lblMission,
                       softWrap: true,
                       textAlign: TextAlign.center,
                       style: TextStyle(

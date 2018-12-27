@@ -3,7 +3,7 @@ import 'package:my_glide/utils/my_glide_const.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
-  _HomeScreenState createState() => new _HomeScreenState();
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
@@ -20,17 +20,17 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     super.initState();
 
     // Animation init
-    animCtrl = new AnimationController(
-        duration: new Duration(milliseconds: 500), vsync: this);
-    animation = new CurvedAnimation(parent: animCtrl, curve: Curves.easeOut);
+    animCtrl = AnimationController(
+        duration: Duration(milliseconds: 500), vsync: this);
+    animation = CurvedAnimation(parent: animCtrl, curve: Curves.easeOut);
     animation.addListener(() {
       this.setState(() {});
     });
     animation.addStatusListener((AnimationStatus status) {});
 
-    animCtrl2 = new AnimationController(
-        duration: new Duration(milliseconds: 1000), vsync: this);
-    animation2 = new CurvedAnimation(parent: animCtrl2, curve: Curves.easeOut);
+    animCtrl2 = AnimationController(
+        duration: Duration(milliseconds: 1000), vsync: this);
+    animation2 = CurvedAnimation(parent: animCtrl2, curve: Curves.easeOut);
     animation2.addListener(() {
       this.setState(() {});
     });
@@ -47,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(MyGlideConst.name),
+        title: Text(MyGlideConst.lblAppName),
         actions: <Widget>[
           Padding(
             child: Icon(Icons.search),
@@ -56,11 +56,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         ],
       ),
       drawer: Drawer(),
-      body: new Center(
-          child: new Stack(
+      body: Center(
+          child: Stack(
         children: <Widget>[
-          new Center(
-            child: new DragTarget(onWillAccept: (_) {
+          Center(
+            child: DragTarget(onWillAccept: (_) {
               print('red');
               return true;
             }, onAccept: (_) {
@@ -68,38 +68,38 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               animCtrl.forward();
               animCtrl2.forward();
             }, builder: (_, _1, _2) {
-              return new SizedBox.expand(
-                child: new Container(color: Colors.red),
+              return SizedBox.expand(
+                child: Container(color: Colors.red),
               );
             }),
           ),
-          new Center(
-            child: new DragTarget(onWillAccept: (_) {
+          Center(
+            child: DragTarget(onWillAccept: (_) {
               print('green');
               return true;
             }, builder: (_, _1, _2) {
-              return new SizedBox.fromSize(
-                size: new Size(350.0, 350.0),
-                child: new Container(color: Colors.green),
+              return SizedBox.fromSize(
+                size: Size(350.0, 350.0),
+                child: Container(color: Colors.green),
               );
             }),
           ),
-          new Stack(alignment: FractionalOffset.center, children: <Widget>[
-            new Align(
-              alignment: new Alignment(0.0, 0.5 - animation.value * 0.15),
-              child: new CardView(200.0 + animation.value * 60),
+          Stack(alignment: FractionalOffset.center, children: <Widget>[
+            Align(
+              alignment: Alignment(0.0, 0.5 - animation.value * 0.15),
+              child: CardView(200.0 + animation.value * 60),
             ),
-            new Align(
-                alignment: new Alignment(0.0, 0.35 - animation2.value * 0.35),
-                child: new InkWell(
+            Align(
+                alignment: Alignment(0.0, 0.35 - animation2.value * 0.35),
+                child: InkWell(
                   onTap: () => Navigator.of(context).push(
-                      new MaterialPageRoute(builder: (_) => new HomeScreen())),
-                  child: new CardView(260.0 + animation2.value * 80),
+                      MaterialPageRoute(builder: (_) => HomeScreen())),
+                  child: CardView(260.0 + animation2.value * 80),
                 )),
-            new Draggable(
-              feedback: new CardView(340.0),
-              child: showFirst ? new CardView(340.0) : new Container(),
-              childWhenDragging: new Container(),
+            Draggable(
+              feedback: CardView(340.0),
+              child: showFirst ? CardView(340.0) : Container(),
+              childWhenDragging: Container(),
             )
           ]),
         ],
@@ -107,7 +107,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.amber,
         onPressed: () => {},
-        child: Icon(Icons.shopping_cart, color: Colors.white),
+        child: Icon(Icons.arrow_forward, color: Colors.white),
       ),
     );
   }
@@ -119,9 +119,9 @@ class CardView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new Card(
-        child: new SizedBox.fromSize(
-      size: new Size(cardSize, cardSize),
+    return Card(
+        child: SizedBox.fromSize(
+      size: Size(cardSize, cardSize),
     ));
   }
 }

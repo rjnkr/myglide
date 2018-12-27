@@ -1,19 +1,33 @@
+import 'package:flutter/material.dart';
+
 class MyGlideConst {
-  static const String name = "My Glide";
-  static const String store = "Online logboek \n en meer....";
-  static const String wt1 = "WELCOME";
-  static const String wc1 =
-      "Flutkart is Premium Online Shopping\n Platform for Everyone";
-  static const String wt2 = "DISCOVER PRODUCT";
-  static const String wc2 =
-      "Search Latest and Featured Product\n With Best Price";
-  static const String wt3 = "ADD TO CART";
-  static const String wc3 =
-      "Add to Cart All Product You need\n And Checkout the Order";
-  static const String wt4 = "VERIFY AND RECEIVE";
-  static const String wc4 =
-      "We Will Verify Your Order\n Pay the bill and Receive the Product";
-  static const String skip = "SKIP";
+  static const String lblAppName = "My Glide";
+  static const String lblMission = "Online logboek \n en meer....";
+
+  // login screen
+  static const String lblUserName = "Gebruiker";
+  static const String lblPassword = "Wachtwoord";
+  static const String lblUrl = "Url";
+
+  static const String hintUserName = "GeZC inlognaam van leden website";
+  static const String hintPassword = "GeZC wachtwoord van leden website";
+  static const String hintUrl = "website van de GeZC start administratie";
+
+  static const String errEmptyUser = "Gebruikersnaam kan niet leeg zijn";
+  static const String errUserLen = "Gebruikersnaam moet minimaal 5 tekens bevatten";
+  static const String errEmptyPassword = "Wachtwoord moet ingevuld worden";
+  static const String errPasswordLen = "Wachtwoord moet minimaal 3 tekens bevatten";
+  static const String errEmptyUrl = "Url moet ingevuld worden";
+  static const String errUrlIncorrect = "Url formaat is onjuist";
+
+  static const String dlgTitleLogin = "Aanmelden";
+  static const String dlgMsgLogin = "Ingevoerde data onjuist";
+
+
   static const String next = "NEXT";
   static const String gotIt = "GOT IT";
+
+
+  static const Color YellowRGB = Color.fromRGBO(254,204,47,1);
+  static const Color BlueRGB = Color.fromRGBO(18,37,81,1);
 }
