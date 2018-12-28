@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:my_glide/utils/session.dart';
-
+import 'package:my_glide/utils/my_glide_const.dart';
 
 class HomeScreen extends StatefulWidget {
   Session _session;
@@ -55,69 +55,38 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("My Glide"),
+        backgroundColor: MyGlideConst.BlueRGB,
+        title: Text(
+          "My Glide",
+          style: TextStyle(color: MyGlideConst.YellowRGB),
+        ),
         actions: <Widget>[
           Padding(
-            child: Icon(Icons.search),
+            child: Icon(Icons.search, color: MyGlideConst.YellowRGB),
             padding: const EdgeInsets.only(right: 10.0),
           )
         ],
       ),
       drawer: Drawer(),
-      body: Center(
-          child: Stack(
-        children: <Widget>[
-          Center(
-            child: DragTarget(onWillAccept: (_) {
-              print('red');
-              return true;
-            }, onAccept: (_) {
-              setState(() => showFirst = false);
-              animCtrl.forward();
-              animCtrl2.forward();
-            }, builder: (_, _1, _2) {
-              return SizedBox.expand(
-                child: Container(color: Colors.red),
-              );
-            }),
-          ),
-          Center(
-            child: DragTarget(onWillAccept: (_) {
-              print('green');
-              return true;
-            }, builder: (_, _1, _2) {
-              return SizedBox.fromSize(
-                size: Size(350.0, 350.0),
-                child: Container(color: Colors.green),
-              );
-            }),
-          ),
-          Stack(alignment: FractionalOffset.center, children: <Widget>[
-            Align(
-              alignment: Alignment(0.0, 0.5 - animation.value * 0.15),
-              child: CardView(200.0 + animation.value * 60),
+      body: ListView(
+          shrinkWrap: true,
+          padding: const EdgeInsets.all(20.0),
+          children: <Widget>[
+            new Container(
+              height: 200.0,
+              color: Colors.blue,
             ),
-            Align(
-                alignment: Alignment(0.0, 0.35 - animation2.value * 0.35),
-                child: InkWell(
-                  onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => HomeScreen(_session))),
-                  child: CardView(260.0 + animation2.value * 80),
-                )),
-            Draggable(
-              feedback: CardView(340.0),
-              child: showFirst ? CardView(340.0) : Container(),
-              childWhenDragging: Container(),
-            )
-          ]),
-        ],
-      )),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.amber,
-        onPressed: () => {},
-        child: Icon(Icons.arrow_forward, color: Colors.white),
-      ),
-    );
+            new Container(
+              height: 200.0,
+              color: Colors.red,
+            ),
+            new Container(
+              height: 200.0,
+              color: Colors.green,
+            ),
+          ],
+        )
+      ); 
   }
 }
 
