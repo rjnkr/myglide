@@ -16,6 +16,22 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # interface with the web services
+  http: ^0.12.0
+
+  # encrypten / descrypten of a string to store password
+  encrypt: ^1.0.0
+
+  # icons for ios and android
+  # regenerate icons with the statement "flutter pub pub run flutter_laucher_icons:main"
+  flutter_launcher_icons: ^0.7.0
+
+  # check internet connection
+  connectivity: ^0.3.2
+
+  # store data locally on device
+  shared_preferences: ^0.4.3
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
@@ -24,6 +40,11 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+
+flutter_icons:
+  image_path: assets/images/silzweeficon.png
+  android: true
+  ios: true
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec

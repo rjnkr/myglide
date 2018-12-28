@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:my_glide/utils/my_glide_const.dart';
+
+import 'package:my_glide/utils/session.dart';
+
 
 class HomeScreen extends StatefulWidget {
+  Session _session;
+  HomeScreen(Session session) { _session = session; }
+
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _HomeScreenState createState() => _HomeScreenState(_session);
 }
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
@@ -14,6 +19,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Animation<double> animation2;
 
   bool showFirst = true;
+  Session _session;
+
+  _HomeScreenState (Session session)  { _session = session; }
 
   @override
   void initState() {
@@ -47,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(MyGlideConst.lblAppName),
+        title: Text("My Glide"),
         actions: <Widget>[
           Padding(
             child: Icon(Icons.search),
@@ -93,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 alignment: Alignment(0.0, 0.35 - animation2.value * 0.35),
                 child: InkWell(
                   onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => HomeScreen())),
+                      MaterialPageRoute(builder: (_) => HomeScreen(_session))),
                   child: CardView(260.0 + animation2.value * 80),
                 )),
             Draggable(

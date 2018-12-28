@@ -2,30 +2,58 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import 'package:connectivity/connectivity.dart';
+
 import 'package:my_glide/utils/my_glide_const.dart';
 import 'package:my_glide/utils/my_navigator.dart';
-import 'package:my_glide/utils/my_glide_logo.dart';
+import 'package:my_glide/utils/session.dart';
+
+import 'package:my_glide/widget/my_glide_logo.dart';
 
 class SplashScreen extends StatefulWidget {
+  Session _session;
+  SplashScreen(Session session) { _session = session; }
+
   @override
-  _SplashScreenState createState() => _SplashScreenState();
+  _SplashScreenState createState() => _SplashScreenState(_session);
+
+
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  ConnectivityResult _connectivityResult;
+  Session _session;
+
+  _SplashScreenState (Session session) { _session = session; }
+
   @override
   void initState() {
     super.initState();
-    Timer(Duration(seconds: 5), nextPage);
+    Timer(Duration(seconds: 3), nextPage);
+
+    Connectivity().checkConnectivity().then((result)
+    {
+      _connectivityResult = result;
+    });
   }
 
   void nextPage() {
-    //TODO: check if user is already logged in
-    if (true)
+    if (_connectivityResult.index == 2)       // no network
+      MyNavigator.goToHome(context); 
+    else if ((_session.lastUsername == null) || (_session.lastPassword == null) || (_session.lastUrl == null))   
+      // nog geen inlog gevens bekend
       MyNavigator.goToLogin(context);
     else
-      MyNavigator.goToHome(context);
+    {
+      _session.lastLogin().then((response) 
+      {
+        if (response == null)
+          MyNavigator.goToHome(context); 
+        else
+          MyNavigator.goToLogin(context);
+      });
+    }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +81,7 @@ class _SplashScreenState extends State<SplashScreen> {
                       padding: EdgeInsets.only(top: 20.0),
                     ),
                     Text(
-                      MyGlideConst.lblMission,
+                      "Online logboek \n en meer....",
                       softWrap: true,
                       textAlign: TextAlign.center,
                       style: TextStyle(
