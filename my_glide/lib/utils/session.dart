@@ -2,31 +2,32 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:encrypt/encrypt.dart'; 
 import 'package:http/http.dart' as http;
+
 import 'dart:convert';
 
+Session serverSession = Session();
 
 class Session {
-  Map<String, String> _headers = {};
-  var _client = new http.Client();
+  Map<String, String> headers = {};
+  var client = new http.Client();
 
   Session ()
   {
     _getCredentials();
   }
+  
   final _key = 'v3ry_Secret-KeyF0r My_Glide @pp';
   final _iv = '8bytesiv'; 
 
-  String lastUsername;
-  String lastPassword;
-  String lastUrl;
-
+  // variable met laatste gelukte inlog poging
+  String lastUsername, lastPassword, lastUrl;
 
   Future<String> login (String username, String password, String url) async {
     String request = '$url/php/main.php?Action=Login.heeftToegang';
     String basicAuth = 'Basic ' + base64Encode(utf8.encode('$username:$password'));
 
     try {
-      http.Response response = await _client.get(
+      http.Response response = await client.get(
         Uri.encodeFull(request),
         headers: {'authorization': basicAuth}
       );
@@ -34,7 +35,7 @@ class Session {
       switch (response.statusCode) {
         case 200: {
           _storeCredentials(username, password, url);     
-          _updateCookie(response);
+          updateCookie(response);
           return null;
         }
         case 401: return "Gebruiker / wachtwoord onjuist";
@@ -47,7 +48,7 @@ class Session {
     }
   }
 
-  // login with the last know credentials
+  // login with the last known credentials
   Future<String> lastLogin()
   {
     return login(lastUsername, lastPassword, lastUrl);
@@ -57,7 +58,7 @@ class Session {
   void logout()
   {
     _clearCredentials();
-    _headers.clear();
+    headers.clear();
 
   }  
 
@@ -96,6 +97,7 @@ class Session {
     });
   }
 
+  // delete information from device
   void _clearCredentials()
   {
     SharedPreferences.getInstance().then((prefs)
@@ -110,11 +112,12 @@ class Session {
     });
   }
 
-  void _updateCookie(http.Response response) {
+
+  void updateCookie(http.Response response) {
     String rawCookie = response.headers['set-cookie'];
     if (rawCookie != null) {
       int index = rawCookie.indexOf(';');
-      _headers['cookie'] =
+      headers['cookie'] =
           (index == -1) ? rawCookie : rawCookie.substring(0, index);
     }
   }

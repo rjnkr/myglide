@@ -38,7 +38,7 @@ class _MyGlideLogoState extends State<MyGlideLogo> with SingleTickerProviderStat
             child: Image.asset('assets/images/silzweef.png' ),
           ),
           Text(
-            "My Glide",
+            MyGlideConst.AppName,
             style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,

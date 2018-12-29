@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:connectivity/connectivity.dart';
+import 'dart:async';
 
-import 'package:my_glide/utils/session.dart';
 import 'package:my_glide/utils/my_glide_const.dart';
+import 'package:my_glide/utils/my_navigation.dart';
+import 'package:my_glide/utils/startlijst.dart';
+
+import 'package:my_glide/widget/my_glide_logo.dart';
 
 class HomeScreen extends StatefulWidget {
-  Session _session;
-  HomeScreen(Session session) { _session = session; }
-
   @override
-  _HomeScreenState createState() => _HomeScreenState(_session);
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
@@ -19,9 +21,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Animation<double> animation2;
 
   bool showFirst = true;
-  Session _session;
-
-  _HomeScreenState (Session session)  { _session = session; }
 
   @override
   void initState() {
@@ -43,6 +42,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       this.setState(() {});
     });
     animation2.addStatusListener((AnimationStatus status) {});
+
+    Startlijst().Logboek();
   }
 
   @override
@@ -56,18 +57,35 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: MyGlideConst.BlueRGB,
+        iconTheme: IconThemeData(color: MyGlideConst.YellowRGB),
         title: Text(
-          "My Glide",
+          MyGlideConst.AppName,
           style: TextStyle(color: MyGlideConst.YellowRGB),
         ),
         actions: <Widget>[
           Padding(
             child: Icon(Icons.search, color: MyGlideConst.YellowRGB),
+            padding: const EdgeInsets.only(right: 20.0),
+          ),
+          Padding(
+            child: Icon(Icons.refresh, color: MyGlideConst.YellowRGB),
             padding: const EdgeInsets.only(right: 10.0),
           )
         ],
       ),
-      drawer: Drawer(),
+      drawer: Drawer(                         // menu
+          child: ListView(
+            //padding: EdgeInsets.zero,
+            children: <Widget>[
+              DrawerHeader(
+                child: MyGlideLogo(),
+                decoration: BoxDecoration(
+                  color: MyGlideConst.BlueRGB
+                )
+              )
+            ]
+          ),
+      ),
       body: ListView(
           shrinkWrap: true,
           padding: const EdgeInsets.all(20.0),

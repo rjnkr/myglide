@@ -1,36 +1,27 @@
+import 'package:flutter/material.dart';
+import 'package:connectivity/connectivity.dart';
 import 'dart:async';
 
-import 'package:flutter/material.dart';
-
-import 'package:connectivity/connectivity.dart';
-
 import 'package:my_glide/utils/my_glide_const.dart';
-import 'package:my_glide/utils/my_navigator.dart';
+import 'package:my_glide/utils/my_navigation.dart';
 import 'package:my_glide/utils/session.dart';
 
 import 'package:my_glide/widget/my_glide_logo.dart';
 
 class SplashScreen extends StatefulWidget {
-  Session _session;
-  SplashScreen(Session session) { _session = session; }
-
   @override
-  _SplashScreenState createState() => _SplashScreenState(_session);
-
-
+  _SplashScreenState createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen> {
   ConnectivityResult _connectivityResult;
-  Session _session;
-
-  _SplashScreenState (Session session) { _session = session; }
 
   @override
   void initState() {
     super.initState();
     Timer(Duration(seconds: 3), nextPage);
 
+    // controleer of er een netwerk verbinding is
     Connectivity().checkConnectivity().then((result)
     {
       _connectivityResult = result;
@@ -38,19 +29,20 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void nextPage() {
-    if (_connectivityResult.index == 2)       // no network
+    if (_connectivityResult.index == 2)       // geen network
       MyNavigator.goToHome(context); 
-    else if ((_session.lastUsername == null) || (_session.lastPassword == null) || (_session.lastUrl == null))   
+    else if ((serverSession.lastUsername == null) || (serverSession.lastPassword == null) || (serverSession.lastUrl == null))   
       // nog geen inlog gevens bekend
       MyNavigator.goToLogin(context);
     else
     {
-      _session.lastLogin().then((response) 
+      // opnieuw inloggen met laatst bekende credentials
+      serverSession.lastLogin().then((response) 
       {
         if (response == null)
-          MyNavigator.goToHome(context); 
+          MyNavigator.goToHome(context);  // gelukt
         else
-          MyNavigator.goToLogin(context);
+          MyNavigator.goToLogin(context); // mislukt dus toon login scherm
       });
     }
   }

@@ -1,21 +1,16 @@
 import 'package:flutter/material.dart';
-
-import 'package:my_glide/utils/my_glide_const.dart';
-import 'package:my_glide/utils/my_navigator.dart';
-import 'package:my_glide/widget/my_glide_logo.dart';
-
-import 'package:my_glide/utils/session.dart';
+import 'package:connectivity/connectivity.dart';
 import 'dart:async';
 
-import 'package:connectivity/connectivity.dart';
+import 'package:my_glide/utils/my_glide_const.dart';
+import 'package:my_glide/utils/my_navigation.dart';
+import 'package:my_glide/utils/session.dart';
 
+import 'package:my_glide/widget/my_glide_logo.dart';
 
 class LoginScreen extends StatefulWidget {
-  Session _session;
-  LoginScreen (Session session) { _session = session; }
-
   @override
-  State createState() => LoginScreenState(_session);
+  State createState() => LoginScreenState();
 }
 
 class LoginScreenState extends State<LoginScreen>
@@ -24,14 +19,11 @@ class LoginScreenState extends State<LoginScreen>
   AnimationController _iconAnimationController;
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
 
-  int _buttonState = 0;  // -1 = no network, 0 = wait for login, 1 = busy, 2 = succesful, 3 = failed
+  int _buttonState = 0;  // -1 = geen network, 0 = wacht op login, 1 = bezig, 2 = gelukt, 3 = mislukt
 
   String _myUsername;
   String _myPassword;
   String _url;  
-  Session _session;
-
-  LoginScreenState (Session session) { _session = session; }
 
   @override
   void initState() {
@@ -85,7 +77,7 @@ class LoginScreenState extends State<LoginScreen>
                           fillColor: Colors.white
                         ),
                         keyboardType: TextInputType.text,
-                        initialValue: _session.lastUsername,
+                        initialValue: serverSession.lastUsername,
                         style: TextStyle(
                           color: Colors.white
                         ),
@@ -99,11 +91,11 @@ class LoginScreenState extends State<LoginScreen>
                           hintStyle: TextStyle(
                             color: Colors.white,
                             fontSize: 10.0,
-                          ),                          
+                          ),
                         ),
                         obscureText: true,
                         keyboardType: TextInputType.text,
-                        initialValue: _session.lastPassword,
+                        initialValue: serverSession.lastPassword,
                         style: TextStyle(
                           color: Colors.white
                         ),
@@ -123,7 +115,7 @@ class LoginScreenState extends State<LoginScreen>
                           ),
                         ),
                         keyboardType: TextInputType.url,
-                        initialValue: _session.lastUrl != null ? _session.lastUrl : "https://startadmin.gezc.org",
+                        initialValue: serverSession.lastUrl != null ? serverSession.lastUrl : "https://startadmin.gezc.org",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 15.0,
@@ -155,12 +147,13 @@ class LoginScreenState extends State<LoginScreen>
     );
   }
 
+  // controleer of apparaat nog netwerk verbinding heeft
   void _checkConnectionState()
   {
     Connectivity().checkConnectivity().then((result)
     {
         setState(() {
-          if (result.index == 2) // no network
+          if (result.index == 2) // geen network
           _buttonState = -1;
           else if (_buttonState == -1)
             _buttonState = 0;
@@ -172,19 +165,19 @@ class LoginScreenState extends State<LoginScreen>
   // Het icoontje voor de login knop
   Widget _statusIcon() {
     switch (_buttonState) {
-      case -1: {  // no network
+      case -1: {  // geen network
         return Icon(Icons.airplanemode_inactive, size: 40, color: Colors.white);
       }
-      case 0: { // init state - wait for login
+      case 0: { // begin state - wacht op login
         return Icon(Icons.arrow_forward, size: 40, color: Colors.white);
       }
-      case 1: { // busy
+      case 1: { // bezig
         return CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(MyGlideConst.YellowRGB));
       }
-      case 2: { // passed
+      case 2: { // gelukt
         return Icon(Icons.check, size: 40, color: Colors.white);
       }
-      case 3: { // failed
+      case 3: { // mislukt
         return Icon(Icons.block, size: 40, color: Colors.white);
       }
     }
@@ -197,16 +190,16 @@ class LoginScreenState extends State<LoginScreen>
       case -1: {
         return Colors.black;
       }
-      case 0: { // init state - wait for login
+      case 0: { // begin state - wacht op login
         return Colors.teal;
       }
-      case 1: { // busy
+      case 1: { // bezig
         return MyGlideConst.BlueRGB;
       }
-      case 2: { // passed
+      case 2: { // gelukt
         return Colors.green;
       }
-      case 3: { // failed
+      case 3: { // mislukt
         return Colors.red;
       }
     }
@@ -256,30 +249,31 @@ class LoginScreenState extends State<LoginScreen>
   // Nu gaat het gebeuren, we gaan inloggen
   void logMeIn() {
     if (this._formKey.currentState.validate()) {
-      _formKey.currentState.save(); // Save our form now.
+      _formKey.currentState.save(); // sla input op in variablen
 
       setState(() {
-        _buttonState = 1;
+        _buttonState = 1;     // bezig
       });
 
-      _session.login(_myUsername, _myPassword, _url).then((response) {
-        if (response == null) {
+      serverSession.login(_myUsername, _myPassword, _url).then((response) {
+        if (response == null) {   // null betekend dat het gelukt is
           setState(() {
-            _buttonState = 2;   // login succesful
+            _buttonState = 2;   // login gelukt
           });
           Timer(Duration(seconds: 2), () => MyNavigator.goToHome(context));
         }
-        else {
+        else { // response bevat foutmelding
           setState(() {
-            _buttonState = 3;   // login failed
+            _buttonState = 3;   // login mislukt
           });
 
-          // make the login button available for the next run
+          // maak de knop weer beschikbaar voor de volgende poging
           Timer(Duration(seconds: 2), () =>        
             setState(() {
-              _buttonState = 0;   // initial state
+              _buttonState = 0;   // begin state
           }));
 
+          // Toon foutmelding
           showDialog(
               context: context,
               builder: (context) => AlertDialog(
@@ -291,6 +285,7 @@ class LoginScreenState extends State<LoginScreen>
       });
     }
     else {
+      // Ingevoerde data is onvoldoende om in te loggen
       showDialog(
           context: context,
           builder: (context) => AlertDialog(
