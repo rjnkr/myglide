@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:connectivity/connectivity.dart';
-import 'dart:async';
 
 import 'package:my_glide/utils/my_glide_const.dart';
 import 'package:my_glide/utils/my_navigation.dart';
+import 'package:my_glide/utils/session.dart';
 import 'package:my_glide/utils/startlijst.dart';
 
 import 'package:my_glide/widget/my_glide_logo.dart';
@@ -20,12 +19,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   AnimationController animCtrl2;
   Animation<double> animation2;
 
-  bool showFirst = true;
+  List _logboekItems;
 
   @override
   void initState() {
     super.initState();
 
+/*
     // Animation init
     animCtrl = AnimationController(
         duration: Duration(milliseconds: 500), vsync: this);
@@ -41,9 +41,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     animation2.addListener(() {
       this.setState(() {});
     });
-    animation2.addStatusListener((AnimationStatus status) {});
-
-    Startlijst().Logboek();
+    animation2.addStatusListener((AnimationStatus status) {}); 
+    */
+    Startlijst.getLogboek().then((response) {
+      setState(() {
+        _logboekItems = response;
+      });
+    });
   }
 
   @override
@@ -73,40 +77,145 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           )
         ],
       ),
-      drawer: Drawer(                         // menu
-          child: ListView(
-            //padding: EdgeInsets.zero,
-            children: <Widget>[
-              DrawerHeader(
-                child: MyGlideLogo(),
-                decoration: BoxDecoration(
-                  color: MyGlideConst.BlueRGB
-                )
-              )
-            ]
-          ),
-      ),
-      body: ListView(
-          shrinkWrap: true,
-          padding: const EdgeInsets.all(20.0),
-          children: <Widget>[
-            new Container(
-              height: 200.0,
-              color: Colors.blue,
+      drawer: Drawer(                                         // menu
+        child: GestureDetector(
+          onTap: () => Navigator.of(context).pop(),
+          child: Container(
+            decoration: BoxDecoration(
+              color: MyGlideConst.BlueRGB
             ),
-            new Container(
-              height: 200.0,
-              color: Colors.red,
-            ),
-            new Container(
-              height: 200.0,
-              color: Colors.green,
-            ),
-          ],
+            child: ListView(
+              children: <Widget>[
+                Container(
+                  height:240.0,
+                  child:
+                  DrawerHeader(
+                    child: MyGlideLogo(),
+                    decoration: BoxDecoration(
+                      color: MyGlideConst.BlueRGB
+                    )
+                  ),  
+                ),
+                ListTile(
+                  title: Text("Aanmelden",
+                    style: TextStyle(color: MyGlideConst.YellowRGB)
+                  ),
+                  trailing: Icon(Icons.flight_takeoff, color: MyGlideConst.YellowRGB),
+                ),
+                ListTile(
+                  title: Text("Instellingen", 
+                    style: TextStyle(color: MyGlideConst.YellowRGB)
+                  ),
+                  trailing: Icon(Icons.settings, color: MyGlideConst.YellowRGB),
+                ),
+                Divider(color: MyGlideConst.YellowRGB, height: 6.0),
+                ListTile(
+                  title: Text("Uitloggen",
+                  style: TextStyle(color: MyGlideConst.YellowRGB)
+                  ),
+                  trailing: Icon(Icons.exit_to_app, color: MyGlideConst.YellowRGB),
+                  onTap: () {
+                    serverSession.logout();
+                    MyNavigator.goToLogin(context);
+                  },
+                ),
+                Divider(color: MyGlideConst.YellowRGB, height: 6.0),
+                ],
+              ),
+          )
         )
-      ); 
+      ),
+      body: ListView.builder(
+        itemCount:  _logboekItems == null ? 0 : _logboekItems.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Card(
+                elevation: 1.5,
+                child: Container(
+                  padding: EdgeInsets.all(4.0),
+                  child: Row (
+                    children: <Widget>[
+                        CircleAvatar(
+                        radius: 12.0, 
+                        backgroundColor: MyGlideConst.BlueRGB,
+                        child: Text(
+                          (index+1).toString(),
+                          style: TextStyle(color:MyGlideConst.YellowRGB, fontSize: 13.0)
+                        )
+                      ),
+                      Padding(padding: EdgeInsets.only(right: 10.0)),
+                      
+                      Column(
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[ 
+                              SizedBox(
+                                width:90, 
+                                child: Text(
+                                _logboekItems[index]['DATUM'])
+                              ),
+                              SizedBox(
+                                width: 50, 
+                                child: Text(
+                                  _logboekItems[index]['STARTTIJD'],
+                                  style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)
+                                )
+                              ),
+                              SizedBox(
+                                width:50, 
+                                child: Text(
+                                  _logboekItems[index]['LANDINGSTIJD'],
+                                  style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)
+                                  )
+                                ),
+                              SizedBox(
+                                width:100, 
+                                child: Text(
+                                  _logboekItems[index]['REG_CALL'],
+                                  )
+                                )                              
+                            ]
+                          ),
+                          Row(
+                            //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[ 
+                              SizedBox(
+                                width:140, 
+                                child: Text(
+                                _logboekItems[index]['VLIEGERNAAM'])
+                              ),
+                              
+                              SizedBox(
+                                width:150, 
+                                child: Text(
+                                _logboekItems[index]['INZITTENDENAAM'] ?? '')
+                              )
+                            ]
+                          )
+                        ]),
+                        PhysicalModel(
+                          color: MyGlideConst.YellowRGB,
+                          borderRadius: BorderRadius.circular(5.0),
+                          child: 
+                              SizedBox(
+                                height:30,
+                                width:30,
+                                child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: <Widget>[Text("L")]
+                                )
+                              )
+                        )
+                    ]),
+            ));
+        }),
+      );  
   }
-}
+}    
+
+            
+            
+            
 
 class CardView extends StatelessWidget {
   final double cardSize;
