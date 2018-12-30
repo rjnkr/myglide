@@ -13,14 +13,14 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   List _logboekItems;
   
-  final double _breedteCirkel = 40;
-  final double _breedteDatum = 100;
+  final double _breedteCirkel = 25;
+  final double _breedteDatum = 50;
   final double _breedteRegCall = 100;
   final double _breedteStartTijd = 40;
   final double _breedteLandingsTijd = 40;
-  final double _breedteDuur = 40;
-  final double _breedteVlieger = 40;
-  final double _breedteInzittende = 40;
+  final double _breedteDuur = 35;
+  final double _breedteVlieger = 150;
+  final double _breedteInzittende = 150;
   double _breedteScherm;
   
 
@@ -49,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         backgroundColor: MyGlideConst.BlueRGB,
         iconTheme: IconThemeData(color: MyGlideConst.YellowRGB),
         title: Text(
-          MyGlideConst.AppName,
+          "Mijn logboek",
           style: TextStyle(color: MyGlideConst.YellowRGB),
         ),
         actions: <Widget>[
@@ -70,20 +70,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   
   // De kaart met de vlucht info
   Widget _logboekItem(int index) {
-    return Card(
+    return 
+    Card(
       elevation: 1.5,
-      child:ExpansionTile(
-    //   key: _logboekItems[index]['ID'],
-        title: _logboekRegel(index),
-        children: _logboekDetails(index)
-      )
+      child: _logboekRegel(index)
     );
   }
 
   // Toon de basis informatie 
-  Widget _logboekRegel(index) {
-    return                       
+  Widget _logboekRegel(index) { 
+    return                  
       Row(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[ 
           SizedBox(
             width:_breedteCirkel, 
@@ -95,8 +93,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 (index+1).toString(),
                 style: TextStyle(fontSize: 13.0)
               )
-            ),
+            )
           ),
+          Padding (padding: EdgeInsets.all(5)),
           SizedBox(
             width:_breedteDatum, 
             child: Text(
@@ -112,67 +111,71 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           SizedBox(
             width:_breedteLandingsTijd, 
             child: Text(
-              _logboekItems[index]['LANDINGSTIJD'],
+              _logboekItems[index]['LANDINGSTIJD'] ?? ' ',
               style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)
-              )
-            ),
+            )
+          ),
+          _toonVluchtDuur(index),
           SizedBox(
             width:_breedteRegCall, 
             child: Text(
               _logboekItems[index]['REG_CALL'],
-              )
-            )                            
+            )
+          ),
+          _toonVlieger(index),
+          _toonInzittende(index)
         ]
       );
-  }
-
-  // Toon de details als kaart is uitgeklapt
-  List<Widget> _logboekDetails(int index) {
-    return <Widget>[
-      Row(
-        children: <Widget>[ 
-          SizedBox(
-            width:140, 
-            child: Text(
-            _logboekItems[index]['VLIEGERNAAM'])
-          ),
-          
-          SizedBox(
-            width:150, 
-            child: Text(
-            _logboekItems[index]['INZITTENDENAAM'] ?? '')
-          )
-        ]
-      ) 
-    ];  
   }
   
-  Widget _startMethodeWidget(int index) {
-    return 
-      PhysicalModel(
-        color: MyGlideConst.YellowRGB,
-        borderRadius: BorderRadius.circular(5.0),
-        child: 
-            SizedBox(
-              height:20,
-              width:20,
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[Text("L")]
-              )
-            )
-      );
-  }
+  Widget _toonVluchtDuur(int index){
+    double minBreedte = 10 + _breedteCirkel + _breedteDatum + _breedteStartTijd + _breedteLandingsTijd + _breedteRegCall; // 10 extra marge
 
-  bool _displayDuur(){
-    double minBreedte = _breedteCirkel + _breedteDatum + _breedteStartTijd + _breedteLandingsTijd + _breedteRegCall;
+    // standaard = hh:mm, maar er zijn maar weining vluchten van 10 uur of langer. Zonde van de ruimte
+    String vliegtijd = _logboekItems[index]['DUUR'].toString().replaceFirst(new RegExp(r'0'), '');
 
     if ((minBreedte + _breedteDuur) < _breedteScherm)
-      return true;
+      return
+        SizedBox(
+          width: _breedteDuur, 
+          child: Text(
+            vliegtijd,
+            style: TextStyle(fontWeight: FontWeight.bold)
+          )
+        );
 
-    return false;
+    return Container(width: 0, height: 0);
   }  
+
+    Widget _toonVlieger(int index){
+    double minBreedte = 10 + _breedteCirkel + _breedteDatum + _breedteStartTijd + _breedteLandingsTijd + _breedteRegCall + _breedteDuur; // 10 extra marge
+
+    if (((minBreedte + _breedteVlieger) < _breedteScherm) && (_logboekItems[index]['VLIEGERNAAM'] != null))
+      return
+        SizedBox(
+          width: _breedteVlieger, 
+          child: Text(
+            _logboekItems[index]['VLIEGERNAAM']
+          )
+        );
+
+    return Container(width: 0, height: 0);
+  }  
+
+    Widget _toonInzittende(int index){
+    double minBreedte = 10 + _breedteCirkel + _breedteDatum + _breedteStartTijd + _breedteLandingsTijd + _breedteRegCall + _breedteDuur + _breedteVlieger; // 10 extra marge
+
+    if (((minBreedte + _breedteInzittende) < _breedteScherm) && (_logboekItems[index]['INZITTENDENAAM'] != null))
+      return
+        SizedBox(
+          width: _breedteInzittende, 
+          child: Text(
+            _logboekItems[index]['INZITTENDENAAM']
+          )
+        );
+
+    return Container(width: 0, height: 0);
+  }    
 
 }
 
