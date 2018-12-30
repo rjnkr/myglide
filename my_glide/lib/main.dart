@@ -12,6 +12,7 @@ var routes = <String, WidgetBuilder>{
 // "/intro": (BuildContext context) => IntroScreen(), 
 };   
 
+
 void main() {
   // niet verwijderen, zorgt dat serverSession class wordt opgebouwd, doet verder niets
   print (serverSession.lastUrl);      
@@ -25,66 +26,105 @@ void main() {
 }
 
 /*
-void main() => runApp(MyApp());
 
-class MyApp extends StatelessWidget {
-  final appTitle = 'Drawer Demo';
-
+class ExpansionTileSample extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: appTitle,
-      home: MyHomePage(title: appTitle),
-    );
-  }
-}
-
-class MyHomePage extends StatelessWidget {
-  final String title;
-
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(title)),
-      body: Center(child: Text('My Page!')),
-      drawer: Drawer(
-        // Add a ListView to the drawer. This ensures the user can scroll
-        // through the options in the Drawer if there isn't enough vertical
-        // space to fit everything.
-        child: ListView(
-          // Important: Remove any padding from the ListView.
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              child: Text('Drawer Header'),
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
-            ),
-            ListTile(
-              title: Text('Item 1'),
-              onTap: () {
-                // Update the state of the app
-                // ...
-                // Then close the drawer
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: Text('Item 2'),
-              onTap: () {
-                // Update the state of the app
-                // ...
-                // Then close the drawer
-                Navigator.pop(context);
-              },
-            ),
-          ],
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('ExpansionTile'),
+        ),
+        body: ListView.builder(
+          itemBuilder: (BuildContext context, int index) =>
+              EntryItem(data[index]),
+          itemCount: data.length,
         ),
       ),
     );
   }
 }
+
+// One entry in the multilevel list displayed by this app.
+class Entry {
+  Entry(this.title, [this.children = const <Entry>[]]);
+
+  final String title;
+  final List<Entry> children;
+}
+
+// The entire multilevel list displayed by this app.
+final List<Entry> data = <Entry>[
+  Entry(
+    'Chapter A',
+    <Entry>[
+      Entry('Section A0'),
+      Entry('Section A1'),
+      Entry('Section A2'),
+    ],
+  ),
+  Entry(
+    'Chapter B',
+    <Entry>[
+      Entry('Section B0'),
+      Entry('Section B1'),
+    ],
+  )
+];
+
+// Displays one Entry. If the entry has children then it's displayed
+// with an ExpansionTile.
+class EntryItem extends StatelessWidget {
+  const EntryItem(this.entry);
+
+  final Entry entry;
+
+  Widget _buildTiles(Entry root) {
+    if (root.children.isEmpty) return ListTile(title: Text(root.title));
+    return ExpansionTile(
+   //   key: PageStorageKey<Entry>(root),
+      title: Text(root.title),
+      children: <Widget>[
+        PhysicalModel(
+        color: Colors.black45,
+        borderRadius: BorderRadius.circular(5.0),
+        child: 
+            SizedBox(
+              height:20,
+              width:20,
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[Text("L")]
+              )
+            )
+      ),
+      PhysicalModel(
+        color: Colors.red,
+        borderRadius: BorderRadius.circular(5.0),
+        child: 
+            SizedBox(
+              height:20,
+              width:20,
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[Text("L")]
+              )
+            )
+      )
+      ]
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _buildTiles(entry);
+  }
+}
+
+void main() {
+  runApp(ExpansionTileSample());
+}
+
 */

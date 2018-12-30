@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:my_glide/utils/my_glide_const.dart';
-import 'package:my_glide/utils/my_navigation.dart';
-import 'package:my_glide/utils/session.dart';
 import 'package:my_glide/utils/startlijst.dart';
 
-import 'package:my_glide/widget/my_glide_logo.dart';
+import 'package:my_glide/widget/hoofd_menu.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -13,36 +11,23 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
-  AnimationController animCtrl;
-  Animation<double> animation;
-
-  AnimationController animCtrl2;
-  Animation<double> animation2;
-
   List _logboekItems;
+  
+  final double _breedteCirkel = 40;
+  final double _breedteDatum = 100;
+  final double _breedteRegCall = 100;
+  final double _breedteStartTijd = 40;
+  final double _breedteLandingsTijd = 40;
+  final double _breedteDuur = 40;
+  final double _breedteVlieger = 40;
+  final double _breedteInzittende = 40;
+  double _breedteScherm;
+  
 
   @override
   void initState() {
     super.initState();
 
-/*
-    // Animation init
-    animCtrl = AnimationController(
-        duration: Duration(milliseconds: 500), vsync: this);
-    animation = CurvedAnimation(parent: animCtrl, curve: Curves.easeOut);
-    animation.addListener(() {
-      this.setState(() {});
-    });
-    animation.addStatusListener((AnimationStatus status) {});
-
-    animCtrl2 = AnimationController(
-        duration: Duration(milliseconds: 1000), vsync: this);
-    animation2 = CurvedAnimation(parent: animCtrl2, curve: Curves.easeOut);
-    animation2.addListener(() {
-      this.setState(() {});
-    });
-    animation2.addStatusListener((AnimationStatus status) {}); 
-    */
     Startlijst.getLogboek().then((response) {
       setState(() {
         _logboekItems = response;
@@ -52,12 +37,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    animCtrl.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    _breedteScherm = MediaQuery.of(context).size.width;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: MyGlideConst.BlueRGB,
@@ -68,164 +54,140 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         ),
         actions: <Widget>[
           Padding(
-            child: Icon(Icons.search, color: MyGlideConst.YellowRGB),
-            padding: const EdgeInsets.only(right: 20.0),
-          ),
-          Padding(
             child: Icon(Icons.refresh, color: MyGlideConst.YellowRGB),
             padding: const EdgeInsets.only(right: 10.0),
           )
         ],
       ),
-      drawer: Drawer(                                         // menu
-        child: GestureDetector(
-          onTap: () => Navigator.of(context).pop(),
-          child: Container(
-            decoration: BoxDecoration(
-              color: MyGlideConst.BlueRGB
-            ),
-            child: ListView(
-              children: <Widget>[
-                Container(
-                  height:240.0,
-                  child:
-                  DrawerHeader(
-                    child: MyGlideLogo(),
-                    decoration: BoxDecoration(
-                      color: MyGlideConst.BlueRGB
-                    )
-                  ),  
-                ),
-                ListTile(
-                  title: Text("Aanmelden",
-                    style: TextStyle(color: MyGlideConst.YellowRGB)
-                  ),
-                  trailing: Icon(Icons.flight_takeoff, color: MyGlideConst.YellowRGB),
-                ),
-                ListTile(
-                  title: Text("Instellingen", 
-                    style: TextStyle(color: MyGlideConst.YellowRGB)
-                  ),
-                  trailing: Icon(Icons.settings, color: MyGlideConst.YellowRGB),
-                ),
-                Divider(color: MyGlideConst.YellowRGB, height: 6.0),
-                ListTile(
-                  title: Text("Uitloggen",
-                  style: TextStyle(color: MyGlideConst.YellowRGB)
-                  ),
-                  trailing: Icon(Icons.exit_to_app, color: MyGlideConst.YellowRGB),
-                  onTap: () {
-                    serverSession.logout();
-                    MyNavigator.goToLogin(context);
-                  },
-                ),
-                Divider(color: MyGlideConst.YellowRGB, height: 6.0),
-                ],
-              ),
-          )
-        )
-      ),
-      body: ListView.builder(
+      drawer: HoofdMenu(),
+      body: ListView.builder (
         itemCount:  _logboekItems == null ? 0 : _logboekItems.length,
-        itemBuilder: (BuildContext context, int index) {
+        itemBuilder: (BuildContext context, int index) =>
+              _logboekItem(index)  // Toon logboek regel
+        )
+    );
+  }
+  
+  // De kaart met de vlucht info
+  Widget _logboekItem(int index) {
+    return Card(
+      elevation: 1.5,
+      child:ExpansionTile(
+    //   key: _logboekItems[index]['ID'],
+        title: _logboekRegel(index),
+        children: _logboekDetails(index)
+      )
+    );
+  }
+
+  // Toon de basis informatie 
+  Widget _logboekRegel(index) {
+    return                       
+      Row(
+        children: <Widget>[ 
+          SizedBox(
+            width:_breedteCirkel, 
+            child: 
+            CircleAvatar(
+              radius: 12.0, 
+              backgroundColor: MyGlideConst.BlueRGB,
+              child: Text(
+                (index+1).toString(),
+                style: TextStyle(fontSize: 13.0)
+              )
+            ),
+          ),
+          SizedBox(
+            width:_breedteDatum, 
+            child: Text(
+            _logboekItems[index]['DATUM'])
+          ),
+          SizedBox(
+            width: _breedteStartTijd, 
+            child: Text(
+              _logboekItems[index]['STARTTIJD'],
+              style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)
+            )
+          ),
+          SizedBox(
+            width:_breedteLandingsTijd, 
+            child: Text(
+              _logboekItems[index]['LANDINGSTIJD'],
+              style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)
+              )
+            ),
+          SizedBox(
+            width:_breedteRegCall, 
+            child: Text(
+              _logboekItems[index]['REG_CALL'],
+              )
+            )                            
+        ]
+      );
+  }
+
+  // Toon de details als kaart is uitgeklapt
+  List<Widget> _logboekDetails(int index) {
+    return <Widget>[
+      Row(
+        children: <Widget>[ 
+          SizedBox(
+            width:140, 
+            child: Text(
+            _logboekItems[index]['VLIEGERNAAM'])
+          ),
+          
+          SizedBox(
+            width:150, 
+            child: Text(
+            _logboekItems[index]['INZITTENDENAAM'] ?? '')
+          )
+        ]
+      ) 
+    ];  
+  }
+  
+  Widget _startMethodeWidget(int index) {
+    return 
+      PhysicalModel(
+        color: MyGlideConst.YellowRGB,
+        borderRadius: BorderRadius.circular(5.0),
+        child: 
+            SizedBox(
+              height:20,
+              width:20,
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[Text("L")]
+              )
+            )
+      );
+  }
+
+  bool _displayDuur(){
+    double minBreedte = _breedteCirkel + _breedteDatum + _breedteStartTijd + _breedteLandingsTijd + _breedteRegCall;
+
+    if ((minBreedte + _breedteDuur) < _breedteScherm)
+      return true;
+
+    return false;
+  }  
+
+}
+
+/* achter de hand houden
           return Card(
                 elevation: 1.5,
                 child: Container(
                   padding: EdgeInsets.all(4.0),
                   child: Row (
                     children: <Widget>[
-                        CircleAvatar(
-                        radius: 12.0, 
-                        backgroundColor: MyGlideConst.BlueRGB,
-                        child: Text(
-                          (index+1).toString(),
-                          style: TextStyle(color:MyGlideConst.YellowRGB, fontSize: 13.0)
-                        )
-                      ),
-                      Padding(padding: EdgeInsets.only(right: 10.0)),
-                      
-                      Column(
-                        children: <Widget>[
-                          Row(
-                            children: <Widget>[ 
-                              SizedBox(
-                                width:90, 
-                                child: Text(
-                                _logboekItems[index]['DATUM'])
-                              ),
-                              SizedBox(
-                                width: 50, 
-                                child: Text(
-                                  _logboekItems[index]['STARTTIJD'],
-                                  style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)
-                                )
-                              ),
-                              SizedBox(
-                                width:50, 
-                                child: Text(
-                                  _logboekItems[index]['LANDINGSTIJD'],
-                                  style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)
-                                  )
-                                ),
-                              SizedBox(
-                                width:100, 
-                                child: Text(
-                                  _logboekItems[index]['REG_CALL'],
-                                  )
-                                )                              
-                            ]
-                          ),
-                          Row(
-                            //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[ 
-                              SizedBox(
-                                width:140, 
-                                child: Text(
-                                _logboekItems[index]['VLIEGERNAAM'])
-                              ),
-                              
-                              SizedBox(
-                                width:150, 
-                                child: Text(
-                                _logboekItems[index]['INZITTENDENAAM'] ?? '')
-                              )
-                            ]
-                          )
+                      ,
+ ,
+                          
                         ]),
-                        PhysicalModel(
-                          color: MyGlideConst.YellowRGB,
-                          borderRadius: BorderRadius.circular(5.0),
-                          child: 
-                              SizedBox(
-                                height:30,
-                                width:30,
-                                child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: <Widget>[Text("L")]
-                                )
-                              )
-                        )
+                        //startMethodeWidget(index)
                     ]),
             ));
-        }),
-      );  
-  }
-}    
-
-            
-            
-            
-
-class CardView extends StatelessWidget {
-  final double cardSize;
-  CardView(this.cardSize);
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-        child: SizedBox.fromSize(
-      size: Size(cardSize, cardSize),
-    ));
-  }
-}
+*/
