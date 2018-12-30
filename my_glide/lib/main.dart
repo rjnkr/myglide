@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:my_glide/pages/home_scherm.dart';
 import 'package:my_glide/pages/login_scherm.dart';
 import 'package:my_glide/pages/splash_scherm.dart';
+import 'package:my_glide/pages/settings_scherm.dart';
 
 import 'package:my_glide/utils/session.dart';
 
 var routes = <String, WidgetBuilder>{
   "/home": (BuildContext context) => HomeScreen(), 
-  "/login": (BuildContext context) => LoginScreen(), 
+  "/login": (BuildContext context) => LoginScreen(),
+  "/settings": (BuildContext context) => SettingsScreen(),
 // "/intro": (BuildContext context) => IntroScreen(), 
 };   
 
