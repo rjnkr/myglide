@@ -46,15 +46,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: MyGlideConst.BlueRGB,
+        backgroundColor: MyGlideConst.appBarBackground(),
         iconTheme: IconThemeData(color: MyGlideConst.YellowRGB),
         title: Text(
           "Mijn logboek",
-          style: TextStyle(color: MyGlideConst.YellowRGB),
+          style: MyGlideConst.appBarTextColor()
         ),
         actions: <Widget>[
           Padding(
-            child: Icon(Icons.refresh, color: MyGlideConst.YellowRGB),
+            child: Icon(Icons.refresh, color: MyGlideConst.frontColor),
             padding: const EdgeInsets.only(right: 10.0),
           )
         ],
@@ -79,52 +79,58 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   // Toon de basis informatie 
   Widget _logboekRegel(index) { 
-    return                  
-      Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[ 
-          SizedBox(
-            width:_breedteCirkel, 
-            child: 
-            CircleAvatar(
-              radius: 12.0, 
-              backgroundColor: MyGlideConst.BlueRGB,
-              child: Text(
-                (index+1).toString(),
-                style: TextStyle(fontSize: 13.0)
+    return
+      Container(
+        height: 50,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[ 
+            SizedBox(
+              width:_breedteCirkel, 
+              child: 
+              CircleAvatar(
+                radius: 12.0, 
+                backgroundColor: MyGlideConst.BlueRGB,
+                child: Text(
+                  (index+1).toString(),
+                  style: TextStyle(fontSize: 13.0)
+                )
               )
-            )
-          ),
-          Padding (padding: EdgeInsets.all(5)),
-          SizedBox(
-            width:_breedteDatum, 
-            child: Text(
-            _logboekItems[index]['DATUM'])
-          ),
-          SizedBox(
-            width: _breedteStartTijd, 
-            child: Text(
-              _logboekItems[index]['STARTTIJD'],
-              style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)
-            )
-          ),
-          SizedBox(
-            width:_breedteLandingsTijd, 
-            child: Text(
-              _logboekItems[index]['LANDINGSTIJD'] ?? ' ',
-              style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)
-            )
-          ),
-          _toonVluchtDuur(index),
-          SizedBox(
-            width:_breedteRegCall, 
-            child: Text(
-              _logboekItems[index]['REG_CALL'],
-            )
-          ),
-          _toonVlieger(index),
-          _toonInzittende(index)
-        ]
+            ),
+            Padding (padding: EdgeInsets.all(5)),
+            SizedBox(
+              width:_breedteDatum, 
+              child: Text(
+              _logboekItems[index]['DATUM'],
+              style: _gridTextStyle()
+              )
+            ),
+            SizedBox(
+              width: _breedteStartTijd, 
+              child: Text(
+                _logboekItems[index]['STARTTIJD'],
+                style: _gridTextStyle(color: MyGlideConst.starttijdColor, weight: FontWeight.bold)
+              )
+            ),
+            SizedBox(
+              width:_breedteLandingsTijd, 
+              child: Text(
+                _logboekItems[index]['LANDINGSTIJD'] ?? ' ',
+                style: _gridTextStyle(color: MyGlideConst.landingstijdColor, weight: FontWeight.bold)
+              )
+            ),
+            _toonVluchtDuur(index),
+            SizedBox(
+              width:_breedteRegCall, 
+              child: Text(
+                _logboekItems[index]['REG_CALL'],
+                style: _gridTextStyle()
+              )
+            ),
+            _toonVlieger(index),
+            _toonInzittende(index)
+          ]
+        )
       );
   }
   
@@ -140,7 +146,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           width: _breedteDuur, 
           child: Text(
             vliegtijd,
-            style: TextStyle(fontWeight: FontWeight.bold)
+            style: _gridTextStyle(weight: FontWeight.bold)
           )
         );
 
@@ -155,7 +161,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         SizedBox(
           width: _breedteVlieger, 
           child: Text(
-            _logboekItems[index]['VLIEGERNAAM']
+            _logboekItems[index]['VLIEGERNAAM'],
+            style: _gridTextStyle()
           )
         );
 
@@ -170,27 +177,20 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         SizedBox(
           width: _breedteInzittende, 
           child: Text(
-            _logboekItems[index]['INZITTENDENAAM']
+            _logboekItems[index]['INZITTENDENAAM'],
+            style: _gridTextStyle()
           )
         );
 
     return Container(width: 0, height: 0);
+  }
+
+  TextStyle _gridTextStyle({color = MyGlideConst.gridTextColor, weight = FontWeight.normal}) {
+    return TextStyle (
+      color: color,
+      fontWeight: weight,
+      fontSize: MyGlideConst.gridTextNormal
+    );
   }    
 
 }
-
-/* achter de hand houden
-          return Card(
-                elevation: 1.5,
-                child: Container(
-                  padding: EdgeInsets.all(4.0),
-                  child: Row (
-                    children: <Widget>[
-                      ,
- ,
-                          
-                        ]),
-                        //startMethodeWidget(index)
-                    ]),
-            ));
-*/

@@ -17,11 +17,14 @@ class _MyGlideLogoState extends State<MyGlideLogo> with SingleTickerProviderStat
   void initState() {
     super.initState();
     _iconAnimationController = AnimationController(
-        vsync: this, duration: Duration(milliseconds: 500));
+        vsync: this, duration: Duration(milliseconds: 500)
+      );
+
     _iconAnimation = CurvedAnimation(
       parent: _iconAnimationController,
       curve: Curves.bounceOut,
     );
+    
     _iconAnimation.addListener(() => this.setState(() {}));
     _iconAnimationController.forward();
   }
@@ -40,9 +43,10 @@ class _MyGlideLogoState extends State<MyGlideLogo> with SingleTickerProviderStat
           Text(
             MyGlideConst.AppName,
             style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 24.0),
+              color: MyGlideConst.logoTextColor,
+              fontWeight: FontWeight.bold,
+              fontSize: MyGlideConst.labelSizeLarge
+            ),
           )
         ],
       )

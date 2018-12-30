@@ -44,106 +44,109 @@ class LoginScreenState extends State<LoginScreen>
   @override
   Widget build(BuildContext context) {  
     return Scaffold(
-      backgroundColor: MyGlideConst.BlueRGB,
-      body: 
-        Theme(
-          data: ThemeData(
-              inputDecorationTheme: InputDecorationTheme(
-                hintStyle: TextStyle(color: MyGlideConst.YellowRGB, fontSize: 20.0),
-                labelStyle:
-                    TextStyle(color: MyGlideConst.YellowRGB, fontSize: 25.0),
-              )),
-          isMaterialAppTheme: true,
-          child: ListView(          
-            shrinkWrap: true,
-            padding: const EdgeInsets.fromLTRB(2, 20, 2, 0),
-            children: <Widget>[
-              MyGlideLogo(),
-              Container(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                child: Form(
-                  key: this._formKey,
-                  autovalidate: true,
-                  child: Column(
-                    children: <Widget>[
-                      TextFormField(
-                        decoration: InputDecoration(
-                          labelText: "Gebruiker", 
-                          hintText: "GeZC inlognaam van leden website",
-                          hintStyle: TextStyle(
-                            color: Colors.white,
-                            fontSize: 10.0,
-                          ),
-                          fillColor: Colors.white
-                        ),
-                        keyboardType: TextInputType.text,
-                        initialValue: serverSession.lastUsername,
-                        style: TextStyle(
-                          color: Colors.white
-                        ),
-                        validator: this._validateUserName, 
-                        onSaved: (val) => _myUsername = val,
-                      ),
-                      TextFormField(
-                        decoration: InputDecoration(
-                          labelText: "Wachtwoord",
-                          hintText: "GeZC wachtwoord van leden website",
-                          hintStyle: TextStyle(
-                            color: Colors.white,
-                            fontSize: 10.0,
-                          ),
-                        ),
-                        obscureText: true,
-                        keyboardType: TextInputType.text,
-                        initialValue: serverSession.lastPassword,
-                        style: TextStyle(
-                          color: Colors.white
-                        ),
-                        validator: this._validatePassword,
-                        onSaved: (val) => _myPassword = val,
-                      ),
-                      TextFormField(
-                        decoration: InputDecoration(
-                          labelText: "Url",
-                          hintText: "website van de GeZC start administratie",
-                          hintStyle: TextStyle(
-                            color: Colors.white,
-                            fontSize: 10.0,
-                          ),
-                          labelStyle: TextStyle(color: MyGlideConst.YellowRGB, 
-                          fontSize: 20.0
-                          ),
-                        ),
-                        keyboardType: TextInputType.url,
-                        initialValue: serverSession.lastUrl != null ? serverSession.lastUrl : "https://startadmin.gezc.org",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 15.0,
-                        ),
-                        validator: this._validateUrl,
-                        onSaved: (val) => _url = val,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 60.0),
-                      ),
-                      PhysicalModel(
-                        borderRadius: BorderRadius.circular(20.0),
-                        color: _buttonColor(),
-                        child: MaterialButton(
-                          height: 50.0,
-                          minWidth: 150.0,
-                          textColor: Colors.white,
-                          child: _statusIcon(),
-                          onPressed: _buttonState != 0 ? null:  logMeIn,    // disable button zodra inloggen gestart is
-                        )
-                      ),
-                    ],
+      backgroundColor: MyGlideConst.backgroundColor,
+      body: ListView(          
+        shrinkWrap: true,
+        padding: const EdgeInsets.fromLTRB(2, 20, 2, 0),
+        children: <Widget>[
+          MyGlideLogo(),
+          Container(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+            child: Form(
+              key: this._formKey,
+              autovalidate: true,
+              child: Column(
+                children: <Widget>[
+                  TextFormField(
+                    decoration: InputDecoration(
+                      labelText: "Gebruiker", 
+                      labelStyle: _labelStyle(),
+                      hintText: "GeZC inlognaam van leden website",
+                      hintStyle: _hintStyle(),
+                      errorStyle: _errorStyle()
+                    ),
+                    style: _inputStyle(),
+                    keyboardType: TextInputType.text,
+                    initialValue: serverSession.lastUsername,
+                    validator: this._validateUserName, 
+                    onSaved: (val) => _myUsername = val,
                   ),
-                ),
-              )
-            ],
-          ),
-        ),
+                  TextFormField(
+                    decoration: InputDecoration(
+                      labelText: "Wachtwoord",
+                      labelStyle: _labelStyle(),
+                      hintText: "GeZC wachtwoord van leden website",
+                      hintStyle: _hintStyle(),
+                      errorStyle: _errorStyle()
+                    ),
+                    style: _inputStyle(),
+                    obscureText: true,
+                    keyboardType: TextInputType.text,
+                    initialValue: serverSession.lastPassword,
+                    validator: this._validatePassword,
+                    onSaved: (val) => _myPassword = val,
+                  ),
+                  TextFormField(
+                    decoration: InputDecoration(
+                      labelText: "Url",
+                      labelStyle: _labelStyle(),
+                      hintText: "website van de GeZC start administratie",
+                      hintStyle: _hintStyle(),
+                      errorStyle: _errorStyle()                      
+                    ),
+                    style: _inputStyle(),
+                    keyboardType: TextInputType.url,
+                    initialValue: serverSession.lastUrl != null ? serverSession.lastUrl : "https://startadmin.gezc.org",
+                    validator: this._validateUrl,
+                    onSaved: (val) => _url = val,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 60.0),
+                  ),
+                  PhysicalModel(
+                    borderRadius: BorderRadius.circular(20.0),
+                    color: _buttonColor(),
+                    child: MaterialButton(
+                      height: 50.0,
+                      minWidth: 150.0,
+                      textColor: Colors.white,
+                      child: _statusIcon(),
+                      onPressed: _buttonState != 0 ? null:  logMeIn,    // disable button zodra inloggen gestart is
+                    )
+                  ),
+                ],
+              ),
+            ),
+          )
+        ]),
+    );
+  }
+
+  TextStyle _hintStyle()  {
+    return TextStyle(
+      color: MyGlideConst.hintColorLight,
+      fontSize: MyGlideConst.hintSizeSmall
+    );
+  }
+
+  TextStyle _labelStyle()  {
+    return TextStyle(
+      color: MyGlideConst.labelColorLight,
+      fontSize: MyGlideConst.labelSizeMedium
+    );
+  }
+
+  TextStyle _inputStyle()  {
+    return TextStyle(
+      color: MyGlideConst.textInputLight,
+      fontSize: MyGlideConst.textInputSizeMedium
+    );
+  }
+
+  TextStyle _errorStyle()  {
+    return TextStyle(
+      color: MyGlideConst.errorColorLight,
+      fontSize: MyGlideConst.errorSizeNormal
     );
   }
 
@@ -211,7 +214,7 @@ class LoginScreenState extends State<LoginScreen>
     if (value.isEmpty) 
       return "Gebruikersnaam kan niet leeg zijn";
 
-    if (value.length < 5) 
+    if (value.length < 4) 
       return "Gebruikersnaam moet minimaal 5 tekens bevatten";
     
     return null;
@@ -260,7 +263,7 @@ class LoginScreenState extends State<LoginScreen>
           setState(() {
             _buttonState = 2;   // login gelukt
           });
-          Timer(Duration(seconds: 2), () => MyNavigator.goToHome(context));
+          Timer(Duration(seconds: 1), () => MyNavigator.goToHome(context));
         }
         else { // response bevat foutmelding
           setState(() {

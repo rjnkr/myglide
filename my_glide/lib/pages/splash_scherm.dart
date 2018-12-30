@@ -14,7 +14,7 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  ConnectivityResult _connectivityResult;
+  ConnectivityResult _netwerkStatus;
 
   @override
   void initState() {
@@ -24,12 +24,55 @@ class _SplashScreenState extends State<SplashScreen> {
     // controleer of er een netwerk verbinding is
     Connectivity().checkConnectivity().then((result)
     {
-      _connectivityResult = result;
+      _netwerkStatus = result;
     });
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Container(
+          decoration: BoxDecoration(color: MyGlideConst.backgroundColor),
+          width: double.infinity,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Expanded(
+                flex: 2,
+                child: MyGlideLogo()
+              ),
+              Expanded(
+                flex: 1,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(MyGlideConst.frontColor)),
+                    Padding(
+                      padding: EdgeInsets.only(top: 20.0),
+                    ),
+                    Text(
+                      "Online logboek \n en meer....",
+                      softWrap: true,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18.0,
+                          color: MyGlideConst.splashScreenTextColor
+                        ),
+                    )
+                  ],
+                ),
+              )
+            ],
+          )
+        )
+      ),
+    );
+  }
+
   void nextPage() {
-    if (_connectivityResult.index == 2)       // geen network
+    if (_netwerkStatus.index == 2)       // geen netwerk
       MyNavigator.goToHome(context); 
     else if ((serverSession.lastUsername == null) || (serverSession.lastPassword == null) || (serverSession.lastUrl == null))   
       // nog geen inlog gevens bekend
@@ -45,49 +88,5 @@ class _SplashScreenState extends State<SplashScreen> {
           MyNavigator.goToLogin(context); // mislukt dus toon login scherm
       });
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        fit: StackFit.expand,
-        children: <Widget>[
-          Container(
-            decoration: BoxDecoration(color: MyGlideConst.BlueRGB),
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Expanded(
-                flex: 2,
-                child: MyGlideLogo()
-              ),
-              Expanded(
-                flex: 1,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(MyGlideConst.YellowRGB)),
-                    Padding(
-                      padding: EdgeInsets.only(top: 20.0),
-                    ),
-                    Text(
-                      "Online logboek \n en meer....",
-                      softWrap: true,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18.0,
-                          color: Colors.white),
-                    )
-                  ],
-                ),
-              )
-            ],
-          )
-        ],
-      ),
-    );
-  }
+  }  
 }
