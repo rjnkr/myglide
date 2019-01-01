@@ -69,7 +69,7 @@ class LoginScreenState extends State<LoginScreen>
                     keyboardType: TextInputType.text,
                     initialValue: serverSession.lastUsername,
                     validator: this._validateUserName, 
-                    onSaved: (val) => _myUsername = val,
+                    onSaved: (val) => _myUsername = val.trim(),
                   ),
                   TextFormField(
                     decoration: InputDecoration(
@@ -84,7 +84,7 @@ class LoginScreenState extends State<LoginScreen>
                     keyboardType: TextInputType.text,
                     initialValue: serverSession.lastPassword,
                     validator: this._validatePassword,
-                    onSaved: (val) => _myPassword = val,
+                    onSaved: (val) => _myPassword = val.trim(),
                   ),
                   TextFormField(
                     decoration: InputDecoration(
@@ -98,7 +98,7 @@ class LoginScreenState extends State<LoginScreen>
                     keyboardType: TextInputType.url,
                     initialValue: serverSession.lastUrl != null ? serverSession.lastUrl : "https://startadmin.gezc.org",
                     validator: this._validateUrl,
-                    onSaved: (val) => _url = val,
+                    onSaved: (val) => _url = val.trim(),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 60.0),
@@ -169,13 +169,13 @@ class LoginScreenState extends State<LoginScreen>
   Widget _statusIcon() {
     switch (_buttonState) {
       case -1: {  // geen network
-        return Icon(Icons.airplanemode_inactive, size: 40, color: Colors.white);
+        return Icon(Icons.cloud_off, size: 40, color: Colors.white);
       }
       case 0: { // begin state - wacht op login
         return Icon(Icons.arrow_forward, size: 40, color: Colors.white);
       }
       case 1: { // bezig
-        return CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(MyGlideConst.YellowRGB));
+        return CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(MyGlideConst.frontColor));
       }
       case 2: { // gelukt
         return Icon(Icons.check, size: 40, color: Colors.white);
@@ -197,7 +197,7 @@ class LoginScreenState extends State<LoginScreen>
         return Colors.teal;
       }
       case 1: { // bezig
-        return MyGlideConst.BlueRGB;
+        return Colors.transparent;
       }
       case 2: { // gelukt
         return Colors.green;

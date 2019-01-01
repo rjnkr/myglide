@@ -6,6 +6,7 @@ import 'package:my_glide/pages/splash_scherm.dart';
 import 'package:my_glide/pages/settings_scherm.dart';
 
 import 'package:my_glide/utils/session.dart';
+import 'package:my_glide/utils/my_glide_const.dart';
 
 var routes = <String, WidgetBuilder>{
   "/home": (BuildContext context) => HomeScreen(), 
@@ -20,6 +21,7 @@ void main() {
   print (serverSession.lastUrl);      
 
   runApp(new MaterialApp(
+    title: MyGlideConst.AppName,
     debugShowCheckedModeBanner: false,
     home: SplashScreen(),
     routes: routes

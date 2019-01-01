@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:my_glide/utils/my_glide_const.dart';
 import 'package:my_glide/utils/startlijst.dart';
@@ -23,16 +26,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   final double _breedteInzittende = 150;
   double _breedteScherm;
   
+  DateTime _lastRefresh = DateTime.now();
+  DateTime _lastRefreshButton = DateTime.now().add(Duration(days: -1));
 
   @override
   void initState() {
     super.initState();
 
-    Startlijst.getLogboek().then((response) {
-      setState(() {
-        _logboekItems = response;
-      });
-    });
+    _ophalenLogboek(false);
+
+    // check iedere 10 seconden we logboek automatisch moeten ophalen
+    // reageert daarmee (bijna) direct op instelling
+    Timer.periodic(Duration(seconds: 10), (Timer t) => _autoOphalenLogboek());   
   }
 
   @override
@@ -47,15 +52,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: MyGlideConst.appBarBackground(),
-        iconTheme: IconThemeData(color: MyGlideConst.YellowRGB),
+        iconTheme: IconThemeData(color: MyGlideConst.frontColor),
         title: Text(
           "Mijn logboek",
           style: MyGlideConst.appBarTextColor()
         ),
         actions: <Widget>[
-          Padding(
-            child: Icon(Icons.refresh, color: MyGlideConst.frontColor),
-            padding: const EdgeInsets.only(right: 10.0),
+          IconButton (
+            onPressed: () => _ophalenLogboek(true),
+            icon: Icon(Icons.refresh, color: MyGlideConst.frontColor),
+            padding: const EdgeInsets.only(right: 10.0)              
           )
         ],
       ),
@@ -90,7 +96,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               child: 
               CircleAvatar(
                 radius: 12.0, 
-                backgroundColor: MyGlideConst.BlueRGB,
+                backgroundColor: MyGlideConst.backgroundColor,
                 child: Text(
                   (index+1).toString(),
                   style: TextStyle(fontSize: 13.0)
@@ -153,36 +159,36 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     return Container(width: 0, height: 0);
   }  
 
-    Widget _toonVlieger(int index){
-    double minBreedte = 10 + _breedteCirkel + _breedteDatum + _breedteStartTijd + _breedteLandingsTijd + _breedteRegCall + _breedteDuur; // 10 extra marge
+  Widget _toonVlieger(int index){
+  double minBreedte = 10 + _breedteCirkel + _breedteDatum + _breedteStartTijd + _breedteLandingsTijd + _breedteRegCall + _breedteDuur; // 10 extra marge
 
-    if (((minBreedte + _breedteVlieger) < _breedteScherm) && (_logboekItems[index]['VLIEGERNAAM'] != null))
-      return
-        SizedBox(
-          width: _breedteVlieger, 
-          child: Text(
-            _logboekItems[index]['VLIEGERNAAM'],
-            style: _gridTextStyle()
-          )
-        );
+  if (((minBreedte + _breedteVlieger) < _breedteScherm) && (_logboekItems[index]['VLIEGERNAAM'] != null))
+    return
+      SizedBox(
+        width: _breedteVlieger, 
+        child: Text(
+          _logboekItems[index]['VLIEGERNAAM'],
+          style: _gridTextStyle()
+        )
+      );
 
-    return Container(width: 0, height: 0);
+  return Container(width: 0, height: 0);
   }  
 
-    Widget _toonInzittende(int index){
-    double minBreedte = 10 + _breedteCirkel + _breedteDatum + _breedteStartTijd + _breedteLandingsTijd + _breedteRegCall + _breedteDuur + _breedteVlieger; // 10 extra marge
+  Widget _toonInzittende(int index){
+  double minBreedte = 10 + _breedteCirkel + _breedteDatum + _breedteStartTijd + _breedteLandingsTijd + _breedteRegCall + _breedteDuur + _breedteVlieger; // 10 extra marge
 
-    if (((minBreedte + _breedteInzittende) < _breedteScherm) && (_logboekItems[index]['INZITTENDENAAM'] != null))
-      return
-        SizedBox(
-          width: _breedteInzittende, 
-          child: Text(
-            _logboekItems[index]['INZITTENDENAAM'],
-            style: _gridTextStyle()
-          )
-        );
+  if (((minBreedte + _breedteInzittende) < _breedteScherm) && (_logboekItems[index]['INZITTENDENAAM'] != null))
+    return
+      SizedBox(
+        width: _breedteInzittende, 
+        child: Text(
+          _logboekItems[index]['INZITTENDENAAM'],
+          style: _gridTextStyle()
+        )
+      );
 
-    return Container(width: 0, height: 0);
+  return Container(width: 0, height: 0);
   }
 
   TextStyle _gridTextStyle({color = MyGlideConst.gridTextColor, weight = FontWeight.normal}) {
@@ -193,4 +199,40 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }    
 
+  void _ophalenLogboek(bool handmatig) {
+    bool volledig = false;
+
+    if (handmatig)
+    {
+      int lastRefresh = DateTime.now().difference(_lastRefreshButton).inSeconds;
+      if (lastRefresh < 5) volledig = true;
+    }
+
+    SharedPreferences.getInstance().then((prefs)
+    {
+      // haal aantal op als opgeslagen in 'nrLogboekItems' anders max 50
+      Startlijst.getLogboek(prefs.getInt('nrLogboekItems') ?? 50, force: volledig).then((response) {
+        setState(() {
+          _logboekItems = response;
+          _lastRefresh = DateTime.now();
+        });
+      });
+    });
+  }
+
+  void _autoOphalenLogboek()
+  {
+    int lastRefresh = DateTime.now().difference(_lastRefresh).inSeconds;
+
+    // We halen iedere 5 miniuten
+    if (lastRefresh < MyGlideConst.logboekRefreshRate)
+      return;
+
+    SharedPreferences.getInstance().then((prefs)
+    {
+      // ophalen logboek indien autoLoadLogboek = true, indien niet gezet dan gebeurd er niets
+      if ((prefs.getBool('autoLoadLogboek') ?? false) == true)
+        _ophalenLogboek(false); 
+    });
+  }
 }

@@ -28,7 +28,7 @@ class _HoofdMenuState extends State<HoofdMenu> {
             onTap: () => Navigator.of(context).pop(),
             child: Container(
               decoration: BoxDecoration(
-                color: MyGlideConst.BlueRGB
+                color: MyGlideConst.backgroundColor
               ),
               child: ListView(
                 children: <Widget>[
@@ -38,57 +38,53 @@ class _HoofdMenuState extends State<HoofdMenu> {
                     DrawerHeader(
                       child: MyGlideLogo(),
                       decoration: BoxDecoration(
-                        color: MyGlideConst.BlueRGB
+                        color: MyGlideConst.backgroundColor
                       )
                     ),  
                   ),
                   ListTile(
-                    title: Text("Aanmelden",
-                      style: TextStyle(color: MyGlideConst.YellowRGB)
+                    title: Text("Aanmelden vliegdag",
+                      style: TextStyle(color: MyGlideConst.frontColor)
                     ),
-                    trailing: Icon(Icons.announcement, color: MyGlideConst.YellowRGB),
+                    trailing: Icon(Icons.announcement, color: MyGlideConst.frontColor),
                   ),
                   ListTile(
                     title: Text("Mijn logboek",
-                      style: TextStyle(color: MyGlideConst.YellowRGB)
+                      style: TextStyle(
+                        color: MyGlideConst.frontColor,
+                      )
                     ),
-                    trailing: Icon(Icons.assignment_ind, color: MyGlideConst.YellowRGB),
+                    trailing: Icon(Icons.assignment_ind, color: MyGlideConst.frontColor),
                     onTap: (){MyNavigator.goToHome(context);}
                   ),
-                  ExpansionTile(
-                    trailing: _expanded ? 
-                    Icon(Icons.arrow_drop_up, color: MyGlideConst.YellowRGB):
-                    Icon(Icons.arrow_drop_down, color: MyGlideConst.YellowRGB),
-                    onExpansionChanged: (state) { setState(() { _expanded = state;} );},
-                    title: Text('Vliegtuigen logboek',
-                    style: TextStyle(color: MyGlideConst.YellowRGB, fontSize: 14.0, fontWeight: FontWeight.bold)
+                  ListTile(
+                    title: Text("Vliegtuig logboek",
+                      style: TextStyle(
+                        color: MyGlideConst.frontColor,
+                      )
                     ),
-                      children: <Widget>[
-                        ListTile(
-                          title: Text ('E1',
-                            style: TextStyle(color: MyGlideConst.YellowRGB)), 
-                        )
-                    ],
+                    trailing: Icon(Icons.airplanemode_active, color: MyGlideConst.frontColor),
+                    onTap: (){MyNavigator.goToHome(context);}
                   ),
                   ListTile(
                     title: Text("Instellingen", 
-                      style: TextStyle(color: MyGlideConst.YellowRGB)
+                      style: TextStyle(color: MyGlideConst.frontColor)
                     ),
-                    trailing: Icon(Icons.settings, color: MyGlideConst.YellowRGB),
+                    trailing: Icon(Icons.settings, color: MyGlideConst.frontColor),
                     onTap: (){MyNavigator.goToSettings(context);},
                   ),
-                  Divider(color: MyGlideConst.YellowRGB, height: 6.0),
+                  Divider(color: MyGlideConst.frontColor, height: 6.0),
                   ListTile(
                     title: Text("Uitloggen",
-                    style: TextStyle(color: MyGlideConst.YellowRGB)
+                    style: TextStyle(color: MyGlideConst.frontColor)
                     ),
-                    trailing: Icon(Icons.exit_to_app, color: MyGlideConst.YellowRGB),
+                    trailing: Icon(Icons.exit_to_app, color: MyGlideConst.frontColor),
                     onTap: () {
                       serverSession.logout();
                       MyNavigator.goToLogin(context);
                     },
                   ),
-                  Divider(color: MyGlideConst.YellowRGB, height: 6.0),
+                  Divider(color: MyGlideConst.frontColor, height: 6.0),
                   ],
                 ),
             )

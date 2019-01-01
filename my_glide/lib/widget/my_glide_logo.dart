@@ -36,7 +36,7 @@ class _MyGlideLogoState extends State<MyGlideLogo> with SingleTickerProviderStat
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           CircleAvatar(
-            backgroundColor: MyGlideConst.BlueRGB,
+            backgroundColor: MyGlideConst.backgroundColor,
             radius: _iconAnimation.value * 80.0,
             child: Image.asset('assets/images/silzweef.png' ),
           ),

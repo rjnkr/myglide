@@ -4,38 +4,47 @@ import 'package:encrypt/encrypt.dart';
 import 'package:http/http.dart' as http;
 
 import 'dart:convert';
+import 'dart:async';
 
 Session serverSession = Session();
 
 class Session {
-  Map<String, String> headers = {};
-  var client = new http.Client();
+  // nodig voor encryptie / decryptie
+  final String _key = 'v3ry_Secret-KeyF0r My_Glide @pp';
+  final String _iv = '8bytesiv'; 
 
-  Session ()
-  {
-    _getCredentials();
-  }
+  Map<String, String> _headers = {};
+  http.Client _client = http.Client();
+  Timer _endClientSessionTimer;     // Wanneer _client sessie afgesloten moet worden
+  DateTime _nextogin;               // Bijhouden wanneer we opnieuw moeten inloggen 
   
-  final _key = 'v3ry_Secret-KeyF0r My_Glide @pp';
-  final _iv = '8bytesiv'; 
-
   // variable met laatste gelukte inlog poging
   String lastUsername, lastPassword, lastUrl;
 
+  Session ()
+  {
+    // ophalen van laatst gebruikte credentials (vullen lastUsername, lastPassword, lastUrl)
+    _getCredentials();
+  }
+  
+  // inloggen op de server. Als het gelukt is wordt er een PHP_SESSION cookie opgeslagen
+  // we slaan ook credentials op om later te hergebruiken
   Future<String> login (String username, String password, String url) async {
     String request = '$url/php/main.php?Action=Login.heeftToegang';
     String basicAuth = 'Basic ' + base64Encode(utf8.encode('$username:$password'));
 
     try {
-      http.Response response = await client.get(
+      http.Response response = await _client.get(
         Uri.encodeFull(request),
         headers: {'authorization': basicAuth}
       );
 
       switch (response.statusCode) {
         case 200: {
-          _storeCredentials(username, password, url);     
           updateCookie(response);
+
+          _storeCredentials(username, password, url);  
+          _setNextLogin();   
           return null;
         }
         case 401: return "Gebruiker / wachtwoord onjuist";
@@ -58,9 +67,44 @@ class Session {
   void logout()
   {
     _clearCredentials();
-    headers.clear();
+    _headers.clear();
 
   }  
+
+  void _endSession() {
+    _client.close(); 
+    _client = http.Client();
+  }
+  
+  http.Client getClient() {
+    if (_nextogin.isBefore(DateTime.now()))
+      lastLogin();
+
+    _endClientSessionTimer = Timer(Duration(minutes: 2), _endSession);
+    //_endClientSessionTimer = Timer(Duration(seconds: 5), _endSession);
+    _setNextLogin();
+    return _client;
+  }
+
+  // maak cookie ook buiten deze class beschikbaar
+  Map<String, String> getHeaders() {
+    return _headers;
+  }
+
+  // opslaan van cookies
+  void updateCookie(http.Response response) {
+    String rawCookie = response.headers['set-cookie'];
+    if (rawCookie != null) {
+      int index = rawCookie.indexOf(';');
+      _headers['cookie'] =
+          (index == -1) ? rawCookie : rawCookie.substring(0, index);
+    }
+  }
+
+  // Zet de datetime dat we opnieuw moeten inloggen
+  void _setNextLogin() {
+    _nextogin = DateTime.now().add(Duration(minutes: 15));
+  }
 
   // Store information, so it can be used when application is restarted
   void _storeCredentials(String username, String password, String url)
@@ -112,13 +156,4 @@ class Session {
     });
   }
 
-
-  void updateCookie(http.Response response) {
-    String rawCookie = response.headers['set-cookie'];
-    if (rawCookie != null) {
-      int index = rawCookie.indexOf(';');
-      headers['cookie'] =
-          (index == -1) ? rawCookie : rawCookie.substring(0, index);
-    }
-  }
 }

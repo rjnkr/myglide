@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:connectivity/connectivity.dart';
-import 'dart:async';
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:my_glide/utils/my_glide_const.dart';
-import 'package:my_glide/utils/my_navigation.dart';
-import 'package:my_glide/utils/session.dart';
 import 'package:my_glide/widget/hoofd_menu.dart';
 import 'package:numberpicker/numberpicker.dart';
 
@@ -16,11 +14,21 @@ class SettingsScreen extends StatefulWidget {
 class SettingsScreenState extends State<SettingsScreen>
     with SingleTickerProviderStateMixin {
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
-  int _aantalVluchtenInLogboek=5;
+
+  int _nrLogboekItems;
+  bool _autoLoadLogboek;
 
   @override
   void initState() {
     super.initState();  
+
+    SharedPreferences.getInstance().then((prefs)
+    {
+      setState(() {
+        _autoLoadLogboek = (prefs.getBool('autoLoadLogboek') ?? false);
+        _nrLogboekItems = (prefs.getInt('nrLogboekItems') ?? 50);
+      });
+    });
   }
 
   @override
@@ -34,67 +42,82 @@ class SettingsScreenState extends State<SettingsScreen>
         )
       ),
       drawer: HoofdMenu(),
-      body: ListView(          
-        shrinkWrap: true,
-        padding: const EdgeInsets.fromLTRB(2, 20, 2, 0),
-        children: <Widget>[
-          Container(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-            child: Form(
-              key: this._formKey,
-              autovalidate: true,
-              child: Column(
-                children: <Widget> [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 60.0),
+      body: Center(
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          width: double.infinity,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  SizedBox (
+                    width: 250,
+                    child: Text("Logboek automatisch verversen")
                   ),
-                  Column(
-                    children: <Widget>[
-                      Container(
-                        alignment: Alignment.topLeft,
-                        child:
-                        Text('Aantal getoonde vluchten in logboek',),
-                      ),
-                      Container(
-                        width: 200,
-                        height: 75,
-                        color: Colors.pink,
-                        alignment: Alignment.centerRight,
-                          child: TextFormField(
-                            decoration: InputDecoration(
-                              labelText: "Gebruiker", 
-                              hintText: "GeZC inlognaam van leden website",
-                              hintStyle: TextStyle(
-                                color: Colors.black,
-                                fontSize: 10.0, 
-                              ),
-                              fillColor: Colors.black
-                            ),
-                            keyboardType: TextInputType.text,
-                            initialValue: serverSession.lastUsername,
-                            style: TextStyle(
-                              color: Colors.black
-                            ),
-                          )
-                      )],
-                    ),
-                  PhysicalModel(
-                    borderRadius: BorderRadius.circular(20.0),
-                    color: Colors.pink,
-                    child: MaterialButton(
-                      height: 50.0,
-                      minWidth: 150.0,
-                      textColor: Colors.white,
-                      child: Icon(Icons.aspect_ratio),
-                    //  onPressed: _buttonState != 0 ? null:  logMeIn,    // disable button zodra inloggen gestart is
-                    )
-                  ),
+                  Checkbox(
+                    activeColor: MyGlideConst.frontColor,
+                    value: _autoLoadLogboek ?? false,
+                    tristate: false,
+                    onChanged: (bool value)
+                    {
+                      setState(() {
+                        _autoLoadLogboek = value;
+                        SharedPreferences.getInstance().then((prefs)
+                        {
+                          prefs.setBool('autoLoadLogboek', value);
+                        });            
+                      });
+                    },
+                  )
                 ],
               ),
-            ),
+              Row(
+                children: <Widget>[
+                  SizedBox (
+                    width: 265,
+                    child: Text("Aantal items in logboek")
+                  ),
+                  Text(
+                    _nrLogboekItems.toString(),
+                    style: TextStyle(
+                      color: MyGlideConst.frontColor
+                    )
+                  ),
+                  
+                  IconButton (
+                    icon: Icon(Icons.more_horiz),
+                    onPressed: _showNrLogboekItemsDialog
+                  ) 
+                ],
+              )
+
+            ])
           )
-        ]
-      )
-    );
-  }  
+        )
+      );
+  }
+
+  void _showNrLogboekItemsDialog() {
+    showDialog<int>(
+      context: context,
+      builder: (BuildContext context) {
+        return new NumberPickerDialog.integer(
+          initialIntegerValue: _nrLogboekItems ?? 50,
+          minValue: 5,
+          step: 5,
+          maxValue: 100,
+
+        );
+      }
+    ).then((newValue) {
+      if (newValue != null) {
+        setState(() => _nrLogboekItems = newValue);
+
+        SharedPreferences.getInstance().then((prefs)  {
+          prefs.setInt('nrLogboekItems', newValue);
+        });  
+      }
+    });
+  }
 }

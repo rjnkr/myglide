@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 
 class MyGlideConst {
   static const String AppName = "My Glide";
+  static const int logboekRefreshRate = 300;   // iedere 5 minuten (300 / 60) logboek ophalen
 
-  static const Color YellowRGB = Color.fromRGBO(213,172,73,1);
-  static const Color BlueRGB = Color.fromRGBO(37,65,121,1);
+  static const Color _yellowRGB = Color.fromRGBO(213,172,73,1);
+  static const Color _blueRGB = Color.fromRGBO(37,65,121,1);
 
-  static const Color frontColor = Color.fromRGBO(213,172,73,1);
-  static const Color backgroundColor = Color.fromRGBO(37,65,121,1);
+  static const Color frontColor = _yellowRGB;
+  static const Color backgroundColor = _blueRGB;
 
   static const Color hintColorLight = Colors.grey;
   static const Color hintColorDark = Colors.black;
