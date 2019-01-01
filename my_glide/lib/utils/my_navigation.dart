@@ -12,7 +12,12 @@ class MyNavigator {
   static void goToLogin(BuildContext context) {
     Navigator.pushNamed(context, "/login");
   }
+  
   static void goToSettings(BuildContext context) {
     Navigator.pushNamed(context, "/settings");
+  }
+
+  static void goToVliegtuigen(BuildContext context) {
+    Navigator.pushNamed(context, "/vliegtuigen");
   }
 }

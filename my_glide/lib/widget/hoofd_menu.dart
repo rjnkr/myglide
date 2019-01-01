@@ -64,7 +64,7 @@ class _HoofdMenuState extends State<HoofdMenu> {
                       )
                     ),
                     trailing: Icon(Icons.airplanemode_active, color: MyGlideConst.frontColor),
-                    onTap: (){MyNavigator.goToHome(context);}
+                    onTap: (){MyNavigator.goToVliegtuigen(context);}
                   ),
                   ListTile(
                     title: Text("Instellingen", 
