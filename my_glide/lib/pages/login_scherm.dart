@@ -221,8 +221,8 @@ class LoginScreenState extends State<LoginScreen>
     if (value.isEmpty) 
       return "Gebruikersnaam kan niet leeg zijn";
 
-    if (value.length < 4) 
-      return "Gebruikersnaam moet minimaal 5 tekens bevatten";
+    if (value.length < 3) 
+      return "Gebruikersnaam moet minimaal 3 tekens bevatten";
     
     return null;
   }
