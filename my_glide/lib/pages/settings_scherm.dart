@@ -1,10 +1,17 @@
+// language packages
 import 'package:flutter/material.dart';
 
+// language add-ons
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'package:my_glide/utils/my_glide_const.dart';
-import 'package:my_glide/widget/hoofd_menu.dart';
 import 'package:numberpicker/numberpicker.dart';
+
+// my glide utils
+import 'package:my_glide/utils/my_glide_const.dart';
+
+// my glide own widgets
+import 'package:my_glide/widget/hoofd_menu.dart';
+
+// my glide pages
 
 class SettingsScreen extends StatefulWidget {
   @override

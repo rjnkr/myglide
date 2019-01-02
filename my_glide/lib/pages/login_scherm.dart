@@ -1,12 +1,19 @@
+// language packages
 import 'package:flutter/material.dart';
-import 'package:connectivity/connectivity.dart';
 import 'dart:async';
 
+// language add-ons
+import 'package:connectivity/connectivity.dart';
+
+// my glide utils
 import 'package:my_glide/utils/my_glide_const.dart';
 import 'package:my_glide/utils/my_navigation.dart';
 import 'package:my_glide/utils/session.dart';
 
+// my glide own widgets
 import 'package:my_glide/widget/my_glide_logo.dart';
+
+// my glide pages
 
 class LoginScreen extends StatefulWidget {
   @override

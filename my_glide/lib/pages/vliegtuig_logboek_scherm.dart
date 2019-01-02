@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
+
+// language packages
+import 'package:flutter/material.dart';
+
+// language add-ons
+
+// my glide utils
 import 'package:my_glide/utils/my_glide_const.dart';
 
+// my glide own widgets
 import 'package:my_glide/widget/hoofd_menu.dart';
+
+// my glide pages
 
 class VliegtuigLogboekScreen extends StatefulWidget {
   @override

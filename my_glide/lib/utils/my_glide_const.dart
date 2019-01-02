@@ -1,8 +1,19 @@
+// language packages
 import 'package:flutter/material.dart';
+
+// language add-ons
+
+// my glide utils
+
+// my glide data providers
+
+// my glide own widgets
+
+// my glide pages
 
 class MyGlideConst {
   static const String AppName = "My Glide";
-  static const int logboekRefreshRate = 300;   // iedere 5 minuten (300 / 60) logboek ophalen
+  static const int logboekRefreshRate = 10; //300;   // iedere 5 minuten (300 / 60) logboek ophalen
 
   static const Color _yellowRGB = Color.fromRGBO(213,172,73,1);
   static const Color _blueRGB = Color.fromRGBO(37,65,121,1);

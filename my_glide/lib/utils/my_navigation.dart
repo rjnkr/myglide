@@ -1,23 +1,30 @@
+// language packages
 import 'package:flutter/material.dart';
 
-class MyNavigator {
-  static void goToHome(BuildContext context) {
-    Navigator.pushNamed(context, "/home");
-  }
+// language add-ons
 
-  static void goToIntro(BuildContext context) {
-    Navigator.pushNamed(context, "/intro");
+// my glide utils
+
+// my glide data providers
+
+// my glide own widgets
+
+// my glide pages
+
+class MyNavigator {
+  static void goMijnLogboek(BuildContext context) {
+    Navigator.popAndPushNamed(context, "/mijnlogboek");
   }
 
   static void goToLogin(BuildContext context) {
-    Navigator.pushNamed(context, "/login");
+    Navigator.popAndPushNamed(context, "/login");
   }
   
   static void goToSettings(BuildContext context) {
-    Navigator.pushNamed(context, "/settings");
+    Navigator.popAndPushNamed(context, "/settings");
   }
 
   static void goToVliegtuigen(BuildContext context) {
-    Navigator.pushNamed(context, "/vliegtuigen");
-  }
+    Navigator.popAndPushNamed(context, "/vliegtuigen");
+  } 
 }

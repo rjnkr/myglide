@@ -1,5 +1,16 @@
+// language packages
 import 'package:flutter/material.dart';
+
+// language add-ons
+
+// my glide utils
 import 'package:my_glide/utils/my_glide_const.dart';
+
+// my glide data providers
+
+// my glide own widgets
+
+// my glide pages
 
 
 class MyGlideLogo extends StatefulWidget {
