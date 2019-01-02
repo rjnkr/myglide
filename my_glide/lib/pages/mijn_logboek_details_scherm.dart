@@ -70,7 +70,7 @@ class LogboekDetailsScreen extends StatelessWidget {
                       textColor: MyGlideConst.frontColor,
                       child: Icon(Icons.email,
                         color: MyGlideConst.frontColor ),
-                      //onPressed: _buttonState != 0 ? null:  logMeIn,    
+                        onPressed: _sendEmail(),    
                     )
                   ),
                   Padding (padding: EdgeInsets.all(10)),
@@ -98,6 +98,7 @@ class LogboekDetailsScreen extends StatelessWidget {
       );
   }
 
+  // Toon een enkel veld in het scherm
   Widget _showDetailsField(String titel, String info, {bool titleTop = false}) {
     return 
       Column (
@@ -122,5 +123,11 @@ class LogboekDetailsScreen extends StatelessWidget {
             Container(width: 0, height: 0)
         ]
       );
+  }
+
+  // email versturen naar beheerder
+  void _sendEmail()
+  {
+
   }
 }

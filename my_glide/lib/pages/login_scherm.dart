@@ -270,7 +270,7 @@ class LoginScreenState extends State<LoginScreen>
           setState(() {
             _buttonState = 2;   // login gelukt
           });
-          Timer(Duration(seconds: 1), () => MyNavigator.goToHome(context));
+          Timer(Duration(seconds: 1), () => MyNavigator.goMijnLogboek(context));
         }
         else { // response bevat foutmelding
           setState(() {

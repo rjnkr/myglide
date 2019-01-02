@@ -65,7 +65,7 @@ class _HoofdMenuState extends State<HoofdMenu> {
                       )
                     ),
                     trailing: Icon(Icons.assignment_ind, color: MyGlideConst.frontColor),
-                    onTap: (){MyNavigator.goToHome(context);}
+                    onTap: (){MyNavigator.goMijnLogboek(context);}
                   ),
                   ListTile(
                     title: Text("Vliegtuig logboek",

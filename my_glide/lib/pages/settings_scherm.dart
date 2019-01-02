@@ -59,7 +59,7 @@ class SettingsScreenState extends State<SettingsScreen>
               Row(
                 children: <Widget>[
                   SizedBox (
-                    width: 250,
+                    width: 220,
                     child: Text("Logboek automatisch verversen")
                   ),
                   Checkbox(
@@ -82,7 +82,7 @@ class SettingsScreenState extends State<SettingsScreen>
               Row(
                 children: <Widget>[
                   SizedBox (
-                    width: 265,
+                    width: 235,
                     child: Text("Aantal items in logboek")
                   ),
                   Text(
