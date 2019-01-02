@@ -42,6 +42,12 @@ dependencies:
   # add number inputwheel
   numberpicker: ^0.1.7
 
+  # Url launcher to open email, cellphone or sms etc.
+  url_launcher: ^4.0.3
+
+  #Mailer with HTML support
+  flutter_mailer: ^0.3.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

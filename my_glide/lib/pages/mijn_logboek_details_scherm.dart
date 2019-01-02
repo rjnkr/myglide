@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
 
 // language packages
 import 'package:flutter/material.dart';
 
 // language add-ons
+import 'package:flutter_mailer/flutter_mailer.dart';
 
 // my glide utils
 import 'package:my_glide/utils/my_glide_const.dart';
@@ -70,7 +70,7 @@ class LogboekDetailsScreen extends StatelessWidget {
                       textColor: MyGlideConst.frontColor,
                       child: Icon(Icons.email,
                         color: MyGlideConst.frontColor ),
-                        onPressed: _sendEmail(),    
+                        onPressed: () => _sendEmail(),    
                     )
                   ),
                   Padding (padding: EdgeInsets.all(10)),
@@ -119,15 +119,39 @@ class LogboekDetailsScreen extends StatelessWidget {
             ]
           ), 
           titleTop ? 
-            Text(info, style: TextStyle(fontWeight: FontWeight.bold)) : 
-            Container(width: 0, height: 0)
+            Row(                  // Row is noodzakelijk om links uitgelijnd te zijn
+              children:<Widget>[
+                Text(info, style: TextStyle(fontWeight: FontWeight.bold))
+              ])
+            :
+            Container(width: 0, height: 0)  //Label staat links en niet erboven
         ]
       );
   }
 
   // email versturen naar beheerder
-  void _sendEmail()
+  void _sendEmail() async
   {
+    String emailBody = "Goedendag,<br><br>Ik zou graag het volgende willen wijzigen in mijn logboek.<br><br> << hier uw tekst >> <br><br>Met vriendelijke groet,<br><br><br><br>";
 
+    emailBody += "Datum: ${details['DATUM']}<br>";
+    emailBody += "Vliegtuig: ${details['REG_CALL']}<br>";
+    emailBody += "Start methode: ${details['STARTMETHODE']}<br>";
+    emailBody += "Starttijd: ${details['STARTTIJD']}<br>";
+    emailBody += "Landingstijd: ${details['LANDINGSTIJD']}<br>";
+    emailBody += "Duur: ${details['DUUR']}<br>";
+    emailBody += "Vliegernaam: ${details['VLIEGERNAAM']}<br>";
+    emailBody += "Inzittende: ${details['INZITTENDENAAM']}<br>";
+    emailBody += "Opmerking: ${details['OPMERKING']}<br>";
+
+    print(emailBody);
+    final MailOptions mailOptions = MailOptions(
+      body: emailBody,
+      subject: 'Verzoek wijziging van mijn logboek',
+    //  recipients: ['example@example.com'],
+      isHTML: true,
+    );
+
+    await FlutterMailer.send(mailOptions);
   }
 }
