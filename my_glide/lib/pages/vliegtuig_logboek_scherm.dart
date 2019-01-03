@@ -7,6 +7,9 @@ import 'package:flutter/material.dart';
 // my glide utils
 import 'package:my_glide/utils/my_glide_const.dart';
 
+// my glide data providers
+import 'package:my_glide/data/vliegtuigen.dart';
+
 // my glide own widgets
 import 'package:my_glide/widget/hoofd_menu.dart';
 
@@ -18,7 +21,18 @@ class VliegtuigLogboekScreen extends StatefulWidget {
 }
 
 class _VliegtuigLogboekScreenState extends State<VliegtuigLogboekScreen> {
+  Map _vliegtuigen = null;
 
+  @override
+  void initState() {
+    super.initState();
+
+    Vliegtuigen.getClubKisten().then((response) {
+        setState(() {
+          _vliegtuigen = response;
+        });
+      });
+  }
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
