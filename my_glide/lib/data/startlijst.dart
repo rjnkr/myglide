@@ -15,6 +15,11 @@ import 'package:my_glide/utils/session.dart';
 
 class Startlijst {
 
+  Startlijst()
+  {
+    print ("hi");
+  }
+  
   // Haal de vluchten op van de server
   static Future<List> getLogboek(int maxItems, {force = false}) async {
     try {

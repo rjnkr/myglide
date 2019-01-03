@@ -1,6 +1,7 @@
 // language packages
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'dart:core';
 
 // language add-ons
 import 'package:connectivity/connectivity.dart';
@@ -16,23 +17,52 @@ import 'package:my_glide/widget/my_glide_logo.dart';
 // my glide pages
 
 class SplashScreen extends StatefulWidget {
+  final dynamic navigateTo;
+
+  SplashScreen(
+    {
+      this.navigateTo,
+    }
+  );
+
+
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen> {
   ConnectivityResult _netwerkStatus;
+  String _lastLoginResult = "init";
 
   @override
   void initState() {
     super.initState();
-    Timer(Duration(seconds: 3), nextPage);
+
+    Timer.periodic(Duration(seconds: 1), (Timer t)
+    {
+      if ((_netwerkStatus != null) && (_lastLoginResult != "init"))
+      {
+        t.cancel();
+
+        Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => widget.navigateTo));
+        
+        if ((serverSession.lastUsername == null) || (serverSession.lastPassword == null) || (serverSession.lastUrl == null))   
+          MyNavigator.goToLogin(context);    // nog geen inlog gevens bekend, toon inlogscherm
+        else if (_netwerkStatus.index == 2)  // geen netwerk
+          return;                            // Dus toon mijn logboek
+        else if (_lastLoginResult != null)
+          MyNavigator.goToLogin(context);    // mislukt om opnieuw in te loggen, dus toon login scherm
+      }
+    });
 
     // controleer of er een netwerk verbinding is
     Connectivity().checkConnectivity().then((result)
     {
       _netwerkStatus = result;
-    });
+    });    
+
+    // opnieuw inloggen met laatst bekende credentials
+    serverSession.lastLogin().then((response) {  _lastLoginResult = response; });
   }
 
   @override
@@ -77,23 +107,4 @@ class _SplashScreenState extends State<SplashScreen> {
       ),
     );
   }
-
-  void nextPage() {
-    if (_netwerkStatus.index == 2)       // geen netwerk
-      MyNavigator.goMijnLogboek(context); 
-    else if ((serverSession.lastUsername == null) || (serverSession.lastPassword == null) || (serverSession.lastUrl == null))   
-      // nog geen inlog gevens bekend
-      MyNavigator.goToLogin(context);
-    else
-    {
-      // opnieuw inloggen met laatst bekende credentials
-      serverSession.lastLogin().then((response) 
-      {
-        if (response == null)
-          MyNavigator.goMijnLogboek(context);  // gelukt
-        else
-          MyNavigator.goToLogin(context); // mislukt dus toon login scherm
-      });
-    }
-  }  
 }

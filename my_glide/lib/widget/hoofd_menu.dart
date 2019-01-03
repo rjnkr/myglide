@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 
 // language add-ons
+import 'package:shared_preferences/shared_preferences.dart';
 
 // my glide utils
 import 'package:my_glide/utils/my_glide_const.dart';
@@ -92,6 +93,7 @@ class _HoofdMenuState extends State<HoofdMenu> {
                     onTap: () {
                       serverSession.logout();
                       MyNavigator.goToLogin(context);
+                      SharedPreferences.getInstance().then((prefs) { prefs.clear(); });
                     },
                   ),
                   Divider(color: MyGlideConst.frontColor, height: 6.0),

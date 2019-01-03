@@ -45,10 +45,7 @@ class _MijnLogboekScreenState extends State<MijnLogboekScreen> with TickerProvid
   {
     // check iedere 10 seconden we logboek automatisch moeten ophalen
     // reageert daarmee (bijna) direct op instelling
-    if (_autoUpdateTimer == null)
-    {
-      _autoUpdateTimer = Timer.periodic(Duration(seconds: 10), (Timer t) => _autoOphalenLogboek()); 
-    } 
+    _autoUpdateTimer = Timer.periodic(Duration(seconds: 10), (Timer t) => _autoOphalenLogboek()); 
   }
 
   @override
@@ -62,7 +59,7 @@ class _MijnLogboekScreenState extends State<MijnLogboekScreen> with TickerProvid
   void dispose() {
     super.dispose();
 
-    _autoUpdateTimer.cancel();    // Stop de timer, anders krijgen we parallele sessie
+ //   _autoUpdateTimer.cancel();    // Stop de timer, anders krijgen we parallele sessie
   }
 
   @override

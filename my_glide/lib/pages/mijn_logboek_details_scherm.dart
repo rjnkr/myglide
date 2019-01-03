@@ -119,10 +119,11 @@ class LogboekDetailsScreen extends StatelessWidget {
             ]
           ), 
           titleTop ? 
-            Row(                  // Row is noodzakelijk om links uitgelijnd te zijn
-              children:<Widget>[
+            SizedBox(
+              width: double.infinity,
+              child: 
                 Text(info, style: TextStyle(fontWeight: FontWeight.bold))
-              ])
+            )
             :
             Container(width: 0, height: 0)  //Label staat links en niet erboven
         ]
@@ -144,7 +145,6 @@ class LogboekDetailsScreen extends StatelessWidget {
     emailBody += "Inzittende: ${details['INZITTENDENAAM']}<br>";
     emailBody += "Opmerking: ${details['OPMERKING']}<br>";
 
-    print(emailBody);
     final MailOptions mailOptions = MailOptions(
       body: emailBody,
       subject: 'Verzoek wijziging van mijn logboek',

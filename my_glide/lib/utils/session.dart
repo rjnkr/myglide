@@ -69,8 +69,9 @@ class Session {
   }
 
   // login with the last known credentials
-  Future<String> lastLogin()
+  Future<String> lastLogin() async
   {
+    var notused = await _getCredentials();
     return login(lastUsername, lastPassword, lastUrl);
   }
 
@@ -92,7 +93,6 @@ class Session {
       lastLogin();
 
     _endClientSessionTimer = Timer(Duration(minutes: 2), _endSession);
-    //_endClientSessionTimer = Timer(Duration(seconds: 5), _endSession);
     _setNextLogin();
     return _client;
   }
@@ -134,12 +134,12 @@ class Session {
     });
   }
 
-  void _getCredentials()
+  Future _getCredentials()
   {
     final encrypter = new Encrypter(new Salsa20(_key, _iv));
 
     // ophalen van device
-    SharedPreferences.getInstance().then((prefs)
+    return SharedPreferences.getInstance().then((prefs)
     {
       lastUsername = prefs.getString('username') ?? null;
       final encryptedPassword = prefs.getString('password') ?? null;
