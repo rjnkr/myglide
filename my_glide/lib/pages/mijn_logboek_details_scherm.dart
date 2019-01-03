@@ -4,21 +4,33 @@ import 'package:flutter/material.dart';
 
 // language add-ons
 import 'package:flutter_mailer/flutter_mailer.dart';
+import 'package:numberpicker/numberpicker.dart';
 
 // my glide utils
 import 'package:my_glide/utils/my_glide_const.dart';
 import 'package:my_glide/utils/session.dart';
+
+// my glide data providers
+import 'package:my_glide/data/startlijst.dart';
 
 // my glide own widgets
 import 'package:my_glide/widget/hoofd_menu.dart';
 
 // my glide pages
 
-class LogboekDetailsScreen extends StatelessWidget {
-  final Map<String, dynamic> details;
+
+
+class LogboekDetailsScreen extends StatefulWidget {
+  final Map details;
 
   LogboekDetailsScreen({Key key, @required this.details}) : super(key: key);
 
+  @override
+  _LogboekDetailsScreenState createState() => _LogboekDetailsScreenState();
+}
+
+
+class _LogboekDetailsScreenState extends State<LogboekDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,7 +42,6 @@ class LogboekDetailsScreen extends StatelessWidget {
           style: MyGlideConst.appBarTextColor()
         ),
       ),
-      //drawer: HoofdMenu(),
       body: Padding(
         padding: EdgeInsets.all(20),
         child: Column(
@@ -42,18 +53,18 @@ class LogboekDetailsScreen extends StatelessWidget {
                 child:
                   Column (
                     children: <Widget>[
-                      _showDetailsField("Datum", details['DATUM']),
-                      _showDetailsField("Vliegtuig", details['REG_CALL']) ?? ' ',
-                      _showDetailsField("Start methode", details['STARTMETHODE'] ?? ' '),
+                      _showDetailsField("Datum", widget.details['DATUM']),
+                      _showDetailsField("Vliegtuig", widget.details['REG_CALL']) ?? ' ',
+                      _showDetailsField("Start methode", widget.details['STARTMETHODE'] ?? ' '),
                       Divider(),
-                      _showDetailsField("Starttijd", details['STARTTIJD'] ?? ' '),
-                      _showDetailsField("Landingstijd", details['LANDINGSTIJD'] ?? ' '),
-                      _showDetailsField("Duur", details['DUUR'] ?? ' '),
+                      _showDetailsField("Starttijd", widget.details['STARTTIJD'] ?? ' '),
+                      _showDetailsField("Landingstijd", widget.details['LANDINGSTIJD'] ?? ' '),
+                      _showDetailsField("Duur", widget.details['DUUR'] ?? ' '),
                       Divider(),
-                      _showDetailsField("Vlieger", details['VLIEGERNAAM'] ?? ' '),
-                      _showDetailsField("Inzittende", details['INZITTENDENAAM'] ?? ' '),
+                      _showDetailsField("Vlieger", widget.details['VLIEGERNAAM'] ?? ' '),
+                      _showDetailsField("Inzittende", widget.details['INZITTENDENAAM'] ?? ' '),
                       Divider(),
-                      _showDetailsField("Opmerking", details['OPMERKING'] ?? ' ', titleTop: true),
+                      _showDetailsField("Opmerking", widget.details['OPMERKING'] ?? ' ', titleTop: true),
                     ]
                   )
               )
@@ -76,7 +87,7 @@ class LogboekDetailsScreen extends StatelessWidget {
                   ),
                   Padding (padding: EdgeInsets.all(10)),
 
-                  details['LANDINGSTIJD'] != null ? 
+                  widget.details['LANDINGSTIJD'] != null ? 
                     Container(width: 0, height: 0)                      // Landingstijd is ingevuld, geen button tonen
                   :  
                     PhysicalModel(                                      // toon landingstijd button om vlucht af te sluiten
@@ -88,7 +99,7 @@ class LogboekDetailsScreen extends StatelessWidget {
                         textColor: MyGlideConst.frontColor,
                         child: Icon(
                           Icons.flight_land, color: MyGlideConst.frontColor ,),
-                        //onPressed: _buttonState != 0 ? null:  logMeIn,    
+                          onPressed: () => _landingsTijd(context),    
                       )
                     ),                  
                 ]
@@ -131,21 +142,62 @@ class LogboekDetailsScreen extends StatelessWidget {
       );
   }
 
+
+  void _landingsTijd(BuildContext context) async {
+    TimeOfDay landingsTijd = TimeOfDay.now();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Landingstijd"),
+        content: _inputTime()
+      )
+    );
+/*
+    setState(() {
+      widget.details['LANDINGSTIJD'] = "13:37";
+      Startlijst.opslaanLandingsTijd(widget.details['ID'], widget.details['LANDINGSTIJD'] );
+    });
+    */
+  }
+
+  Widget _inputTime() {
+    return
+      Column(
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              NumberPicker.integer(
+                listViewWidth: 10,
+                initialValue: TimeOfDay.now().hour,
+                minValue: 0,
+                maxValue: 23,
+              ),
+              NumberPicker.integer(
+                listViewWidth: 10,
+                initialValue: TimeOfDay.now().minute,
+                minValue: 0,
+                maxValue: 59,
+              )
+            ],)
+        ],);
+  } 
+
+
   // email versturen naar beheerder
-  void _sendEmail() async
-  {
+  void _sendEmail() async {
     String emailBody = "Goedendag,<br><br>Ik zou graag het volgende willen wijzigen in mijn logboek.<br><br> << hier uw tekst >> <br><br>Met vriendelijke groet,<br><br>";
     emailBody += "${serverSession.userInfo['NAAM']}<br><br><br><br>";
 
-    emailBody += "Datum: ${details['DATUM']}<br>";
-    emailBody += "Vliegtuig: ${details['REG_CALL']}<br>";
-    emailBody += "Start methode: ${details['STARTMETHODE']}<br>";
-    emailBody += "Starttijd: ${details['STARTTIJD']}<br>";
-    emailBody += "Landingstijd: ${details['LANDINGSTIJD']}<br>";
-    emailBody += "Duur: ${details['DUUR']}<br>";
-    emailBody += "Vliegernaam: ${details['VLIEGERNAAM']}<br>";
-    emailBody += "Inzittende: ${details['INZITTENDENAAM']}<br>";
-    emailBody += "Opmerking: ${details['OPMERKING']}<br>";
+    emailBody += "Datum: ${widget.details['DATUM']}<br>";
+    emailBody += "Vliegtuig: ${widget.details['REG_CALL']}<br>";
+    emailBody += "Start methode: ${widget.details['STARTMETHODE']}<br>";
+    emailBody += "Starttijd: ${widget.details['STARTTIJD']}<br>";
+    emailBody += "Landingstijd: ${widget.details['LANDINGSTIJD']}<br>";
+    emailBody += "Duur: ${widget.details['DUUR']}<br>";
+    emailBody += "Vliegernaam: ${widget.details['VLIEGERNAAM']}<br>";
+    emailBody += "Inzittende: ${widget.details['INZITTENDENAAM']}<br>";
+    emailBody += "Opmerking: ${widget.details['OPMERKING']}<br>";
 
     final MailOptions mailOptions = MailOptions(
       body: emailBody,
@@ -157,3 +209,4 @@ class LogboekDetailsScreen extends StatelessWidget {
     await FlutterMailer.send(mailOptions);
   }
 }
+

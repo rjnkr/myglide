@@ -37,4 +37,25 @@ class Startlijst {
     }
     return null;
   }
+
+  static void opslaanLandingsTijd(String id, String landingsTijd) async {
+    try {
+        http.Client client = serverSession.getClient();
+        if (client == null)
+          return null;
+
+        String url = serverSession.lastUrl;
+        String post = '$url/php/main.php?Action=Startlijst.SaveLandingsTijd';
+
+        http.Response response = await client.post(post, body: {"ID": id, "LANDINGSTIJD": landingsTijd }, headers: serverSession.getHeaders());
+        serverSession.updateCookie(response);
+
+        return null;
+      }
+      catch (e)
+      {
+        print (e);
+      }
+    return null;  
+  }
 }
