@@ -12,6 +12,7 @@ import 'package:http/http.dart' as http;
 // my glide utils
 
 // my glide data providers
+import 'package:my_glide/data/leden.dart';
 
 // my glide own widgets
 
@@ -23,14 +24,15 @@ class Session {
   // nodig voor encryptie / decryptie
   final String _key = 'v3ry_Secret-KeyF0r My_Glide @pp';
   final String _iv = '8bytesiv'; 
-
   Map<String, String> _headers = {};
   http.Client _client = http.Client();
   Timer _endClientSessionTimer;     // Wanneer _client sessie afgesloten moet worden
   DateTime _nextogin;               // Bijhouden wanneer we opnieuw moeten inloggen 
-  
-  // variable met laatste gelukte inlog poging
-  String lastUsername, lastPassword, lastUrl;
+ 
+
+  String lastUsername, lastPassword, lastUrl;       // variable met laatste gelukte inlog poging
+  bool isIngelogd = false;                          // Is het inloggen de laatste keer gelukt
+  Map userInfo;                                     // Info over ingelogde gebruiker
 
   Session ()
   {
@@ -53,17 +55,30 @@ class Session {
       switch (response.statusCode) {
         case 200: {
           updateCookie(response);
-
           _storeCredentials(username, password, url);  
-          _setNextLogin();   
+          _setNextLogin();  
+
+          isIngelogd = true;
+          Leden.getUserDetails(username).then((result) { userInfo = result; });
+
           return null;
         }
-        case 401: return "Gebruiker / wachtwoord onjuist";
-        case 404: return "Onjuiste url (404)";
-        default: return response.reasonPhrase;
+        case 401: {
+          isIngelogd = false;
+          return "Gebruiker / wachtwoord onjuist";
+        }
+        case 404: {
+          isIngelogd = false;
+          return "Onjuiste url (404)";
+        }
+        default: {
+          isIngelogd = false;
+          return response.reasonPhrase;
+        }
       }
     }
     catch (e) {
+      isIngelogd = false;
       return "Url is onjuist";
     }
   }
@@ -78,6 +93,7 @@ class Session {
   // logout, clear headers and remove user info
   void logout()
   {
+    isIngelogd = false;
     _clearCredentials();
     _headers.clear();
 

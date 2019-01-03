@@ -22,7 +22,6 @@ class HoofdMenu extends StatefulWidget {
 }
 
 class _HoofdMenuState extends State<HoofdMenu> {
-  bool _expanded = false;
 
   @override
   Widget build(BuildContext context) {
@@ -53,12 +52,7 @@ class _HoofdMenuState extends State<HoofdMenu> {
                       )
                     ),  
                   ),
-                  ListTile(
-                    title: Text("Aanmelden vliegdag",
-                      style: TextStyle(color: MyGlideConst.frontColor)
-                    ),
-                    trailing: Icon(Icons.announcement, color: MyGlideConst.frontColor),
-                  ),
+                  _aanmeldenMenuItem(),
                   ListTile(
                     title: Text("Mijn logboek",
                       style: TextStyle(
@@ -68,15 +62,7 @@ class _HoofdMenuState extends State<HoofdMenu> {
                     trailing: Icon(Icons.assignment_ind, color: MyGlideConst.frontColor),
                     onTap: (){MyNavigator.goMijnLogboek(context);}
                   ),
-                  ListTile(
-                    title: Text("Vliegtuig logboek",
-                      style: TextStyle(
-                        color: MyGlideConst.frontColor,
-                      )
-                    ),
-                    trailing: Icon(Icons.airplanemode_active, color: MyGlideConst.frontColor),
-                    onTap: (){MyNavigator.goToVliegtuigen(context);}
-                  ),
+                  _vliegtuigLogboekMenuItem(),
                   ListTile(
                     title: Text("Instellingen", 
                       style: TextStyle(color: MyGlideConst.frontColor)
@@ -85,17 +71,28 @@ class _HoofdMenuState extends State<HoofdMenu> {
                     onTap: (){MyNavigator.goToSettings(context);},
                   ),
                   Divider(color: MyGlideConst.frontColor, height: 6.0),
-                  ListTile(
-                    title: Text("Uitloggen",
-                    style: TextStyle(color: MyGlideConst.frontColor)
+                  serverSession.isIngelogd ?
+                    ListTile(
+                      title: Text("Uitloggen",
+                      style: TextStyle(color: MyGlideConst.frontColor)
+                      ),
+                      trailing: Icon(Icons.exit_to_app, color: MyGlideConst.frontColor),
+                      onTap: () {
+                        serverSession.logout();
+                        MyNavigator.goToLogin(context);
+                        SharedPreferences.getInstance().then((prefs) { prefs.clear(); });
+                      }
+                    )
+                  :
+                    ListTile(
+                      title: Text("Inloggen",
+                      style: TextStyle(color: MyGlideConst.frontColor)
+                      ),
+                      trailing: Icon(Icons.exit_to_app, color: MyGlideConst.frontColor),
+                      onTap: () {
+                        MyNavigator.goToLogin(context);
+                      }
                     ),
-                    trailing: Icon(Icons.exit_to_app, color: MyGlideConst.frontColor),
-                    onTap: () {
-                      serverSession.logout();
-                      MyNavigator.goToLogin(context);
-                      SharedPreferences.getInstance().then((prefs) { prefs.clear(); });
-                    },
-                  ),
                   Divider(color: MyGlideConst.frontColor, height: 6.0),
                   ],
                 ),
@@ -104,4 +101,45 @@ class _HoofdMenuState extends State<HoofdMenu> {
         )
     );
   } 
+
+  Widget _vliegtuigLogboekMenuItem() {
+    if (!_clubVlieger())
+      return Container(width: 0, height: 0);
+
+    return                   
+      ListTile(
+        title: Text("Vliegtuig logboek",
+          style: TextStyle(
+            color: MyGlideConst.frontColor,
+          )
+        ),
+        trailing: Icon(Icons.airplanemode_active, color: MyGlideConst.frontColor),
+        onTap: (){MyNavigator.goToVliegtuigen(context);}
+      );
+  }
+
+  Widget _aanmeldenMenuItem() {
+    if (!_clubVlieger())
+      return Container(width: 0, height: 0);   
+
+    return 
+      ListTile(
+        title: Text("Aanmelden vliegdag",
+          style: TextStyle(color: MyGlideConst.frontColor)
+        ),
+        trailing: Icon(Icons.announcement, color: MyGlideConst.frontColor),
+      );     
+  }
+
+  // is de ingelogde persoon een club vlieger
+  bool _clubVlieger() {
+    if ((serverSession.userInfo['LIDTYPE_ID'] == "601") ||       // 601 = Erelid
+        (serverSession.userInfo['LIDTYPE_ID'] == "602") ||       // 602 = Lid 
+        (serverSession.userInfo['LIDTYPE_ID'] == "602") ||       // 602 = Jeugdlid 
+        (serverSession.userInfo['LIDTYPE_ID'] == "606"))         // 606 = Donateur
+      return true;
+
+    return false;   // geen clubvlieger
+  }
+
 }

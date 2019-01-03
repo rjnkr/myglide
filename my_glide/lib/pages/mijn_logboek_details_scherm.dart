@@ -7,6 +7,7 @@ import 'package:flutter_mailer/flutter_mailer.dart';
 
 // my glide utils
 import 'package:my_glide/utils/my_glide_const.dart';
+import 'package:my_glide/utils/session.dart';
 
 // my glide own widgets
 import 'package:my_glide/widget/hoofd_menu.dart';
@@ -133,7 +134,8 @@ class LogboekDetailsScreen extends StatelessWidget {
   // email versturen naar beheerder
   void _sendEmail() async
   {
-    String emailBody = "Goedendag,<br><br>Ik zou graag het volgende willen wijzigen in mijn logboek.<br><br> << hier uw tekst >> <br><br>Met vriendelijke groet,<br><br><br><br>";
+    String emailBody = "Goedendag,<br><br>Ik zou graag het volgende willen wijzigen in mijn logboek.<br><br> << hier uw tekst >> <br><br>Met vriendelijke groet,<br><br>";
+    emailBody += "${serverSession.userInfo['NAAM']}<br><br><br><br>";
 
     emailBody += "Datum: ${details['DATUM']}<br>";
     emailBody += "Vliegtuig: ${details['REG_CALL']}<br>";

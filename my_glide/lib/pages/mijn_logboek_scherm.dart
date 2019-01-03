@@ -59,7 +59,7 @@ class _MijnLogboekScreenState extends State<MijnLogboekScreen> with TickerProvid
   void dispose() {
     super.dispose();
 
- //   _autoUpdateTimer.cancel();    // Stop de timer, anders krijgen we parallele sessie
+    _autoUpdateTimer.cancel();    // Stop de timer, anders krijgen we parallele sessie
   }
 
   @override
@@ -261,7 +261,6 @@ class _MijnLogboekScreenState extends State<MijnLogboekScreen> with TickerProvid
 
   void _autoOphalenLogboek()
   {
-    print (DateTime.now().toIso8601String());
     int lastRefresh = DateTime.now().difference(_lastRefresh).inSeconds;
 
     // We halen iedere 5 miniuten
