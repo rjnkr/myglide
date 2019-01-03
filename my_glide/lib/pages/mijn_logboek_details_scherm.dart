@@ -18,7 +18,7 @@ import 'package:my_glide/data/startlijst.dart';
 import 'package:my_glide/widget/hoofd_menu.dart';
 
 // my glide pages
-
+import 'package:my_glide/pages/gui_helpers.dart';
 
 
 class LogboekDetailsScreen extends StatefulWidget {
@@ -54,18 +54,18 @@ class _LogboekDetailsScreenState extends State<LogboekDetailsScreen> {
                 child:
                   Column (
                     children: <Widget>[
-                      _showDetailsField("Datum", widget.details['DATUM']),
-                      _showDetailsField("Vliegtuig", widget.details['REG_CALL']) ?? ' ',
-                      _showDetailsField("Start methode", widget.details['STARTMETHODE'] ?? ' '),
+                      GUIHelper.showDetailsField("Datum", widget.details['DATUM']),
+                      GUIHelper.showDetailsField("Vliegtuig", widget.details['REG_CALL']) ?? ' ',
+                      GUIHelper.showDetailsField("Start methode", widget.details['STARTMETHODE'] ?? ' '),
                       Divider(),
-                      _showDetailsField("Starttijd", widget.details['STARTTIJD'] ?? ' '),
-                      _showDetailsField("Landingstijd", widget.details['LANDINGSTIJD'] ?? ' '),
-                      _showDetailsField("Duur", widget.details['DUUR'] ?? ' '),
+                      GUIHelper.showDetailsField("Starttijd", widget.details['STARTTIJD'] ?? ' '),
+                      GUIHelper.showDetailsField("Landingstijd", widget.details['LANDINGSTIJD'] ?? ' '),
+                      GUIHelper.showDetailsField("Duur", widget.details['DUUR'] ?? ' '),
                       Divider(),
-                      _showDetailsField("Vlieger", widget.details['VLIEGERNAAM'] ?? ' '),
-                      _showDetailsField("Inzittende", widget.details['INZITTENDENAAM'] ?? ' '),
+                      GUIHelper.showDetailsField("Vlieger", widget.details['VLIEGERNAAM'] ?? ' '),
+                      GUIHelper.showDetailsField("Inzittende", widget.details['INZITTENDENAAM'] ?? ' '),
                       Divider(),
-                      _showDetailsField("Opmerking", widget.details['OPMERKING'] ?? ' ', titleTop: true),
+                      GUIHelper.showDetailsField("Opmerking", widget.details['OPMERKING'] ?? ' ', titleTop: true),
                     ]
                   )
               )
@@ -108,38 +108,6 @@ class _LogboekDetailsScreenState extends State<LogboekDetailsScreen> {
             )
           ])
         )
-      );
-  }
-
-  // Toon een enkel veld in het scherm
-  Widget _showDetailsField(String titel, String info, {bool titleTop = false}) {
-    return 
-      Column (
-        //crossAxisAlignment: CrossAxisAlignment.end,
-        //mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget> [
-          Row (
-            children: <Widget> [
-              SizedBox(
-                width: 120,
-                height: 30, 
-                child: Text(titel)
-              ),
-              SizedBox(
-                height: 30,
-                child: Text (titleTop ? ' ' : info, style: TextStyle(fontWeight: FontWeight.bold))
-              )
-            ]
-          ), 
-          titleTop ? 
-            SizedBox(
-              width: double.infinity,
-              child: 
-                Text(info, style: TextStyle(fontWeight: FontWeight.bold))
-            )
-            :
-            Container(width: 0, height: 0)  //Label staat links en niet erboven
-        ]
       );
   }
 

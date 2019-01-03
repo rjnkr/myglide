@@ -19,7 +19,7 @@ var routes = <String, WidgetBuilder>{
   "/mijnlogboek": (BuildContext context) => MijnLogboekScreen(), 
   "/login": (BuildContext context) => LoginScreen(),
   "/settings": (BuildContext context) => SettingsScreen(),
-  "/vliegtuigen": (BuildContext context) => VliegtuigLogboekScreen(),
+  "/vliegtuigen": (BuildContext context) => VliegtuigLogboekTabScreen(),
 };   
 
 class MyNavigator {

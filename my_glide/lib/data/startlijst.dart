@@ -38,6 +38,27 @@ class Startlijst {
     return null;
   }
 
+  static Future<List> getVliegtuigLogboek(String vliegtuigID) async {
+    try {
+      http.Client client = serverSession.getClient();
+      if (client == null)
+        return null;
+
+      String url = serverSession.lastUrl;
+      String request = '$url/php/main.php?Action=Startlijst.VliegtuigLogboekJSON&_:logboekVliegtuigID=$vliegtuigID';
+
+      http.Response response = await client.get(request, headers: serverSession.getHeaders());
+      serverSession.updateCookie(response);
+      final List parsed = json.decode(response.body);
+      return parsed;
+    }
+    catch (e)
+    {
+      print (e);
+    }
+    return null;
+  }
+
   static void opslaanLandingsTijd(String id, String landingsTijd) async {
     try {
         http.Client client = serverSession.getClient();

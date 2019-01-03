@@ -9,34 +9,45 @@ import 'package:my_glide/utils/my_glide_const.dart';
 
 // my glide data providers
 import 'package:my_glide/data/vliegtuigen.dart';
+import 'package:my_glide/data/startlijst.dart';
 
 // my glide own widgets
 import 'package:my_glide/widget/hoofd_menu.dart';
 
 // my glide pages
+import 'package:my_glide/pages/gui_helpers.dart';
 
-class VliegtuigLogboekScreen extends StatefulWidget {
+class VliegtuigLogboekTabScreen extends StatefulWidget {
   @override
-  _VliegtuigLogboekScreenState createState() => _VliegtuigLogboekScreenState();
+  _VliegtuigLogboekTabScreenState createState() => _VliegtuigLogboekTabScreenState();
 }
 
-class _VliegtuigLogboekScreenState extends State<VliegtuigLogboekScreen> {
-  Map _vliegtuigen = null;
+class _VliegtuigLogboekTabScreenState extends State<VliegtuigLogboekTabScreen> {
+  Map _vliegtuigen;
 
   @override
   void initState() {
     super.initState();
 
-    Vliegtuigen.getClubKisten().then((response) {
-        setState(() {
-          _vliegtuigen = response;
-        });
-      });
+    _ophalenVliegtuigLogboeken();
   }
+  
   @override
   Widget build(BuildContext context) {
+    if (_vliegtuigen == null)
+      return Scaffold(
+          appBar: AppBar(
+            backgroundColor: MyGlideConst.appBarBackground(),
+            iconTheme: IconThemeData(color: MyGlideConst.frontColor),
+            title: Text(
+              "Vliegtuig logboek",
+              style: MyGlideConst.appBarTextColor()
+            )
+          )
+      );
+
     return DefaultTabController(
-      length: 3,
+      length: int.parse(_vliegtuigen['total']),
       child: 
         Scaffold(
           appBar: AppBar(
@@ -53,23 +64,11 @@ class _VliegtuigLogboekScreenState extends State<VliegtuigLogboekScreen> {
               indicatorColor: MyGlideConst.frontColor,
               isScrollable: true,
               
-            ),
-            actions: <Widget>[
-              IconButton (
-            //    onPressed: () => _ophalenLogboek(true),
-                icon: Icon(Icons.refresh, color: MyGlideConst.frontColor),
-                padding: const EdgeInsets.only(right: 10.0)              
-              )
-            ],
+            )
           ),
           drawer: HoofdMenu(),
-         body: TabBarView(
-           children: <Widget>[
-             Icon(Icons.directions_car),
-             Icon(Icons.directions_bike),
-             Icon(Icons.directions_bus),
-             Icon(Icons.directions_bus),
-           ],
+          body: TabBarView(
+            children: _tabBladenInhoud(),
          )
         ),
     );
@@ -78,13 +77,95 @@ class _VliegtuigLogboekScreenState extends State<VliegtuigLogboekScreen> {
   List<Widget> _toonTabbladen(){
     List<Widget> retVal = List<Widget>();
 
-    for (int i=1; i< 10; i++) {
-      retVal.add(_toonTabblad("E$i"));
+    for (int i=0; i< int.parse(_vliegtuigen['total']); i++) {
+      retVal.add(Text(_vliegtuigen['results'][i]['CALLSIGN']));
     }
     return retVal;
   }
 
-  Widget _toonTabblad(String callsign) {
-    return Text(callsign);
+  List<Widget> _tabBladenInhoud() {
+    List<Widget> retVal = List<Widget>();
+
+    for (int i=0; i< int.parse(_vliegtuigen['total']); i++) {
+      retVal.add(VliegtuigLogboekTab(vliegtuigID:_vliegtuigen['results'][i]['ID']));
+    }
+    return retVal;
+  }
+
+  // haal de data op van de server
+  void _ophalenVliegtuigLogboeken() {
+    Vliegtuigen.getClubKisten().then((response) {
+      setState(() {
+        _vliegtuigen = response;
+      });
+    });
+  }
+}
+
+class VliegtuigLogboekTab extends StatefulWidget {
+    final String vliegtuigID;
+
+    VliegtuigLogboekTab (
+    {
+      @required this.vliegtuigID
+    }
+  );
+  
+  @override
+  _VliegtuigLogboekTabState createState() => _VliegtuigLogboekTabState();
+}
+
+class _VliegtuigLogboekTabState extends State<VliegtuigLogboekTab> {
+  List _logboekItems;
+  
+  @override
+  void initState() {
+    super.initState();
+
+    Startlijst.getVliegtuigLogboek(widget.vliegtuigID).then((logboek)
+    {
+      setState(() {
+        _logboekItems = logboek;      
+      });
+    });
+  }
+
+@override
+  Widget build(BuildContext context) {
+    return  
+      ListView.builder (
+        itemCount:  _logboekItems == null ? 0 : _logboekItems.length,
+        itemBuilder: (BuildContext context, int index) =>
+          _logboekItem(index)  // Toon logboek regel
+      );
+  }
+  
+  // De kaart waarin de informatie getoond wordt
+  Widget _logboekItem(int index) {
+    return 
+    Card(
+      elevation: 1.5,
+      child: _logboekRegel(index)
+    );
+  }
+
+  // Toon de informatie van de vliegdag
+  Widget _logboekRegel(index) { 
+    return
+      Container(
+        height: 130,
+        child: Padding(
+          padding: EdgeInsets.all(8),
+          child: Column (
+            children: <Widget>[
+              GUIHelper.showDetailsField("Datum", _logboekItems[index]['DATUM']),
+              GUIHelper.showDetailsField("Vluchten", _logboekItems[index]['VLUCHTEN']),
+              GUIHelper.showDetailsField("Vliegtijd", _logboekItems[index]['VLIEGTIJD']),
+              GUIHelper.showDetailsField("Lierstarts", _logboekItems[index]['LIERSTARTS']),
+              GUIHelper.showDetailsField("Sleepstarts", _logboekItems[index]['SLEEPSTARTS']),
+            ]
+          )
+        )
+      );
   }
 }
