@@ -42,6 +42,10 @@ dependencies:
   # add number inputwheel
   numberpicker: ^0.1.7
 
+  #Date picker
+  flutter_picker:
+    git: git://github.com/yangyxd/flutter_picker.git
+
   # Url launcher to open email, cellphone or sms etc.
   url_launcher: ^4.0.3
 
