@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 // language add-ons
 import 'package:flutter_mailer/flutter_mailer.dart';
 import 'package:numberpicker/numberpicker.dart';
+import 'package:flutter_picker/flutter_picker.dart';
 
 // my glide utils
 import 'package:my_glide/utils/my_glide_const.dart';
@@ -144,45 +145,31 @@ class _LogboekDetailsScreenState extends State<LogboekDetailsScreen> {
 
 
   void _landingsTijd(BuildContext context) async {
-    TimeOfDay landingsTijd = TimeOfDay.now();
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
+    Picker(
+      looping: true,
+        adapter: NumberPickerAdapter(data: [
+          NumberPickerColumn(begin: 0, end: 24, initValue: TimeOfDay.now().hour),
+          NumberPickerColumn(begin: 0, end: 59, initValue: TimeOfDay.now().minute),
+        ]),
+        delimiter: [
+          PickerDelimiter(child: Container(
+            width: 30.0,
+            alignment: Alignment.center,
+            child: Text(':',style: TextStyle(fontWeight: FontWeight.bold),)
+          ))
+        ],
+        hideHeader: true,
         title: Text("Landingstijd"),
-        content: _inputTime()
-      )
-    );
-/*
-    setState(() {
-      widget.details['LANDINGSTIJD'] = "13:37";
-      Startlijst.opslaanLandingsTijd(widget.details['ID'], widget.details['LANDINGSTIJD'] );
-    });
-    */
+        onSelect: (Picker picker, int i, List value) {
+          print(value.toString());
+          print(picker.getSelectedValues());
+        },
+        onConfirm: (Picker picker, List value) {
+          print(value.toString());
+          print(picker.getSelectedValues());
+        }
+    ).showDialog(context);
   }
-
-  Widget _inputTime() {
-    return
-      Column(
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              NumberPicker.integer(
-                listViewWidth: 10,
-                initialValue: TimeOfDay.now().hour,
-                minValue: 0,
-                maxValue: 23,
-              ),
-              NumberPicker.integer(
-                listViewWidth: 10,
-                initialValue: TimeOfDay.now().minute,
-                minValue: 0,
-                maxValue: 59,
-              )
-            ],)
-        ],);
-  } 
-
 
   // email versturen naar beheerder
   void _sendEmail() async {
