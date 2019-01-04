@@ -18,6 +18,8 @@ class MyGlideConst {
   static const Color _yellowRGB = Color.fromRGBO(213,172,73,1);
   static const Color _blueRGB = Color.fromRGBO(37,65,121,1);
 
+  static const Color disabled = Colors.grey; 
+
   static const Color frontColor = _yellowRGB;
   static const Color backgroundColor = _blueRGB;
 

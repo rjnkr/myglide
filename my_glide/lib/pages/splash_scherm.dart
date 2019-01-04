@@ -47,11 +47,11 @@ class _SplashScreenState extends State<SplashScreen> {
         Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => widget.navigateTo));
         
         if ((serverSession.lastUsername == null) || (serverSession.lastPassword == null) || (serverSession.lastUrl == null))   
-          MyNavigator.goToLogin(context);    // nog geen inlog gevens bekend, toon inlogscherm
-        else if (_netwerkStatus.index == 2)  // geen netwerk
-          return;                            // Dus toon mijn logboek
+          MyNavigator.goToLogin(context);                     // nog geen inlog gevens bekend, toon inlogscherm
+        else if (_netwerkStatus == ConnectivityResult.none)   // geen netwerk
+          return;                                             // Dus toon mijn logboek
         else if (_lastLoginResult != null)
-          MyNavigator.goToLogin(context);    // mislukt om opnieuw in te loggen, dus toon login scherm
+          MyNavigator.goToLogin(context);                     // mislukt om opnieuw in te loggen, dus toon login scherm
       }
     });
 

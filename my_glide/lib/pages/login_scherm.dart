@@ -118,7 +118,7 @@ class LoginScreenState extends State<LoginScreen>
                       minWidth: 150.0,
                       textColor: Colors.white,
                       child: _statusIcon(),
-                      onPressed: _buttonState != 0 ? null:  logMeIn,    // disable button zodra inloggen gestart is
+                      onPressed: _buttonState != 0 ? null: _logMeIn,    // disable button zodra inloggen gestart is
                     )
                   ),
                 ],
@@ -163,19 +163,18 @@ class LoginScreenState extends State<LoginScreen>
     Connectivity().checkConnectivity().then((result)
     {
         setState(() {
-          if (result.index == 2) // geen network
+          if (result == ConnectivityResult.none) // geen network
           _buttonState = -1;
           else if (_buttonState == -1)
             _buttonState = 0;
         });
     });
-
   }
 
   // Het icoontje voor de login knop
   Widget _statusIcon() {
     switch (_buttonState) {
-      case -1: {  // geen network
+      case -1: {  // geen netwerk
         return Icon(Icons.cloud_off, size: 40, color: Colors.white);
       }
       case 0: { // begin state - wacht op login
@@ -257,7 +256,7 @@ class LoginScreenState extends State<LoginScreen>
   } 
   
   // Nu gaat het gebeuren, we gaan inloggen
-  void logMeIn() {
+  void _logMeIn() {
     if (this._formKey.currentState.validate()) {
       _formKey.currentState.save(); // sla input op in variablen
 
@@ -270,7 +269,7 @@ class LoginScreenState extends State<LoginScreen>
           setState(() {
             _buttonState = 2;   // login gelukt
           });
-          Timer(Duration(seconds: 1), () => MyNavigator.goMijnLogboek(context));
+          Timer(Duration(seconds: 1), () => MyNavigator.goToMijnLogboek(context));
         }
         else { // response bevat foutmelding
           setState(() {

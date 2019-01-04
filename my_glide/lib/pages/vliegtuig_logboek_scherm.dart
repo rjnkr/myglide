@@ -29,7 +29,11 @@ class _VliegtuigLogboekTabScreenState extends State<VliegtuigLogboekTabScreen> {
   void initState() {
     super.initState();
 
-    _ophalenVliegtuigLogboeken();
+    Vliegtuigen.getClubKisten().then((response) {
+      setState(() {
+        _vliegtuigen = response;
+      });
+    });
   }
   
   @override
@@ -91,25 +95,15 @@ class _VliegtuigLogboekTabScreenState extends State<VliegtuigLogboekTabScreen> {
     }
     return retVal;
   }
-
-  // haal de data op van de server
-  void _ophalenVliegtuigLogboeken() {
-    Vliegtuigen.getClubKisten().then((response) {
-      setState(() {
-        _vliegtuigen = response;
-      });
-    });
-  }
 }
 
 class VliegtuigLogboekTab extends StatefulWidget {
-    final String vliegtuigID;
+  final String vliegtuigID;
 
-    VliegtuigLogboekTab (
-    {
-      @required this.vliegtuigID
-    }
-  );
+  VliegtuigLogboekTab (
+  {
+    @required this.vliegtuigID
+  });
   
   @override
   _VliegtuigLogboekTabState createState() => _VliegtuigLogboekTabState();

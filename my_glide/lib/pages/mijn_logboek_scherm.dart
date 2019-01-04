@@ -5,9 +5,12 @@ import 'dart:async';
 // language add-ons
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:connectivity/connectivity.dart';
 
 // my glide utils
 import 'package:my_glide/utils/my_glide_const.dart';
+import 'package:my_glide/utils/my_navigation.dart';
+import 'package:my_glide/utils/session.dart';
 
 // my glide data providers
 import 'package:my_glide/data/startlijst.dart';
@@ -38,6 +41,7 @@ class _MijnLogboekScreenState extends State<MijnLogboekScreen> with TickerProvid
   
   DateTime _lastRefresh = DateTime.now();
   DateTime _lastRefreshButton = DateTime.now().add(Duration(days: -1));
+  ConnectivityResult _netwerkStatus;
 
   Timer _autoUpdateTimer;
 
@@ -75,11 +79,19 @@ class _MijnLogboekScreenState extends State<MijnLogboekScreen> with TickerProvid
           style: MyGlideConst.appBarTextColor()
         ),
         actions: <Widget>[
+          IconButton(
+            padding: const EdgeInsets.only(right: 20.0), 
+            icon: Icon (serverSession.isAangemeld ? Icons.person : Icons.person_outline,
+              color: serverSession.isAangemeld ? MyGlideConst.frontColor : MyGlideConst.disabled
+            )
+          ),
           IconButton (
-            onPressed: () => _ophalenLogboek(true),
-            icon: Icon(Icons.refresh, color: MyGlideConst.frontColor),
+            onPressed: _netwerkStatus == ConnectivityResult.none  ? null : () => _ophalenLogboek(true),
+            icon: Icon(_netwerkStatus == ConnectivityResult.none  ? Icons.cloud_off : Icons.refresh, 
+              color: MyGlideConst.frontColor),
             padding: const EdgeInsets.only(right: 10.0)              
           )
+
         ],
       ),
       drawer: HoofdMenu(),
@@ -262,6 +274,13 @@ class _MijnLogboekScreenState extends State<MijnLogboekScreen> with TickerProvid
   void _autoOphalenLogboek()
   {
     int lastRefresh = DateTime.now().difference(_lastRefresh).inSeconds;
+
+    Connectivity().checkConnectivity().then((result)
+    {
+        setState(() {
+          _netwerkStatus = result;
+        });
+    });
 
     // We halen iedere 5 miniuten
     if (lastRefresh < MyGlideConst.logboekRefreshRate)

@@ -60,7 +60,7 @@ class _HoofdMenuState extends State<HoofdMenu> {
                       )
                     ),
                     trailing: Icon(Icons.assignment_ind, color: MyGlideConst.frontColor),
-                    onTap: (){MyNavigator.goMijnLogboek(context);}
+                    onTap: (){MyNavigator.goToMijnLogboek(context);},
                   ),
                   _vliegtuigLogboekMenuItem(),
                   ListTile(
@@ -127,7 +127,8 @@ class _HoofdMenuState extends State<HoofdMenu> {
         title: Text("Aanmelden vliegdag",
           style: TextStyle(color: MyGlideConst.frontColor)
         ),
-        trailing: Icon(Icons.announcement, color: MyGlideConst.frontColor),
+        trailing: Icon(Icons.person_add, color: MyGlideConst.frontColor),
+        onTap: (){MyNavigator.goToAanmelden(context);},
       );     
   }
 

@@ -13,6 +13,7 @@ import 'package:http/http.dart' as http;
 
 // my glide data providers
 import 'package:my_glide/data/leden.dart';
+import 'package:my_glide/data/aanwezig.dart';
 
 // my glide own widgets
 
@@ -32,6 +33,7 @@ class Session {
 
   String lastUsername, lastPassword, lastUrl;       // variable met laatste gelukte inlog poging
   bool isIngelogd = false;                          // Is het inloggen de laatste keer gelukt
+  bool isAangemeld = false;                          // Is de vlieger aangemeld voor vandaag
   Map userInfo;                                     // Info over ingelogde gebruiker
 
   Session ()
@@ -59,7 +61,13 @@ class Session {
           _setNextLogin();  
 
           isIngelogd = true;
-          Leden.getUserDetails(username).then((result) { userInfo = result; });
+          Leden.getUserDetails(username).then((result) { 
+            userInfo = result; 
+            Aanwezig.isAangemeld(serverSession.userInfo['ID']).then((value)
+            {
+              isAangemeld = value;
+            });
+          });
 
           return null;
         }
