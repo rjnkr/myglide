@@ -107,7 +107,7 @@ class _LogboekDetailsScreenState extends State<LogboekDetailsScreen> {
             textColor: MyGlideConst.frontColor,
             child: Icon(
               Icons.flight_land, color: MyGlideConst.frontColor ,),
-              onPressed: () => _landingsTijd(context),    
+              onPressed: () => _landingsTijdScherm(context),    
           )
         );
     }
@@ -134,7 +134,7 @@ class _LogboekDetailsScreenState extends State<LogboekDetailsScreen> {
     return Container(width: 0, height: 0);
   }
 
-  void _landingsTijd(BuildContext context) async {
+  void _landingsTijdScherm(BuildContext context) async {
     Picker(
       looping: true,
         adapter: NumberPickerAdapter(data: [
@@ -150,15 +150,26 @@ class _LogboekDetailsScreenState extends State<LogboekDetailsScreen> {
         ],
         hideHeader: true,
         title: Text("Landingstijd"),
-        onSelect: (Picker picker, int i, List value) {
-          print(value.toString());
-          print(picker.getSelectedValues());
-        },
         onConfirm: (Picker picker, List value) {
-          print(value.toString());
-          print(picker.getSelectedValues());
+          _landingsTijd(value[0], value[1]);
         }
     ).showDialog(context);
+  }
+
+  void _landingsTijd(int uur, int minuten)
+  {
+    String tijd = "$uur:$minuten";
+
+    Startlijst.opslaanLandingsTijd (widget.details['ID'], tijd).then((gelukt)  {
+      Startlijst.getLogboek();
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Landingstijd"),
+          content: gelukt ? Text("De landingstijd is aangepast") : Text("Er is iets mis gegaan, probeer het nogmaals of neem contact op met de beheerder")
+        ));          
+    });
+    Navigator.pop(context);
   }
 
   void _verwijderVlucht()
