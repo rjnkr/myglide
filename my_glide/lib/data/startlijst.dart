@@ -4,6 +4,7 @@ import 'dart:convert';
 
 // language add-ons
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:http/http.dart' as http;
 
 // my glide utils
@@ -19,6 +20,8 @@ class Startlijst
 {  
   // Haal de vluchten op van de server
   static Future<List> getLogboek({force = false}) async {
+    Map parsed;
+
     try {
       // haal aantal op als opgeslagen in 'nrLogboekItems' anders max 50
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -27,8 +30,18 @@ class Startlijst
       String url = serverSession.lastUrl;
       String request = '$url/php/main.php?Action=Startlijst.LogboekJSON&start=0&limit=$maxItems';
 
-      http.Response response = await serverSession.get(request);
-      final Map parsed = json.decode(response.body);
+      ConnectivityResult connected = await Connectivity().checkConnectivity();
+      if (connected == ConnectivityResult.none) {
+        String rawJSON = prefs.getString("startlijst:getLogboek") ?? "{'total':'0','results':[]}";
+        parsed = json.decode(rawJSON);                                      // geen netwerk gebruik cache
+      }
+      else {
+        http.Response response = await serverSession.get(request);
+        parsed = json.decode(response.body);
+
+        prefs.setString("startlijst:getLogboek", response.body);            // stop json in cache
+      }
+
       final List results = (parsed['results']); 
 
       return results;

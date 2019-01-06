@@ -48,12 +48,12 @@ class _SplashScreenState extends State<SplashScreen> {
 
         Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => widget.navigateTo));
         
-        if (_lastLoginResult == "false")   
-          MyNavigator.goToLogin(context);                     /// mislukt om opnieuw in te loggen, of nog geen inlog gevens bekend. Toon inlogscherm
-        else if (_netwerkStatus == ConnectivityResult.none)   // geen netwerk
-          return;                                             // Dus toon mijn logboek    
+        if (_netwerkStatus == ConnectivityResult.none)   // geen netwerk
+          return;                                        // Dus toon mijn logboek   
 
-        if (_lastLoginResult == "true")  {
+        if (_lastLoginResult == "false")   
+          MyNavigator.goToLogin(context);                // mislukt om opnieuw in te loggen, of nog geen inlog gevens bekend. Toon inlogscherm           
+        else if (_lastLoginResult == "true")  {
           if (!serverSession.login.isAangemeld)
             MyNavigator.goToAanmelden(context, pop: false);
         }     
