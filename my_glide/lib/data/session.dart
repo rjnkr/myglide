@@ -54,7 +54,7 @@ class Session {
   {
     ConnectivityResult connected = await Connectivity().checkConnectivity();
     if (connected == ConnectivityResult.none)
-      throw ("Geen data verbinding");
+      throw Exception("Geen data verbinding");
 
     http.Response response;
     try {
@@ -84,7 +84,7 @@ class Session {
   {
     ConnectivityResult connected = await Connectivity().checkConnectivity();
     if (connected == ConnectivityResult.none)
-      throw ("Geen data verbinding");
+      throw Exception("Geen data verbinding");
 
     http.Response response;
     try {
