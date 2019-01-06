@@ -3,32 +3,34 @@ import 'dart:async';
 import 'dart:convert';
 
 // language add-ons
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 // my glide utils
-import 'package:my_glide/utils/my_glide_const.dart';
-import 'package:my_glide/utils/session.dart';
+
+// my glide data providers
+import 'package:my_glide/data/session.dart';
 
 // my glide own widgets
 
 
 
-class Startlijst {
-  
+class Startlijst 
+{  
   // Haal de vluchten op van de server
-  static Future<List> getLogboek(int maxItems, {force = false}) async {
+  static Future<List> getLogboek({force = false}) async {
     try {
-      http.Client client = serverSession.getClient();
-      if (client == null)
-        return null;
+      // haal aantal op als opgeslagen in 'nrLogboekItems' anders max 50
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      int maxItems = prefs.getInt('nrLogboekItems') ?? 50;
 
       String url = serverSession.lastUrl;
       String request = '$url/php/main.php?Action=Startlijst.LogboekJSON&start=0&limit=$maxItems';
 
-      http.Response response = await client.get(request, headers: serverSession.getHeaders());
-      serverSession.updateCookie(response);
+      http.Response response = await serverSession.get(request);
       final Map parsed = json.decode(response.body);
       final List results = (parsed['results']); 
+
       return results;
     }
     catch (e)
@@ -38,17 +40,13 @@ class Startlijst {
     return null;
   }
 
+  // ophalen van het vliegtuig logboek. vliegtuigID bevat ID van vliegtuig uit ref_vliegtuigen
   static Future<List> getVliegtuigLogboek(String vliegtuigID) async {
     try {
-      http.Client client = serverSession.getClient();
-      if (client == null)
-        return null;
-
       String url = serverSession.lastUrl;
       String request = '$url/php/main.php?Action=Startlijst.VliegtuigLogboekJSON&_:logboekVliegtuigID=$vliegtuigID';
 
-      http.Response response = await client.get(request, headers: serverSession.getHeaders());
-      serverSession.updateCookie(response);
+      http.Response response = await serverSession.get(request);
       final List parsed = json.decode(response.body);
       return parsed;
     }
@@ -59,24 +57,37 @@ class Startlijst {
     return null;
   }
 
-  static void opslaanLandingsTijd(String id, String landingsTijd) async {
+  // Opslaan van de landings tijd. id bevat het ID van de start uit oper_startlijst
+  static Future<bool> opslaanLandingsTijd(String id, String landingsTijd) async {
     try {
-        http.Client client = serverSession.getClient();
-        if (client == null)
-          return null;
+      String url = serverSession.lastUrl;
+      String post = '$url/php/main.php?Action=Startlijst.SaveLandingsTijd';
 
-        String url = serverSession.lastUrl;
-        String post = '$url/php/main.php?Action=Startlijst.SaveLandingsTijd';
+      await serverSession.post(post, {"ID": id, "LANDINGSTIJD": landingsTijd });
 
-        http.Response response = await client.post(post, body: {"ID": id, "LANDINGSTIJD": landingsTijd }, headers: serverSession.getHeaders());
-        serverSession.updateCookie(response);
+      return true;
+    }
+    catch (e)
+    {
+      print (e);
+    }
+    return false;  
+  }
 
-        return null;
-      }
-      catch (e)
-      {
-        print (e);
-      }
-    return null;  
+    // Opslaan van de landings tijd. id bevat het ID van de start uit oper_startlijst
+  static Future<bool> verwijderVlucht(String id) async {
+    try {
+      String url = serverSession.lastUrl;
+      String post = '$url/php/main.php?Action=Startlijst.VerwijderObject';
+
+      await serverSession.post(post, {"ID": id });
+
+      return true;
+    }
+    catch (e)
+    {
+      print (e);
+    }
+    return false;  
   }
 }

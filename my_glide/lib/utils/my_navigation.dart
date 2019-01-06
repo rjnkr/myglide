@@ -41,7 +41,10 @@ class MyNavigator {
     Navigator.pushReplacementNamed(context, "/vliegtuigen");
   } 
 
-    static void goToAanmelden(BuildContext context) {
-    Navigator.popAndPushNamed(context, "/aanmelden");
+  static void goToAanmelden(BuildContext context, {bool pop = true}) {
+    if (pop)
+      Navigator.popAndPushNamed(context, "/aanmelden");
+    else
+      Navigator.pushNamed(context, "/aanmelden");
   } 
 }

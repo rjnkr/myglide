@@ -8,16 +8,18 @@ import 'package:connectivity/connectivity.dart';
 
 // my glide utils
 import 'package:my_glide/utils/my_glide_const.dart';
-import 'package:my_glide/utils/session.dart';
 
 // my glide data providers
 import 'package:my_glide/data/vliegtuigen.dart';
 import 'package:my_glide/data/aanwezig.dart';
+import 'package:my_glide/data/session.dart';
 
 // my glide own widgets
 
 // my glide pages
 
+
+// De data definitie van de lijst met checkboxes
 class VliegtuigTypeSel {
   final String id;
   final String omschrijving;
@@ -168,8 +170,21 @@ class _AanmeldenScreenState extends State<AanmeldenScreen> {
       {
         prefs.setString("aanmelden", csv);
       });
-      Aanwezig.aanmeldenLidVandaag(csv);
-      serverSession.isAangemeld = true;
+      
+    
+      Aanwezig.aanmeldenLidVandaag(csv).then((gelukt)  {
+        if (gelukt)
+        {
+          serverSession.login.isAangemeld = true;
+        }
+
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text("Aanmelding"),
+            content: serverSession.login.isAangemeld ? Text("U bent aangemeld voor de vliegdag van vandaag") : Text("U aanmelding is mislukt")
+          ));          
+      });
       Navigator.pop(context);
     }
   }

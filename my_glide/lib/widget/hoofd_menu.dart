@@ -1,15 +1,17 @@
 // language packages
 import 'package:flutter/material.dart';
+import 'dart:async';
 
 // language add-ons
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:connectivity/connectivity.dart';
 
 // my glide utils
 import 'package:my_glide/utils/my_glide_const.dart';
 import 'package:my_glide/utils/my_navigation.dart';
-import 'package:my_glide/utils/session.dart';
 
 // my glide data providers
+import 'package:my_glide/data/session.dart';
 
 // my glide own widgets
 import 'package:my_glide/widget/my_glide_logo.dart';
@@ -22,18 +24,36 @@ class HoofdMenu extends StatefulWidget {
 }
 
 class _HoofdMenuState extends State<HoofdMenu> {
+  ConnectivityResult _netwerkStatus;
+  Timer _statusUpdateTimer;
+
+
+  @override
+  void initState() {
+    super.initState();
+
+  // check iedere seconde of er een netwerk is
+    _statusUpdateTimer = Timer.periodic(Duration(seconds: 1), (Timer t) => _checkConnectionState());   
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    _statusUpdateTimer.cancel();    // Stop de timer, de class wordt namelijk verwijderd
+  }
 
   @override
   Widget build(BuildContext context) {
     return
-    Theme(
-       data: ThemeData(
-         primaryTextTheme: TextTheme(
-           title: TextStyle(color: Colors.pink)
-        )
-      ),
-      isMaterialAppTheme: true,
-     child: Drawer(                                         
+      Theme(
+        data: ThemeData(
+          primaryTextTheme: TextTheme(
+            title: TextStyle(color: Colors.pink)
+          )
+        ),
+        isMaterialAppTheme: true,
+        child: Drawer(                                         
           child: GestureDetector(
             onTap: () => Navigator.of(context).pop(),
             child: Container(
@@ -78,7 +98,7 @@ class _HoofdMenuState extends State<HoofdMenu> {
                       ),
                       trailing: Icon(Icons.exit_to_app, color: MyGlideConst.frontColor),
                       onTap: () {
-                        serverSession.logout();
+                        serverSession.login.logout();
                         MyNavigator.goToLogin(context);
                         SharedPreferences.getInstance().then((prefs) { prefs.clear(); });
                       }
@@ -96,15 +116,19 @@ class _HoofdMenuState extends State<HoofdMenu> {
                   Divider(color: MyGlideConst.frontColor, height: 6.0),
                   ],
                 ),
-            )
+              )
           )
         )
-    );
+      );
   } 
 
   Widget _vliegtuigLogboekMenuItem() {
-    if (!_clubVlieger())
-      return Container(width: 0, height: 0);
+    if ((!serverSession.login.isClubVlieger) ||          // aanmelden is alleen voor leden en donateurs
+        (_netwerkStatus == ConnectivityResult.none)) {   // als er geen netwerk is kunnen we geen logboeken tonen 
+
+          if (!serverSession.login.isLocal)              // lokale gebruiker mag wel vliegtuig logboeken zien 
+            return Container(width: 0, height: 0);
+        }
 
     return                   
       ListTile(
@@ -119,8 +143,12 @@ class _HoofdMenuState extends State<HoofdMenu> {
   }
 
   Widget _aanmeldenMenuItem() {
-    if (!_clubVlieger())
-      return Container(width: 0, height: 0);   
+    if ((!serverSession.login.isClubVlieger) ||          // aanmelden is alleen voor leden en donateurs
+        (_netwerkStatus == ConnectivityResult.none)) {   // als er geen netwerk is kunnen we niet aanmelden
+    
+        return Container(width: 0, height: 0); 
+    }  
+        
 
     return 
       ListTile(
@@ -132,15 +160,15 @@ class _HoofdMenuState extends State<HoofdMenu> {
       );     
   }
 
-  // is de ingelogde persoon een club vlieger
-  bool _clubVlieger() {
-    if ((serverSession.userInfo['LIDTYPE_ID'] == "601") ||       // 601 = Erelid
-        (serverSession.userInfo['LIDTYPE_ID'] == "602") ||       // 602 = Lid 
-        (serverSession.userInfo['LIDTYPE_ID'] == "602") ||       // 602 = Jeugdlid 
-        (serverSession.userInfo['LIDTYPE_ID'] == "606"))         // 606 = Donateur
-      return true;
-
-    return false;   // geen clubvlieger
+    // controleer of apparaat nog netwerk verbinding heeft
+  void _checkConnectionState()
+  {
+    Connectivity().checkConnectivity().then((result)
+    {
+      if (_netwerkStatus != result)
+        setState(() {
+          _netwerkStatus = result;
+        });
+    });
   }
-
 }

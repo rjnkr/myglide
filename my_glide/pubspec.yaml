@@ -46,6 +46,9 @@ dependencies:
   flutter_picker:
     git: git://github.com/yangyxd/flutter_picker.git
 
+  # Intenationalization and localization like date formating
+  intl: ^0.15.7
+
   # Url launcher to open email, cellphone or sms etc.
   url_launcher: ^4.0.3
 

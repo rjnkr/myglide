@@ -10,10 +10,10 @@ import 'package:connectivity/connectivity.dart';
 // my glide utils
 import 'package:my_glide/utils/my_glide_const.dart';
 import 'package:my_glide/utils/my_navigation.dart';
-import 'package:my_glide/utils/session.dart';
 
 // my glide data providers
 import 'package:my_glide/data/startlijst.dart';
+import 'package:my_glide/data/session.dart';
 
 // my glide own widgets
 import 'package:my_glide/widget/hoofd_menu.dart';
@@ -41,7 +41,9 @@ class _MijnLogboekScreenState extends State<MijnLogboekScreen> with TickerProvid
   
   DateTime _lastRefresh = DateTime.now();
   DateTime _lastRefreshButton = DateTime.now().add(Duration(days: -1));
+
   ConnectivityResult _netwerkStatus;
+  bool _isAangemeld;
 
   Timer _autoUpdateTimer;
 
@@ -80,9 +82,10 @@ class _MijnLogboekScreenState extends State<MijnLogboekScreen> with TickerProvid
         ),
         actions: <Widget>[
           IconButton(
+            onPressed: _showAangemeld,
             padding: const EdgeInsets.only(right: 20.0), 
-            icon: Icon (serverSession.isAangemeld ? Icons.person : Icons.person_outline,
-              color: serverSession.isAangemeld ? MyGlideConst.frontColor : MyGlideConst.disabled
+            icon: Icon (serverSession.login.isAangemeld ? Icons.person : Icons.person_outline,
+              color: serverSession.login.isAangemeld ? MyGlideConst.frontColor : MyGlideConst.disabled
             )
           ),
           IconButton (
@@ -162,7 +165,7 @@ class _MijnLogboekScreenState extends State<MijnLogboekScreen> with TickerProvid
                 SizedBox(
                   width: _breedteStartTijd, 
                   child: Text(
-                    _logboekItems[index]['STARTTIJD'],
+                    _logboekItems[index]['STARTTIJD'] ?? ' ',
                     style: _gridTextStyle(color: MyGlideConst.starttijdColor, weight: FontWeight.bold)
                   )
                 ),
@@ -248,25 +251,33 @@ class _MijnLogboekScreenState extends State<MijnLogboekScreen> with TickerProvid
       fontSize: MyGlideConst.gridTextNormal
     );
   }    
-     
+  
+  void _showAangemeld() {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Aanmelding"),
+          content: serverSession.login.isAangemeld ? Text("U bent aangemeld voor de vliegdag van vandaag") : Text("U bent nog NIET aangemeld voor vandaag") ,
+        )
+    ); 
+  }
+
 
   void _ophalenLogboek(bool handmatig) {
     bool volledig = false;
 
     if (handmatig)
     {
+      serverSession.login.lastLogin();
+
       int lastRefresh = DateTime.now().difference(_lastRefreshButton).inSeconds;
       if (lastRefresh < 5) volledig = true;
     }
-
-    SharedPreferences.getInstance().then((prefs)
-    {
-      // haal aantal op als opgeslagen in 'nrLogboekItems' anders max 50
-      Startlijst.getLogboek(prefs.getInt('nrLogboekItems') ?? 50, force: volledig).then((response) {
-        setState(() {
-          _logboekItems = response;
-          _lastRefresh = DateTime.now();
-        });
+    
+    Startlijst.getLogboek(force: volledig).then((response) {
+      setState(() {
+        _logboekItems = response;
+        _lastRefresh = DateTime.now();
       });
     });
   }
@@ -275,11 +286,19 @@ class _MijnLogboekScreenState extends State<MijnLogboekScreen> with TickerProvid
   {
     int lastRefresh = DateTime.now().difference(_lastRefresh).inSeconds;
 
+    if (_isAangemeld != serverSession.login.isAangemeld)
+    {
+      setState(() {
+        _isAangemeld = serverSession.login.isAangemeld;     
+      });
+    }
     Connectivity().checkConnectivity().then((result)
     {
-        setState(() {
-          _netwerkStatus = result;
-        });
+        if (_netwerkStatus != result) {
+          setState(() {
+            _netwerkStatus = result;
+          });
+        }
     });
 
     // We halen iedere 5 miniuten

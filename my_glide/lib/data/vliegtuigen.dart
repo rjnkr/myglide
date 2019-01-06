@@ -7,26 +7,22 @@ import 'package:http/http.dart' as http;
 
 // my glide utils
 import 'package:my_glide/utils/my_glide_const.dart';
-import 'package:my_glide/utils/session.dart';
+
+// my glide data providers
+import 'package:my_glide/data/session.dart';
 
 // my glide own widgets
 
 
-
 class Vliegtuigen {
   
-  // Haal de vluchten op van de server
+  // Haal van de server welke clubkisten we hebben
   static Future<Map> getClubKisten() async {
     try {
-      http.Client client = serverSession.getClient();
-      if (client == null)
-        return null;
-
       String url = serverSession.lastUrl;
       String request = '$url/php/main.php?Action=Vliegtuigen.GetClubkistenJSON';
 
-      http.Response response = await client.get(request, headers: serverSession.getHeaders());
-      serverSession.updateCookie(response);
+      http.Response response = await serverSession.get(request);
       final Map parsed = json.decode(response.body);
       return parsed;
     }
@@ -35,26 +31,5 @@ class Vliegtuigen {
       print (e);
     }
     return null;
-  }
-
-  static void opslaanLandingsTijd(String id, String landingsTijd) async {
-    try {
-        http.Client client = serverSession.getClient();
-        if (client == null)
-          return null;
-
-        String url = serverSession.lastUrl;
-        String post = '$url/php/main.php?Action=Startlijst.SaveLandingsTijd';
-
-        http.Response response = await client.post(post, body: {"ID": id, "LANDINGSTIJD": landingsTijd }, headers: serverSession.getHeaders());
-        serverSession.updateCookie(response);
-
-        return null;
-      }
-      catch (e)
-      {
-        print (e);
-      }
-    return null;  
   }
 }

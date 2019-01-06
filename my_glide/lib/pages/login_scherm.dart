@@ -8,7 +8,9 @@ import 'package:connectivity/connectivity.dart';
 // my glide utils
 import 'package:my_glide/utils/my_glide_const.dart';
 import 'package:my_glide/utils/my_navigation.dart';
-import 'package:my_glide/utils/session.dart';
+
+// my glide data providers
+import 'package:my_glide/data/session.dart';
 
 // my glide own widgets
 import 'package:my_glide/widget/my_glide_logo.dart';
@@ -27,6 +29,7 @@ class LoginScreenState extends State<LoginScreen>
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
 
   int _buttonState = 0;  // -1 = geen network, 0 = wacht op login, 1 = bezig, 2 = gelukt, 3 = mislukt
+  Timer _statusUpdateTimer;
 
   String _myUsername;
   String _myPassword;
@@ -45,7 +48,14 @@ class LoginScreenState extends State<LoginScreen>
     _iconAnimationController.forward();
 
   // check iedere seconde of er een netwerk is
-    Timer.periodic(Duration(seconds: 1), (Timer t) => _checkConnectionState());   
+    _statusUpdateTimer = Timer.periodic(Duration(seconds: 1), (Timer t) => _checkConnectionState());   
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    _statusUpdateTimer.cancel();    // Stop de timer, de class wordt namelijk verwijderd
   }
 
   @override
@@ -74,7 +84,7 @@ class LoginScreenState extends State<LoginScreen>
                     ),
                     style: _inputStyle(),
                     keyboardType: TextInputType.text,
-                    initialValue: serverSession.lastUsername,
+                    initialValue: serverSession.login.getLastUsername(),
                     validator: this._validateUserName, 
                     onSaved: (val) => _myUsername = val.trim(),
                   ),
@@ -89,7 +99,7 @@ class LoginScreenState extends State<LoginScreen>
                     style: _inputStyle(),
                     obscureText: true,
                     keyboardType: TextInputType.text,
-                    initialValue: serverSession.lastPassword,
+                    initialValue: serverSession.login.getLastPassword(),
                     validator: this._validatePassword,
                     onSaved: (val) => _myPassword = val.trim(),
                   ),
@@ -264,12 +274,12 @@ class LoginScreenState extends State<LoginScreen>
         _buttonState = 1;     // bezig
       });
 
-      serverSession.login(_myUsername, _myPassword, _url).then((response) {
-        if (response == null) {   // null betekend dat het gelukt is
+      serverSession.login.login(_myUsername, _myPassword, _url).then((succeeded) {
+        if (succeeded == true) {   // null betekend dat het gelukt is
           setState(() {
             _buttonState = 2;   // login gelukt
           });
-          Timer(Duration(seconds: 1), () => MyNavigator.goToMijnLogboek(context));
+          MyNavigator.goToMijnLogboek(context);
         }
         else { // response bevat foutmelding
           setState(() {
@@ -287,7 +297,7 @@ class LoginScreenState extends State<LoginScreen>
               context: context,
               builder: (context) => AlertDialog(
                 title: Text("Aanmelden"),
-                content: Text(response),
+                content: Text("Inloggen mislukt"),
               )
           );  
         }

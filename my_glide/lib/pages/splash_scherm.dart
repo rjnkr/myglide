@@ -9,7 +9,9 @@ import 'package:connectivity/connectivity.dart';
 // my glide utils
 import 'package:my_glide/utils/my_glide_const.dart';
 import 'package:my_glide/utils/my_navigation.dart';
-import 'package:my_glide/utils/session.dart';
+
+// my glide data providers
+import 'package:my_glide/data/session.dart';
 
 // my glide own widgets
 import 'package:my_glide/widget/my_glide_logo.dart';
@@ -46,12 +48,15 @@ class _SplashScreenState extends State<SplashScreen> {
 
         Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => widget.navigateTo));
         
-        if ((serverSession.lastUsername == null) || (serverSession.lastPassword == null) || (serverSession.lastUrl == null))   
-          MyNavigator.goToLogin(context);                     // nog geen inlog gevens bekend, toon inlogscherm
+        if (_lastLoginResult == "false")   
+          MyNavigator.goToLogin(context);                     /// mislukt om opnieuw in te loggen, of nog geen inlog gevens bekend. Toon inlogscherm
         else if (_netwerkStatus == ConnectivityResult.none)   // geen netwerk
-          return;                                             // Dus toon mijn logboek
-        else if (_lastLoginResult != null)
-          MyNavigator.goToLogin(context);                     // mislukt om opnieuw in te loggen, dus toon login scherm
+          return;                                             // Dus toon mijn logboek    
+
+        if (_lastLoginResult == "true")  {
+          if (!serverSession.login.isAangemeld)
+            MyNavigator.goToAanmelden(context, pop: false);
+        }     
       }
     });
 
@@ -62,7 +67,7 @@ class _SplashScreenState extends State<SplashScreen> {
     });    
 
     // opnieuw inloggen met laatst bekende credentials
-    serverSession.lastLogin().then((response) {  _lastLoginResult = response; });
+    serverSession.login.lastLogin().then((response) {  _lastLoginResult = response.toString(); });
   }
 
   @override
