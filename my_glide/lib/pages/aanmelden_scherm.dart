@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 // language add-ons
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:connectivity/connectivity.dart';
 
 // my glide utils
 import 'package:my_glide/utils/my_glide_const.dart';
+import 'package:my_glide/utils/storage.dart';
 
 // my glide data providers
 import 'package:my_glide/data/vliegtuigen.dart';
@@ -17,7 +17,7 @@ import 'package:my_glide/data/session.dart';
 // my glide own widgets
 
 // my glide pages
-
+import 'package:my_glide/pages/gui_helpers.dart';
 
 // De data definitie van de lijst met checkboxes
 class VliegtuigTypeSel {
@@ -45,24 +45,23 @@ class _AanmeldenScreenState extends State<AanmeldenScreen> {
   @override
   void initState() {
     super.initState();
-      SharedPreferences.getInstance().then((prefs)
-      {
-         String lastCSV = prefs.getString("aanmelden") ?? "";   // Vliegtuig types die gebruikt is bij laatste keer aanmelden
 
-          Vliegtuigen.getClubKisten().then((response) {
-          setState(() {
-            for (int i=0 ; i < response['types'].length ; i++) {
-              _types.add(
-                VliegtuigTypeSel(response['types'][i]['TYPE_ID'],
-                                 response['types'][i]['VLIEGTUIGTYPE'], 
-                                 lastCSV.contains(response['types'][i]['TYPE_ID'])));
-            }
-          });
+    Storage.getString("aanmelden", defaultValue: "").then((lastCSV) // Vliegtuig types die gebruikt is bij laatste keer aanmelden
+    {
+      if (lastCSV == null) lastCSV = "";          // lastCSV mag niet null zijn, contains statement hieronder gaat dan fout                             
+      Vliegtuigen.getClubKisten().then((response) {
+        setState(() {
+          for (int i=0 ; i < response['types'].length ; i++) {
+            _types.add(
+              VliegtuigTypeSel(response['types'][i]['TYPE_ID'],
+                                response['types'][i]['VLIEGTUIGTYPE'], 
+                                lastCSV.contains(response['types'][i]['TYPE_ID'])));
+          }
+        });
       });
-
-      // check iedere seconde of er een netwerk is
-      _checkNetwerkTimer = Timer.periodic(Duration(seconds: 1), (Timer t) => _checkConnectionState());   
     });
+    // check iedere seconde of er een netwerk is
+    _checkNetwerkTimer = Timer.periodic(Duration(seconds: 1), (Timer t) => _checkConnectionState());   
   }  
 
   @override
@@ -74,8 +73,7 @@ class _AanmeldenScreenState extends State<AanmeldenScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_types.length == 0)
-      return Container(width: 10, height: 10,);   
+    if (_types.length == 0)  return GUIHelper.showLoading();   
 
     return Scaffold(
       appBar: AppBar(
@@ -166,13 +164,9 @@ class _AanmeldenScreenState extends State<AanmeldenScreen> {
           csv += _types[i].id;
         }
       }
-      SharedPreferences.getInstance().then((prefs)
-      {
-        prefs.setString("aanmelden", csv);
-      });
+      Storage.setString("aanmelden", csv);
       
-    
-      Aanwezig.aanmeldenLidVandaag(csv).then((gelukt)  {
+      Aanwezig.aanmeldenLidVandaag(csv, _opmerking).then((gelukt)  {
         if (gelukt)
         {
           serverSession.login.isAangemeld = true;

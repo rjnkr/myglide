@@ -15,6 +15,7 @@ import 'package:my_glide/pages/login_scherm.dart';
 import 'package:my_glide/pages/settings_scherm.dart';
 import 'package:my_glide/pages/vliegtuig_logboek_scherm.dart';
 import 'package:my_glide/pages/aanmelden_scherm.dart';
+import 'package:my_glide/pages/aanwezig_scherm.dart';
 
 var routes = <String, WidgetBuilder>{
   "/mijnlogboek": (BuildContext context) => MijnLogboekScreen(), 
@@ -22,11 +23,16 @@ var routes = <String, WidgetBuilder>{
   "/settings": (BuildContext context) => SettingsScreen(),
   "/vliegtuigen": (BuildContext context) => VliegtuigLogboekTabScreen(),
   "/aanmelden": (BuildContext context) => AanmeldenScreen(),
+  "/aanwezig": (BuildContext context) => AanwezigScreen(),  
 };   
 
 class MyNavigator {
   static void goToMijnLogboek(BuildContext context) {
     Navigator.pushReplacementNamed(context, "/mijnlogboek");
+  }
+
+static void goToAanwezig(BuildContext context) {
+    Navigator.pushReplacementNamed(context, "/aanwezig");
   }
 
   static void goToLogin(BuildContext context) {

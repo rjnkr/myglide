@@ -14,6 +14,23 @@ import 'package:my_glide/utils/my_glide_const.dart';
 
 
 class MyGlideLogo extends StatefulWidget {
+  final int size;
+  final bool showLabel;
+  final bool labelInside;
+  final String image;
+  final String labelText;
+
+  final double labelTextSize;
+
+
+  MyGlideLogo({Key key, 
+    this.size = 300, 
+    this.showLabel = true, 
+    this.labelInside = true, 
+    this.labelText = MyGlideConst.AppName, 
+    this.labelTextSize = MyGlideConst.labelSizeExtraLarge,
+    this.image = "assets/images/gezc_logo_transp.png" }) : super(key: key);
+
   @override
   _MyGlideLogoState createState() => _MyGlideLogoState();
 }
@@ -41,26 +58,62 @@ class _MyGlideLogoState extends State<MyGlideLogo> with SingleTickerProviderStat
   }
 
   @override
+  void dispose() {
+    _iconAnimationController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          CircleAvatar(
-            backgroundColor: MyGlideConst.backgroundColor,
-            radius: _iconAnimation.value * 80.0,
-            child: Image.asset('assets/images/silzweef.png' ),
-          ),
-          Text(
-            MyGlideConst.AppName,
-            style: TextStyle(
-              color: MyGlideConst.logoTextColor,
-              fontWeight: FontWeight.bold,
-              fontSize: MyGlideConst.labelSizeLarge
-            ),
-          )
-        ],
-      )
-    );
+          Stack (
+            children: <Widget> [
+              Container(
+                margin: EdgeInsets.fromLTRB(0, 20, 0, 10),
+                height: _iconAnimation.value * widget.size * 0.46875,
+                width: _iconAnimation.value * widget.size,
+                child: Image.asset(widget.image),
+              ),
+              _toonLabelInside(),
+            ]),
+            _toonLabelOnder(),
+          ])
+      );
+  }
+
+  Widget _toonLabelInside() {
+    if (!widget.labelInside) 
+      return Container (height: 0, width: 0);
+
+    return
+      Positioned (
+        right: 20,
+        bottom: 20,
+        child: _toonLabel()
+      );
+  }
+
+  Widget _toonLabelOnder() {
+    if (widget.labelInside) 
+      return Container (height: 0, width: 0); 
+    else 
+      return _toonLabel();
+  }
+
+  Widget _toonLabel() {
+    if (!widget.showLabel) return Container (height: 0, width: 0);
+
+    return 
+      Text(
+        widget.labelText,
+        style: TextStyle(
+          color: MyGlideConst.logoTextColor,
+          fontWeight: FontWeight.bold,
+          fontSize: widget.labelTextSize
+        )
+      );
   }
 }

@@ -31,6 +31,8 @@ class LoginScreenState extends State<LoginScreen>
   int _buttonState = 0;  // -1 = geen network, 0 = wacht op login, 1 = bezig, 2 = gelukt, 3 = mislukt
   Timer _statusUpdateTimer;
 
+  bool _showUrl = false;
+
   String _myUsername;
   String _myPassword;
   String _url;  
@@ -48,14 +50,22 @@ class LoginScreenState extends State<LoginScreen>
     _iconAnimationController.forward();
 
   // check iedere seconde of er een netwerk is
-    _statusUpdateTimer = Timer.periodic(Duration(seconds: 1), (Timer t) => _checkConnectionState());   
+    _statusUpdateTimer = Timer.periodic(Duration(seconds: 1), (Timer t) => _checkConnectionState());  
+
+    serverSession.getLastUrl().then((url)
+    {
+      if (url == null)
+        _url = MyGlideConst.defaultURL;
+      else
+        _url = url;
+    }); 
   }
 
   @override
   void dispose() {
-    super.dispose();
-
+    _iconAnimationController.dispose();
     _statusUpdateTimer.cancel();    // Stop de timer, de class wordt namelijk verwijderd
+    super.dispose();
   }
 
   @override
@@ -66,7 +76,10 @@ class LoginScreenState extends State<LoginScreen>
         shrinkWrap: true,
         padding: const EdgeInsets.fromLTRB(2, 20, 2, 0),
         children: <Widget>[
-          MyGlideLogo(),
+          MaterialButton(
+            child:MyGlideLogo(),
+            onPressed: () => setState(() { _showUrl = !_showUrl; })
+          ),
           Container(
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
             child: Form(
@@ -103,20 +116,7 @@ class LoginScreenState extends State<LoginScreen>
                     validator: this._validatePassword,
                     onSaved: (val) => _myPassword = val.trim(),
                   ),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      labelText: "Url",
-                      labelStyle: _labelStyle(),
-                      hintText: "website van de GeZC start administratie",
-                      hintStyle: _hintStyle(),
-                      errorStyle: _errorStyle()                      
-                    ),
-                    style: _inputStyle(),
-                    keyboardType: TextInputType.url,
-                    initialValue: serverSession.lastUrl != null ? serverSession.lastUrl : "https://startadmin.gezc.org",
-                    validator: this._validateUrl,
-                    onSaved: (val) => _url = val.trim(),
-                  ),
+                  _showUrlWidget(),
                   Padding(
                     padding: const EdgeInsets.only(top: 60.0),
                   ),
@@ -225,6 +225,26 @@ class LoginScreenState extends State<LoginScreen>
     return Colors.black;
   }
 
+  Widget _showUrlWidget() {
+    if (!_showUrl) return Container(width: 0, height: 70);
+
+    return                   
+      TextFormField(
+        decoration: InputDecoration(
+          labelText: "Url",
+          labelStyle: _labelStyle(),
+          hintText: "website van de GeZC start administratie",
+          hintStyle: _hintStyle(),
+          errorStyle: _errorStyle()                      
+        ),
+        style: _inputStyle(),
+        keyboardType: TextInputType.url,
+        initialValue: _url,
+        validator: this._validateUrl,
+        onSaved: (val) => _url = val.trim(),
+      );
+  }  
+
   // Controleer of gebruikersnaam (goed) ingevuld is
   String _validateUserName(String value) {
     if (value.isEmpty) 
@@ -249,6 +269,7 @@ class LoginScreenState extends State<LoginScreen>
 
   // Controleer of Url ingevuld is en voldoet aan het formaat
   String _validateUrl(String value) {
+
     if (value.isEmpty) 
       return "Url moet ingevuld worden";
 
@@ -257,10 +278,12 @@ class LoginScreenState extends State<LoginScreen>
 
     if (!value.contains('http'))
       return "Url moet een http(s) notatie zijn";
+    
 
     RegExp regExp =  RegExp('[.]'); 
     if (regExp.allMatches(value).length < 2)
       return "Url adres is onjuist";
+    
 
     return null;
   } 

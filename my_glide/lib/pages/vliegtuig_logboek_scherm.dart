@@ -38,17 +38,7 @@ class _VliegtuigLogboekTabScreenState extends State<VliegtuigLogboekTabScreen> {
   
   @override
   Widget build(BuildContext context) {
-    if (_vliegtuigen == null)
-      return Scaffold(
-          appBar: AppBar(
-            backgroundColor: MyGlideConst.appBarBackground(),
-            iconTheme: IconThemeData(color: MyGlideConst.frontColor),
-            title: Text(
-              "Vliegtuig logboek",
-              style: MyGlideConst.appBarTextColor()
-            )
-          )
-      );
+    if (_vliegtuigen == null) return GUIHelper.showLoading();
 
     return DefaultTabController(
       length: int.parse(_vliegtuigen['total']),
@@ -66,8 +56,7 @@ class _VliegtuigLogboekTabScreenState extends State<VliegtuigLogboekTabScreen> {
               labelStyle: TextStyle(fontSize: MyGlideConst.labelSizeLarge),
               labelColor: MyGlideConst.frontColor,
               indicatorColor: MyGlideConst.frontColor,
-              isScrollable: true,
-              
+              isScrollable: true
             )
           ),
           drawer: HoofdMenu(),
@@ -145,6 +134,11 @@ class _VliegtuigLogboekTabState extends State<VliegtuigLogboekTab> {
 
   // Toon de informatie van de vliegdag
   Widget _logboekRegel(index) { 
+    String datum = _logboekItems[index]['DATUM'].toString();
+
+    if (datum != null)
+      datum = datum.substring(8,10) + "-" + datum.substring(5,7) + "-" + datum.substring(0,4);
+    
     return
       Container(
         height: 130,
@@ -152,7 +146,7 @@ class _VliegtuigLogboekTabState extends State<VliegtuigLogboekTab> {
           padding: EdgeInsets.all(8),
           child: Column (
             children: <Widget>[
-              GUIHelper.showDetailsField("Datum", _logboekItems[index]['DATUM']),
+              GUIHelper.showDetailsField("Datum", datum),
               GUIHelper.showDetailsField("Vluchten", _logboekItems[index]['VLUCHTEN']),
               GUIHelper.showDetailsField("Vliegtijd", _logboekItems[index]['VLIEGTIJD']),
               GUIHelper.showDetailsField("Lierstarts", _logboekItems[index]['LIERSTARTS']),

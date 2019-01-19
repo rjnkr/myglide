@@ -1,6 +1,8 @@
 // language packages
+import 'dart:convert';
 
 // language add-ons
+import 'package:http/http.dart' as http;
 
 // my glide utils
 
@@ -13,13 +15,13 @@ class Aanwezig
 {  
   // Onszelf aanmelden voor de vliegdag
   // voorkeurVliegtuigType is een CSV string met de ID uit de type tabel
-  static Future<bool> aanmeldenLidVandaag(String voorkeurVliegtuigType) async {
+  static Future<bool> aanmeldenLidVandaag(String voorkeurVliegtuigType, String opmerking) async {
     try {
-        String url = serverSession.lastUrl;
+        String url = await serverSession.getLastUrl();
         String post = '$url/php/main.php?Action=Aanwezig.AanmeldenLidJSON';
 
         String lidID = serverSession.login.userInfo['ID'];      
-        await serverSession.post(post, {"LID_ID": lidID, "VOORKEUR_VLIEGTUIG_TYPE": voorkeurVliegtuigType });
+        await serverSession.post(post, {"OPMERKING": opmerking,  "LID_ID": lidID, "VOORKEUR_VLIEGTUIG_TYPE": voorkeurVliegtuigType });
   
         return true;
       }
@@ -29,4 +31,22 @@ class Aanwezig
         return false;
       }
   }
+
+  // Haal van de server welke leden zich aangemeld hebben
+  static Future<List> ledenAanwezig({force = false}) async {
+    try {
+      String url = await serverSession.getLastUrl();
+      String request = '$url/php/main.php?Action=Aanwezig.LedenAanwezigJSON';
+
+      http.Response response = await serverSession.get(request);
+      final Map parsed = json.decode(response.body);
+      final List results = (parsed['results']); 
+      return results;
+    }
+    catch (e)
+    {
+      print (e);
+    }
+    return null;
+  }  
 }

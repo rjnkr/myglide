@@ -3,11 +3,10 @@ import 'dart:async';
 import 'dart:convert';
 
 // language add-ons
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:encrypt/encrypt.dart'; 
 
 // my glide utils
+import 'package:my_glide/utils/storage.dart';
 
 // my glide data providers
 import 'package:my_glide/data/session.dart';
@@ -17,11 +16,10 @@ import 'package:my_glide/data/session.dart';
 
 class Login 
 {
-  // nodig voor encryptie / decryptie
-  final String _key = 'v3ry_Secret-KeyF0r My_Glide @pp';    // Gebruikt om wachtwoord te versleutelen
-  final String _iv = '8bytesiv';                            // Gebruikt om wachtwoord te versleutelen
+  String _lastUsername, _lastPassword;                      // variable met laatste gelukte inlog poging
+  Timer _userInfoRefreshTimer;                              // Timer om regelmatig UserInfo te verversen
+  DateTime _lastUserInfoOpgehaald;                          // Wanneer is de laatste keer de UserInfo opgehaald
 
-  String _lastUsername, _lastPassword;                        // variable met laatste gelukte inlog poging
   bool isAangemeld = false;                                 // Is de vlieger aangemeld voor vandaag
 
   bool magSchrijven =false;
@@ -31,6 +29,7 @@ class Login
   bool isStartleider = false;                               // Vandaag startleider
   bool isInstructeur = false;                               // Vandaag instructeur
   bool isClubVlieger = false;
+  bool isDDWV = false;
   
   Map userInfo;                                            // Info over ingelogde gebruiker
 
@@ -38,6 +37,7 @@ class Login
   {
     // ophalen van laatst gebruikte credentials (vullen lastUsername, lastPassword, lastUrl)
     _getCredentials();
+
 
   }
 
@@ -60,15 +60,18 @@ class Login
   // login with the last known credentials
   Future<bool> lastLogin() async
   {
-    var notused = await _getCredentials();
+    await _getCredentials();
     if ((_lastUsername == null) || (_lastPassword == null))
       return false;
 
-    return login(_lastUsername, _lastPassword, serverSession.lastUrl);
+    String url = await serverSession.getLastUrl();  
+    return login(_lastUsername, _lastPassword, url);
   }
 
   void logout()
   {
+    if (_userInfoRefreshTimer != null)  _userInfoRefreshTimer.cancel();       // uitgelogd dus UserInfo niet meer verversen
+
     serverSession.clearCredentials();
     _clearCredentials();
   }
@@ -76,11 +79,14 @@ class Login
   // Haal de info van de ingelogde gebruiker op. username is de gebruikte inlognaam
   Future<bool> getUserInfo({String url}) async {
     try {
-      if (url == null)  url = serverSession.lastUrl;
+      if (url == null)  url = await serverSession.getLastUrl();
       String request = '$url/php/main.php?Action=Login.getUserInfoJSON';
 
       http.Response response = await serverSession.get(request);
       final Map parsed = json.decode(response.body);
+
+      if (parsed['UserInfo'] == null) return false;       // Geen user info aanwezig
+      if (parsed['UserInfo'].length == 0) return false;   // Geen user info aanwezig
       userInfo = (parsed['UserInfo'])[0]; 
       var userRights = (parsed['UserRights']);  
 
@@ -91,8 +97,14 @@ class Login
       isStartleider   = userRights['isStartleider'] == '1';
       isInstructeur   = userRights['isInstructeur'] == '1';                        
       isClubVlieger   = userRights['isClubVlieger'] == '1'; 
+      isDDWV          = userRights['DDWV'] == '1'; 
       isAangemeld     = userRights['isAangemeld'] == '1'; 
       
+      _lastUserInfoOpgehaald = DateTime.now();
+      _setTimerForNextUserInfo();
+
+      serverSession.ophalenZonOpkomstOndergang();
+
       return true;
     }
     catch (e)
@@ -102,37 +114,38 @@ class Login
     return false;
   }
 
-  // Opslaan van de informatie zodat het de volgende keer gebruikt kan worden bij opstarten
-  void _storeCredentials(String username, String password)
-  {
-    final encrypter = new Encrypter(new Salsa20(_key, _iv));
-    final encryptedPassword = encrypter.encrypt(password);
+  // UserInfo bevat dynamische informatie, moet dus regelmatig geupdate worden
+  void _setTimerForNextUserInfo() {
+    if (_userInfoRefreshTimer != null)  _userInfoRefreshTimer.cancel();
 
-    // opslaan op device
-    SharedPreferences.getInstance().then((prefs)
-    {
-      prefs.setString("username", username);
-      prefs.setString("password", encryptedPassword);
+    _userInfoRefreshTimer = Timer.periodic(Duration(hours: 1), (Timer t) {
+      final now = DateTime.now();
 
-      _getCredentials();
+      if (_lastUserInfoOpgehaald.day != now.day)
+        getUserInfo();
+      else if ((serverSession.zonOpkomst == null) || (serverSession.zonOndergang == null))
+        getUserInfo();
+      else {
+        if (now.isAfter(serverSession.zonOpkomst) && now.isBefore(serverSession.zonOndergang))
+          getUserInfo();
+      }
     });
   }
 
-  Future _getCredentials()
+  // Opslaan van de informatie zodat het de volgende keer gebruikt kan worden bij opstarten
+  void _storeCredentials(String username, String password)
   {
-    final encrypter = new Encrypter(new Salsa20(_key, _iv));
+      Storage.setString ("username", username);
+      Storage.setString ("password", password);
 
+      _getCredentials();
+  }
+
+  Future<void> _getCredentials() async
+  {
     // de gegevens zijn opgeslagen op het device
-    return SharedPreferences.getInstance().then((prefs)
-    {
-      _lastUsername = prefs.getString('username') ?? null;
-      final encryptedPassword = prefs.getString('password') ?? null;
-
-      if (encryptedPassword != null)
-        _lastPassword = encrypter.decrypt(encryptedPassword);
-      else
-        _lastPassword = null;
-    });
+    _lastUsername = await Storage.getString('username');
+    _lastPassword = await Storage.getString('password'); 
   }
 
   // Maak gebruikersnaam ook beschikbaar voor andere classes
@@ -148,14 +161,12 @@ class Login
   // delete information from device
   void _clearCredentials()
   {
-    SharedPreferences.getInstance().then((prefs)
-    {  
-      prefs.remove("username");
-      prefs.remove("password");
 
-      _lastUsername = null;
-      _lastPassword = null;
-    });
+    Storage.remove("username");
+    Storage.remove("password");
+
+    _lastUsername = null;
+    _lastPassword = null;
   }
 
 }

@@ -17,6 +17,7 @@ import 'package:my_glide/data/session.dart';
 import 'package:my_glide/widget/my_glide_logo.dart';
 
 // my glide pages
+import 'package:my_glide/pages/gui_helpers.dart';
 
 class SplashScreen extends StatefulWidget {
   final dynamic navigateTo;
@@ -27,7 +28,6 @@ class SplashScreen extends StatefulWidget {
     }
   );
 
-
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
@@ -37,7 +37,7 @@ class _SplashScreenState extends State<SplashScreen> {
   String _lastLoginResult = "init";
 
   @override
-  void initState() {
+  void initState()  {
     super.initState();
 
     Timer.periodic(Duration(seconds: 1), (Timer t)

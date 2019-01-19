@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 // language add-ons
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:connectivity/connectivity.dart';
 
 // my glide utils
 import 'package:my_glide/utils/my_glide_const.dart';
 import 'package:my_glide/utils/my_navigation.dart';
+import 'package:my_glide/utils/storage.dart';
 
 // my glide data providers
 import 'package:my_glide/data/session.dart';
@@ -32,7 +32,8 @@ class _HoofdMenuState extends State<HoofdMenu> {
   void initState() {
     super.initState();
 
-  // check iedere seconde of er een netwerk is
+    // check iedere seconde of er een netwerk is
+    _checkConnectionState();
     _statusUpdateTimer = Timer.periodic(Duration(seconds: 1), (Timer t) => _checkConnectionState());   
   }
 
@@ -63,16 +64,20 @@ class _HoofdMenuState extends State<HoofdMenu> {
               child: ListView(
                 children: <Widget>[
                   Container(
-                    height:240.0,
+                    height:220.0,
                     child:
                     DrawerHeader(
-                      child: MyGlideLogo(),
+                      child: MyGlideLogo(
+                        size: 300,
+                        labelText: serverSession.login.isDDWV ? "DDWV" : "GeZC",
+                      ),
                       decoration: BoxDecoration(
                         color: MyGlideConst.backgroundColor
                       )
                     ),  
                   ),
                   _aanmeldenMenuItem(),
+                  _aanwezigMenuItem(),
                   ListTile(
                     title: Text("Mijn logboek",
                       style: TextStyle(
@@ -100,7 +105,7 @@ class _HoofdMenuState extends State<HoofdMenu> {
                       onTap: () {
                         serverSession.login.logout();
                         MyNavigator.goToLogin(context);
-                        SharedPreferences.getInstance().then((prefs) { prefs.clear(); });
+                        Storage.clear();
                       }
                     )
                   :
@@ -122,33 +127,56 @@ class _HoofdMenuState extends State<HoofdMenu> {
       );
   } 
 
-  Widget _vliegtuigLogboekMenuItem() {
-    if ((!serverSession.login.isClubVlieger) ||          // aanmelden is alleen voor leden en donateurs
-        (_netwerkStatus == ConnectivityResult.none)) {   // als er geen netwerk is kunnen we geen logboeken tonen 
-
-          if (!serverSession.login.isLocal)              // lokale gebruiker mag wel vliegtuig logboeken zien 
-            return Container(width: 0, height: 0);
-        }
-
-    return                   
+  // menu item om te tonen wie er vandaag aanwezig zijn
+  Widget _aanwezigMenuItem() {
+    if (_netwerkStatus == ConnectivityResult.none)     // als er geen netwerk is kunnen we niets tonen 
+      return Container(width: 0, height: 0);
+    
+    if ((serverSession.login.isBeheerder) || (serverSession.login.isInstructeur) ||
+        (serverSession.login.isStartleider)) {
+     return                   
       ListTile(
-        title: Text("Vliegtuig logboek",
+        title: Text("Vandaag aanwezig",
           style: TextStyle(
             color: MyGlideConst.frontColor,
           )
         ),
-        trailing: Icon(Icons.airplanemode_active, color: MyGlideConst.frontColor),
-        onTap: (){MyNavigator.goToVliegtuigen(context);}
+        trailing: Icon(Icons.person, color: MyGlideConst.frontColor),
+        onTap: (){MyNavigator.goToAanwezig(context);}
       );
+    }
+
+    return Container(width: 0, height: 0);
+  } 
+
+  // menu item om vliegtuig logboeken te tonen
+  Widget _vliegtuigLogboekMenuItem() {
+    if (_netwerkStatus == ConnectivityResult.none)     // als er geen netwerk is kunnen we niets tonen 
+      return Container(width: 0, height: 0);
+
+    if ((serverSession.login.isClubVlieger) ||        // aanmelden is alleen voor leden en donateurs
+        (serverSession.login.isLocal))                // lokale gebruiker mag wel vliegtuig logboeken zien        
+      return                   
+        ListTile(
+          title: Text("Vliegtuig logboek",
+            style: TextStyle(
+              color: MyGlideConst.frontColor,
+            )
+          ),
+          trailing: Icon(Icons.airplanemode_active, color: MyGlideConst.frontColor),
+          onTap: (){MyNavigator.goToVliegtuigen(context);}
+        );
+
+    return Container(width: 0, height: 0);
   }
 
+  // menu item om de gebruiker voor de vliegdag aan te melden
   Widget _aanmeldenMenuItem() {
-    if ((!serverSession.login.isClubVlieger) ||          // aanmelden is alleen voor leden en donateurs
-        (_netwerkStatus == ConnectivityResult.none)) {   // als er geen netwerk is kunnen we niet aanmelden
-    
-        return Container(width: 0, height: 0); 
-    }  
-        
+    if (_netwerkStatus == ConnectivityResult.none)     // als er geen netwerk is kunnen we niets tonen 
+      return Container(width: 0, height: 0);
+
+    if (!serverSession.login.isClubVlieger)            // aanmelden is alleen voor leden en donateurs
+        return Container(width: 0, height: 0);       
 
     return 
       ListTile(

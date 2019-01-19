@@ -33,6 +33,11 @@ class LogboekDetailsScreen extends StatefulWidget {
 class _LogboekDetailsScreenState extends State<LogboekDetailsScreen> {
   @override
   Widget build(BuildContext context) {
+    String datum = widget.details['DATUM'].substring(8,10) + "-" + widget.details['DATUM'].substring(5,7) + "-" + widget.details['DATUM'].substring(0,4);
+    
+    String vlieger = (widget.details['VLIEGERNAAM'] != null) ? widget.details['VLIEGERNAAM']  : widget.details['VLIEGERNAAM_LID'];
+    String inzittende = (widget.details['INZITTENDENAAM'] != null) ? widget.details['INZITTENDENAAM'] : widget.details['INZITTENDENAAM_LID'];
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: MyGlideConst.appBarBackground(),
@@ -53,7 +58,7 @@ class _LogboekDetailsScreenState extends State<LogboekDetailsScreen> {
                 child:
                   Column (
                     children: <Widget>[
-                      GUIHelper.showDetailsField("Datum", widget.details['DATUM']),
+                      GUIHelper.showDetailsField("Datum", datum),
                       GUIHelper.showDetailsField("Vliegtuig", widget.details['REG_CALL']) ?? ' ',
                       GUIHelper.showDetailsField("Start methode", widget.details['STARTMETHODE'] ?? ' '),
                       Divider(),
@@ -61,8 +66,8 @@ class _LogboekDetailsScreenState extends State<LogboekDetailsScreen> {
                       GUIHelper.showDetailsField("Landingstijd", widget.details['LANDINGSTIJD'] ?? ' '),
                       GUIHelper.showDetailsField("Duur", widget.details['DUUR'] ?? ' '),
                       Divider(),
-                      GUIHelper.showDetailsField("Vlieger", widget.details['VLIEGERNAAM'] ?? ' '),
-                      GUIHelper.showDetailsField("Inzittende", widget.details['INZITTENDENAAM'] ?? ' '),
+                      GUIHelper.showDetailsField("Vlieger", vlieger ?? ' '),
+                      GUIHelper.showDetailsField("Inzittende", inzittende ?? ' '),
                       Divider(),
                       GUIHelper.showDetailsField("Opmerking", widget.details['OPMERKING'] ?? ' ', titleTop: true),
                     ]
@@ -112,7 +117,7 @@ class _LogboekDetailsScreenState extends State<LogboekDetailsScreen> {
         );
     }
 
-    String vandaag = DateFormat('dd-MM-yyyy').format(DateTime.now()).toString();
+    String vandaag = DateFormat('yyyy-MM-dd').format(DateTime.now()).toString();
 
     if ((widget.details['STARTTIJD'] == null) && (widget.details['LANDINGSTIJD'] == null) &&
         (widget.details['DATUM'] != vandaag)) {

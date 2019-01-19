@@ -2,11 +2,11 @@
 import 'package:flutter/material.dart';
 
 // language add-ons
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:numberpicker/numberpicker.dart';
 
 // my glide utils
 import 'package:my_glide/utils/my_glide_const.dart';
+import 'package:my_glide/utils/storage.dart';
 
 // my glide own widgets
 import 'package:my_glide/widget/hoofd_menu.dart';
@@ -18,8 +18,7 @@ class SettingsScreen extends StatefulWidget {
   State createState() => SettingsScreenState();
 }
 
-class SettingsScreenState extends State<SettingsScreen>
-    with SingleTickerProviderStateMixin {
+class SettingsScreenState extends State<SettingsScreen> {
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
 
   int _nrLogboekItems;
@@ -28,15 +27,14 @@ class SettingsScreenState extends State<SettingsScreen>
   @override
   void initState() {
     super.initState();  
+    
+      Storage.getBool('autoLoadLogboek', defaultValue: false).then((autoLoad) { 
+        setState(() { _autoLoadLogboek = autoLoad; }); });
 
-    SharedPreferences.getInstance().then((prefs)
-    {
-      setState(() {
-        _autoLoadLogboek = (prefs.getBool('autoLoadLogboek') ?? false);
-        _nrLogboekItems = (prefs.getInt('nrLogboekItems') ?? 50);
-      });
-    });
+      Storage.getInt('nrLogboekItems', defaultValue: 50).then ((logboekItems) {
+        setState(() { _nrLogboekItems = logboekItems; }); });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -70,10 +68,7 @@ class SettingsScreenState extends State<SettingsScreen>
                     {
                       setState(() {
                         _autoLoadLogboek = value;
-                        SharedPreferences.getInstance().then((prefs)
-                        {
-                          prefs.setBool('autoLoadLogboek', value);
-                        });            
+                        Storage.setBool('autoLoadLogboek', value);        
                       });
                     },
                   )
@@ -120,10 +115,7 @@ class SettingsScreenState extends State<SettingsScreen>
     ).then((newValue) {
       if (newValue != null) {
         setState(() => _nrLogboekItems = newValue);
-
-        SharedPreferences.getInstance().then((prefs)  {
-          prefs.setInt('nrLogboekItems', newValue);
-        });  
+        Storage.setInt('nrLogboekItems', newValue);
       }
     });
   }

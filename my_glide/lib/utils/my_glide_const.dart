@@ -43,6 +43,9 @@ class MyGlideConst {
   static const Color starttijdColor = Colors.green;
   static const Color landingstijdColor = Colors.red;
 
+  static const Color showLoadingBackground = Colors.white;
+
+  static const double labelSizeExtraLarge = 35;
   static const double labelSizeLarge = 25;
   static const double labelSizeMedium = 20;
   static const double labelSizeNormal = 15;
@@ -67,6 +70,8 @@ class MyGlideConst {
   static const double gridTextedium = 20;
   static const double gridTextNormal = 12;
   static const double gridTextSmall= 10;
+
+  static const String defaultURL = "https://startadmin.gezc.org";
 
   static Color appBarBackground() {
     return backgroundColor;

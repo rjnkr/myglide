@@ -16,10 +16,7 @@ import 'package:my_glide/data/session.dart';
 import 'package:my_glide/pages/splash_scherm.dart';
 import 'package:my_glide/pages/mijn_logboek_scherm.dart';
 
-void main() {
-  // niet verwijderen, zorgt dat serverSession class wordt opgebouwd, doet verder niets
-  String notUsed = serverSession.lastUrl; 
- 
+void main() async {
   runApp(new MaterialApp(
     title: MyGlideConst.AppName,
     debugShowCheckedModeBanner: false,
