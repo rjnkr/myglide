@@ -30,6 +30,7 @@ class Session {
   Timer _endClientSessionTimer;                             // Wanneer _client sessie afgesloten moet worden
   DateTime zonOpkomst;                                      // Hoe laat komt de zon op
   DateTime zonOndergang;                                    // Hoe laat gaat de zon onder
+  DateTime _lastZonOpOnder = DateTime.now().subtract(Duration(days: 5));      // wanneer hebben de laaste keer zon opkomst ondergang gelden, default 5 dagen geleden (is lang genoeg)
   
   // Hiermee gaan we inloggen
   void setCredentials(String username, String password)
@@ -152,7 +153,12 @@ class Session {
 
   Future<void> ophalenZonOpkomstOndergang() async
   {
-    ZonOpkomstOndergang.zonOpkomst().then((opkomst) => zonOpkomst = opkomst); 
-    ZonOpkomstOndergang.zonOndergang().then((ondergang) => zonOndergang = ondergang); 
+    if (DateTime.now().isAfter(_lastZonOpOnder.add(Duration(hours: 24))))
+    {
+      _lastZonOpOnder = DateTime.now();
+      
+      ZonOpkomstOndergang.zonOpkomst().then((opkomst) => zonOpkomst = opkomst); 
+      ZonOpkomstOndergang.zonOndergang().then((ondergang) => zonOndergang = ondergang); 
+    }
   }
 }

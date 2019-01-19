@@ -113,7 +113,7 @@ class _MijnLogboekScreenState extends State<MijnLogboekScreen> with TickerProvid
 
     if (handmatig)
     {
-      int lastRefresh = DateTime.now().difference(_lastRefreshButton).inSeconds;
+      final int lastRefresh = DateTime.now().difference(_lastRefreshButton).inSeconds;
       if (lastRefresh < 5) volledig = true;
     }
     
@@ -127,7 +127,8 @@ class _MijnLogboekScreenState extends State<MijnLogboekScreen> with TickerProvid
 
   void _autoOphalenLogboek()
   {
-    int lastRefresh = DateTime.now().difference(_lastRefresh).inSeconds;
+    final DateTime now = DateTime.now();
+    final int lastRefresh = now.difference(_lastRefresh).inSeconds;
 
     if (_isAangemeld != serverSession.login.isAangemeld)
     {
@@ -147,6 +148,11 @@ class _MijnLogboekScreenState extends State<MijnLogboekScreen> with TickerProvid
     // We halen iedere 5 miniuten
     if (lastRefresh < MyGlideConst.logboekRefreshRate)
       return;
+
+    // We gaan geen data ophalen als de zon onder is. Zuinig zijn met data
+    if ((serverSession.zonOpkomst != null) && (serverSession.zonOndergang != null))
+      if (now.isBefore(serverSession.zonOpkomst) || now.isAfter(serverSession.zonOndergang))
+          return;
 
     // ophalen logboek indien autoLoadLogboek = true, indien niet gezet dan gebeurd er niets
     Storage.getBool('autoLoadLogboek').then((value) { if (value) _ophalenLogboek(false); });
