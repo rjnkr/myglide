@@ -17,7 +17,6 @@ import 'package:my_glide/data/session.dart';
 import 'package:my_glide/widget/my_glide_logo.dart';
 
 // my glide pages
-import 'package:my_glide/pages/gui_helpers.dart';
 
 class SplashScreen extends StatefulWidget {
   final dynamic navigateTo;

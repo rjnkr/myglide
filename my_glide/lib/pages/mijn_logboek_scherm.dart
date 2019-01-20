@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 // language add-ons
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:connectivity/connectivity.dart';
 
 // my glide utils

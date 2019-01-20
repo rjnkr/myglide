@@ -8,7 +8,6 @@ import 'package:my_glide/utils/my_glide_const.dart';
 import 'package:my_glide/utils/my_navigation.dart';
 
 // my glide data providers
-import 'package:my_glide/data/session.dart';
 
 // my glide own widgets
 

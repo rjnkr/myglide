@@ -19,8 +19,6 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class SettingsScreenState extends State<SettingsScreen> {
-  final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
-
   int _nrLogboekItems;
   bool _autoLoadLogboek;
 
