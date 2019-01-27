@@ -1,0 +1,89 @@
+{
+    "total": "11",
+    "types": [{
+      "TYPE_ID": "406",
+      "VLIEGTUIGTYPE": "ASK 21"
+    }, {
+      "TYPE_ID": "402",
+      "VLIEGTUIGTYPE": "LS 4"
+    }, {
+      "TYPE_ID": "401",
+      "VLIEGTUIGTYPE": "Discus CS"
+    }, {
+      "TYPE_ID": "404",
+      "VLIEGTUIGTYPE": "LS8"
+    }, {
+      "TYPE_ID": "408",
+      "VLIEGTUIGTYPE": "ASG-29"
+    }, {
+      "TYPE_ID": "405",
+      "VLIEGTUIGTYPE": "Duo Discus"
+    }],
+    "results": [{
+      "ID": "224",
+      "REGISTRATIE": "PH-1058",
+      "CALLSIGN": "E1",
+      "REGCALL": "PH-1058 (E1)",
+      "LAATSTE_AANPASSING": "2019-01-03 17:47:20"
+    }, {
+      "ID": "226",
+      "REGISTRATIE": "PH-1076",
+      "CALLSIGN": "E2",
+      "REGCALL": "PH-1076 (E2)",
+      "LAATSTE_AANPASSING": "2019-01-03 17:47:28"
+    }, {
+      "ID": "604",
+      "REGISTRATIE": "D-0729",
+      "CALLSIGN": "E3",
+      "REGCALL": "D-0729 (E3)",
+      "LAATSTE_AANPASSING": "2019-01-03 17:47:32"
+    }, {
+      "ID": "296",
+      "REGISTRATIE": "PH-721",
+      "CALLSIGN": "E4",
+      "REGCALL": "PH-721 (E4)",
+      "LAATSTE_AANPASSING": "2019-01-03 17:47:49"
+    }, {
+      "ID": "223",
+      "REGISTRATIE": "PH-1510",
+      "CALLSIGN": "E5",
+      "REGCALL": "PH-1510 (E5)",
+      "LAATSTE_AANPASSING": "2019-01-03 17:47:58"
+    }, {
+      "ID": "297",
+      "REGISTRATIE": "PH-1292",
+      "CALLSIGN": "E6",
+      "REGCALL": "PH-1292 (E6)",
+      "LAATSTE_AANPASSING": "2019-01-03 17:48:04"
+    }, {
+      "ID": "295",
+      "REGISTRATIE": "PH-1057",
+      "CALLSIGN": "E7",
+      "REGCALL": "PH-1057 (E7)",
+      "LAATSTE_AANPASSING": "2019-01-03 17:48:09"
+    }, {
+      "ID": "255",
+      "REGISTRATIE": "PH-936",
+      "CALLSIGN": "E9",
+      "REGCALL": "PH-936 (E9)",
+      "LAATSTE_AANPASSING": "2019-01-03 17:48:57"
+    }, {
+      "ID": "252",
+      "REGISTRATIE": "PH-794",
+      "CALLSIGN": "E10",
+      "REGCALL": "PH-794 (E10)",
+      "LAATSTE_AANPASSING": "2019-01-03 17:49:08"
+    }, {
+      "ID": "402",
+      "REGISTRATIE": "PH-1521",
+      "CALLSIGN": "E11",
+      "REGCALL": "PH-1521 (E11)",
+      "LAATSTE_AANPASSING": "2019-01-03 17:49:13"
+    }, {
+      "ID": "200",
+      "REGISTRATIE": "PH-1529",
+      "CALLSIGN": "E12",
+      "REGCALL": "PH-1529 (E12)",
+      "LAATSTE_AANPASSING": "2019-01-03 17:49:20"
+    }]
+  }

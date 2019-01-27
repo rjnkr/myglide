@@ -1,0 +1,36 @@
+[{
+	"DATUM": "2018-12-25",
+	"VLUCHTEN": "9",
+	"LIERSTARTS": "9",
+	"SLEEPSTARTS": "0",
+	"VLIEGTIJD": "00:49:00",
+	"REG_CALL": "PH-1076 (E2)"
+}, {
+	"DATUM": "2018-12-19",
+	"VLUCHTEN": "9",
+	"LIERSTARTS": "7",
+	"SLEEPSTARTS": "2",
+	"VLIEGTIJD": "02:38:00",
+	"REG_CALL": "PH-1076 (E2)"
+}, {
+	"DATUM": "2018-12-18",
+	"VLUCHTEN": "5",
+	"LIERSTARTS": "5",
+	"SLEEPSTARTS": "0",
+	"VLIEGTIJD": "03:14:00",
+	"REG_CALL": "PH-1076 (E2)"
+}, {
+	"DATUM": "2018-11-17",
+	"VLUCHTEN": "10",
+	"LIERSTARTS": "9",
+	"SLEEPSTARTS": "1",
+	"VLIEGTIJD": "01:06:00",
+	"REG_CALL": "PH-1076 (E2)"
+}, {
+	"DATUM": "2018-11-13",
+	"VLUCHTEN": "8",
+	"LIERSTARTS": "8",
+	"SLEEPSTARTS": "0",
+	"VLIEGTIJD": "00:48:00",
+	"REG_CALL": "PH-1076 (E2)"
+}]

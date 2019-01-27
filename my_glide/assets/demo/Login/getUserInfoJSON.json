@@ -1,0 +1,37 @@
+{
+    "UserRights": {
+      "magSchrijven": "1",
+      "isLocal": false,
+      "isSync": false,
+      "isBeheerderDDWV": false,
+      "isBeheerder": "0",
+      "isStartleider": false,
+      "isInstructeur": false,
+      "isAangemeld": "0",
+      "isClubVlieger": "0",
+      "isDDWV": false
+    }, 
+    "UserInfo": [{
+      "ID": "1000",
+      "LIDNR": "1",
+      "CODE": null,
+      "NAAM": "Juffrouw Ooievaar",
+      "LIDTYPE_ID": "602",
+      "MOBIEL": "008",
+      "TELEFOON": "06-xxxx",
+      "NOODNUMMER": null,
+      "VOORNAAM": "Juffrouw",
+      "ACHTERNAAM": "Ooievaar",
+      "GPL_VERLOOPT": "2036-12-30",
+      "MEDICAL_VERLOOPT": "2001-03-02",
+      "INSTRUCTEUR": "0",
+      "LIERIST": "0",
+      "STARTLEIDER": "0",
+      "HEEFT_BETAALD": "1",
+      "INLOGNAAM": "J-O",
+      "WACHTWOORD": "geheim",
+      "AVATAR": null,
+      "VERWIJDERD": "0",
+      "LAATSTE_AANPASSING": "2001-01-03 13:59:09"
+    }]
+  }

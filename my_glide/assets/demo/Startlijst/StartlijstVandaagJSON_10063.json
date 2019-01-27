@@ -1,0 +1,33 @@
+{
+  "total": "1",
+  "results": [{
+    "ID": "1901202208135",
+    "DAGNUMMER": "5",
+    "REGISTRATIE": "PH-1529",
+    "CALLSIGN": "E12",
+    "REG_CALL": "PH-1529 (E12)",
+    "FLARM_CODE": "485069",
+    "VLIEGTUIG_ID": "200",
+    "SLEEPKIST_ID": null,
+    "SLEEP_HOOGTE": null,
+    "DATUM": "2019-01-20",
+    "SOORTVLUCHT_ID": "805",
+    "STARTMETHODE_ID": "550",
+    "STARTTIJD": "13:00",
+    "LANDINGSTIJD": "17:10",
+    "DUUR": "04:10",
+    "OPMERKING": null,
+    "LAATSTE_AANPASSING": "2019-01-20 22:08:27",
+    "VLIEGER_ID": "10063",
+    "VLIEGERNAAM_LID": "Isadora Paradijsvogel",
+    "VLIEGERNAAM": null,
+    "INZITTENDE_ID": null,
+    "INZITTENDENAAM_LID": null,
+    "INZITTENDENAAM": null,
+    "OP_REKENING_ID": "10063",
+    "OP_REKENING": "Isadora Paradijsvogel",
+    "SOORTVLUCHT": "Normale GeZC start",
+    "STARTMETHODE": "Lierstart GeZC",
+    "BAAN": "12"
+  }]
+}    

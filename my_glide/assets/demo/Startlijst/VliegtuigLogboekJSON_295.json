@@ -1,0 +1,36 @@
+[{
+	"DATUM": "2018-10-22",
+	"VLUCHTEN": "4",
+	"LIERSTARTS": "4",
+	"SLEEPSTARTS": "0",
+	"VLIEGTIJD": "02:00:00",
+	"REG_CALL": "PH-1057 (E7)"
+}, {
+	"DATUM": "2018-10-20",
+	"VLUCHTEN": "3",
+	"LIERSTARTS": "2",
+	"SLEEPSTARTS": "1",
+	"VLIEGTIJD": "00:50:00",
+	"REG_CALL": "PH-1057 (E7)"
+}, {
+	"DATUM": "2018-10-07",
+	"VLUCHTEN": "5",
+	"LIERSTARTS": "5",
+	"SLEEPSTARTS": "0",
+	"VLIEGTIJD": "03:54:00",
+	"REG_CALL": "PH-1057 (E7)"
+}, {
+	"DATUM": "2018-09-29",
+	"VLUCHTEN": "5",
+	"LIERSTARTS": "3",
+	"SLEEPSTARTS": "2",
+	"VLIEGTIJD": "03:28:00",
+	"REG_CALL": "PH-1057 (E7)"
+}, {
+	"DATUM": "2018-09-17",
+	"VLUCHTEN": "1",
+	"LIERSTARTS": "0",
+	"SLEEPSTARTS": "1",
+	"VLIEGTIJD": "01:26:00",
+	"REG_CALL": "PH-1057 (E7)"
+}]

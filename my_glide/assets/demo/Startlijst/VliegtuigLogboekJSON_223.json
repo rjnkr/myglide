@@ -1,0 +1,36 @@
+[{
+	"DATUM": "2019-06-28",
+	"VLUCHTEN": "5",
+	"LIERSTARTS": "5",
+	"SLEEPSTARTS": "0",
+	"VLIEGTIJD": "02:47:00",
+	"REG_CALL": "PH-1510 (E5)"
+}, {
+	"DATUM": "2019-06-27",
+	"VLUCHTEN": "6",
+	"LIERSTARTS": "6",
+	"SLEEPSTARTS": "0",
+	"VLIEGTIJD": "01:14:00",
+	"REG_CALL": "PH-1510 (E5)"
+}, {
+	"DATUM": "2019-06-21",
+	"VLUCHTEN": "4",
+	"LIERSTARTS": "4",
+	"SLEEPSTARTS": "0",
+	"VLIEGTIJD": "00:27:00",
+	"REG_CALL": "PH-1510 (E5)"
+}, {
+	"DATUM": "2019-06-20",
+	"VLUCHTEN": "4",
+	"LIERSTARTS": "4",
+	"SLEEPSTARTS": "0",
+	"VLIEGTIJD": "01:51:00",
+	"REG_CALL": "PH-1510 (E5)"
+}, {
+	"DATUM": "2019-06-13",
+	"VLUCHTEN": "2",
+	"LIERSTARTS": "2",
+	"SLEEPSTARTS": "0",
+	"VLIEGTIJD": "00:17:00",
+	"REG_CALL": "PH-1510 (E5)"
+}]

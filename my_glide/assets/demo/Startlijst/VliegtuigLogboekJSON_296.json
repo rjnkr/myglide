@@ -1,0 +1,36 @@
+[{
+	"DATUM": "2019-02-16",
+	"VLUCHTEN": "1",
+	"LIERSTARTS": "1",
+	"SLEEPSTARTS": "0",
+	"VLIEGTIJD": "12:19:00",
+	"REG_CALL": "PH-721 (E4)"
+}, {
+	"DATUM": "2019-02-15",
+	"VLUCHTEN": "1",
+	"LIERSTARTS": "1",
+	"SLEEPSTARTS": "0",
+	"VLIEGTIJD": "00:33:00",
+	"REG_CALL": "PH-721 (E4)"
+}, {
+	"DATUM": "2019-01-28",
+	"VLUCHTEN": "10",
+	"LIERSTARTS": "9",
+	"SLEEPSTARTS": "1",
+	"VLIEGTIJD": "03:08:00",
+	"REG_CALL": "PH-721 (E4)"
+}, {
+	"DATUM": "2019-01-27",
+	"VLUCHTEN": "12",
+	"LIERSTARTS": "11",
+	"SLEEPSTARTS": "1",
+	"VLIEGTIJD": "01:21:00",
+	"REG_CALL": "PH-721 (E4)"
+}, {
+	"DATUM": "2019-01-25",
+	"VLUCHTEN": "9",
+	"LIERSTARTS": "7",
+	"SLEEPSTARTS": "2",
+	"VLIEGTIJD": "00:57:00",
+	"REG_CALL": "PH-721 (E4)"
+}]

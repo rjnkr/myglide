@@ -1,0 +1,36 @@
+[{
+	"DATUM": "2018-03-28",
+	"VLUCHTEN": "3",
+	"LIERSTARTS": "3",
+	"SLEEPSTARTS": "0",
+	"VLIEGTIJD": "03:12:00",
+	"REG_CALL": "D-0729 (E3)"
+}, {
+	"DATUM": "2018-03-27",
+	"VLUCHTEN": "1",
+	"LIERSTARTS": "1",
+	"SLEEPSTARTS": "0",
+	"VLIEGTIJD": "00:11:00",
+	"REG_CALL": "D-0729 (E3)"
+}, {
+	"DATUM": "2018-03-21",
+	"VLUCHTEN": "3",
+	"LIERSTARTS": "3",
+	"SLEEPSTARTS": "0",
+	"VLIEGTIJD": "00:42:00",
+	"REG_CALL": "D-0729 (E3)"
+}, {
+	"DATUM": "2018-03-20",
+	"VLUCHTEN": "3",
+	"LIERSTARTS": "3",
+	"SLEEPSTARTS": "0",
+	"VLIEGTIJD": "03:09:00",
+	"REG_CALL": "D-0729 (E3)"
+}, {
+	"DATUM": "2018-03-19",
+	"VLUCHTEN": "3",
+	"LIERSTARTS": "3",
+	"SLEEPSTARTS": "0",
+	"VLIEGTIJD": "01:26:00",
+	"REG_CALL": "D-0729 (E3)"
+}]
