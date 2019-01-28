@@ -1,4 +1,4 @@
-  
+ 
 // language packages
 import 'package:flutter/material.dart';
 
@@ -26,7 +26,6 @@ class StartLijstGrid extends StatelessWidget {
   static final double _breedteInzittende = 150;
   static double _breedteScherm;
 
-  
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -47,14 +46,13 @@ class StartLijstGrid extends StatelessWidget {
       _breedteScherm = MediaQuery.of(context).size.width;
 
     return
-      SingleChildScrollView(
-        scrollDirection: Axis.horizontal, 
-        child: Card(
+      ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: 50, maxWidth: double.infinity),
+        child:Card(
           elevation: 2,
-          margin: EdgeInsets.all(1),
+          margin: EdgeInsets.all(1),       
           child: Container(
             height: 50,
-            width: _breedteScherm - 25,
             margin: EdgeInsets.fromLTRB(5, 0, 0, 0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -95,14 +93,14 @@ class StartLijstGrid extends StatelessWidget {
                 ),
                 _toonVluchtDuur(vluchtData['DUUR']),
                 SizedBox(
-                  width:_breedteRegCall, 
+                  width: _breedteRegCall, 
                   child: Text(
                     vluchtData['REG_CALL'],
                     style: _gridTextStyle()
                   )
                 ),
                 _toonVlieger(vlieger),
-                _toonInzittende(inzittende)
+                _toonInzittende(inzittende),
               ]
             )
           )

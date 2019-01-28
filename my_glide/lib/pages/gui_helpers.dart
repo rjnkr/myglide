@@ -22,18 +22,21 @@ class GUIHelper {
   // Toon een enkel veld in het scherm
   static Widget showDetailsField(String titel, String info, {bool titleTop = false}) {
     return 
-      Column (
+      Column(
         children: <Widget> [
-          Row (
+          Row(
             children: <Widget> [
               SizedBox(
                 width: 120,
-                 height: 22, 
-                child: Text(titel)
+                height: 22, 
+                child: Text(titel, textAlign: TextAlign.start)
               ),
               SizedBox(
                 height: 22,
-                child: Text (titleTop ? ' ' : info, style: TextStyle(fontWeight: FontWeight.bold))
+                child: Text (titleTop ? ' ' : info, 
+                  overflow: TextOverflow.clip,
+                  maxLines: 1,
+                  style: TextStyle(fontWeight: FontWeight.bold))
               )
             ]
           ), 

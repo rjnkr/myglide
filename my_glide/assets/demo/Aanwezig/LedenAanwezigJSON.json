@@ -21,6 +21,7 @@
       "VLIEGTIJD_VANDAAG": "01:33",
       "OPMERKING": null,
       "VOLGEND_CALLSIGN": null,
+      "VOLGORDE": "1",
       "LAATSTE_AANPASSING": "2019-01-20 22:01:29"
     }, {
       "ID": "1901202201001",
@@ -43,6 +44,7 @@
       "VLIEGTIJD_VANDAAG": "02:30",
       "OPMERKING": "tot 17:00",
       "VOLGEND_CALLSIGN": null,
+      "VOLGORDE": "2",
       "LAATSTE_AANPASSING": "2019-01-20 22:14:09"
     }, {
       "ID": "1901202201586",
@@ -65,6 +67,7 @@
       "VLIEGTIJD_VANDAAG": "01:14",
       "OPMERKING": null,
       "VOLGEND_CALLSIGN": "E9",
+      "VOLGORDE": "3",
       "LAATSTE_AANPASSING": "2019-01-20 22:01:58"
     }, {
       "ID": "1901202203464",
@@ -87,6 +90,7 @@
       "VLIEGTIJD_VANDAAG": "04:56",
       "OPMERKING": null,
       "VOLGEND_CALLSIGN": null,
+      "VOLGORDE": "4",
       "LAATSTE_AANPASSING": "2019-01-20 22:03:46"
     }, {
       "ID": "1901202202226",
@@ -109,6 +113,7 @@
       "VLIEGTIJD_VANDAAG": "04:10",
       "OPMERKING": null,
       "VOLGEND_CALLSIGN": null,
+      "VOLGORDE": "5",
       "LAATSTE_AANPASSING": "2019-01-20 22:02:22"
     }, {
       "ID": "1901202203318",
@@ -131,6 +136,7 @@
       "VLIEGTIJD_VANDAAG": "00:00",
       "OPMERKING": "check start",
       "VOLGEND_CALLSIGN": null,
+      "VOLGORDE": "6",
       "LAATSTE_AANPASSING": "2019-01-20 22:13:15"
     }, {
       "ID": "1901202010213",
@@ -153,6 +159,7 @@
       "VLIEGTIJD_VANDAAG": "00:00",
       "OPMERKING": null,
       "VOLGEND_CALLSIGN": "E1",
+      "VOLGORDE": "7",
       "LAATSTE_AANPASSING": "2019-01-20 22:11:43"
     }, {
       "ID": "1901200100315",
@@ -175,6 +182,7 @@
       "VLIEGTIJD_VANDAAG": "00:00",
       "OPMERKING": null,
       "VOLGEND_CALLSIGN": null,
+      "VOLGORDE": "8",
       "LAATSTE_AANPASSING": "2019-01-20 01:00:31"
     }, {
       "ID": "1901201649263",
@@ -197,6 +205,7 @@
       "VLIEGTIJD_VANDAAG": "08:36",
       "OPMERKING": null,
       "VOLGEND_CALLSIGN": null,
+      "VOLGORDE": "9",
       "LAATSTE_AANPASSING": "2019-01-20 16:49:26"
     }]
   }  

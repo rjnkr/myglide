@@ -19,10 +19,9 @@ import 'package:my_glide/pages/startlijst_container.dart';
 
 
 class AanwezigDetailsScreen extends StatefulWidget {
-  final bool isInTabletLayout;
   final Map aanwezig;
 
-  AanwezigDetailsScreen({Key key, @required this.isInTabletLayout, @required this.aanwezig}) : super(key: key);
+  AanwezigDetailsScreen({Key key, @required this.aanwezig}) : super(key: key);
 
   @override
   _AanwezigDetailsScreenState createState() => _AanwezigDetailsScreenState();
@@ -68,21 +67,6 @@ class _AanwezigDetailsScreenState extends State<AanwezigDetailsScreen> {
     if (_vertoondLidID != widget.aanwezig['LID_ID']) 
       _vertoondLidID = widget.aanwezig['LID_ID'];
 
-/*
-    if ((_startsVandaag == null) || (_recency == null)) {
-      return Container(width: 0, height: 0, color: Colors.brown); //TODO: moet spinner worden
-    }
-*/
-    if (widget.isInTabletLayout)
-    {
-      return _tabletLayout();
-    }
-    else
-      return _mobileLayout();
-  }
-
-  // Laat layout zien op een smartphone
-  Widget _mobileLayout() {
     return DefaultTabController(
       length: (serverSession.login.isInstructeur) ? 3 : 2,
       child: 
@@ -98,34 +82,8 @@ class _AanwezigDetailsScreenState extends State<AanwezigDetailsScreen> {
         ),
         body: _tabbladInhoud()
         )
-      );        
+      );
   }
-
-  // Laat layout zien op een tablet
-  Widget _tabletLayout() {
-    return _toonRecency();
-
-    List<Widget> weergave = List<Widget>();
-
-    if (serverSession.login.isInstructeur) 
-    {
-      weergave.add(_toonRecency());                                     // Instructeurs zien recente ervaring van vlieger 
-      weergave.add(Divider(color: MyGlideConst.frontColor, height: 6.0));   
-    }
-
-    weergave.add(_samenvatting());                                     // tabblad met samenvattign van vandaag
-    weergave.add(Divider(color: MyGlideConst.frontColor, height: 6.0));
-    weergave.add(StartlijstContainer(starts: _startsVandaag));         // Welke starts heeft deze vlieger vandaag al gemaakt
-
-    return Expanded(
-      flex: 1,
-      child: Column(
-  //      shrinkWrap: true,
-        children: weergave  
-      )
-    );
-  }
-
 
   Widget _toonTabbladen() {
     List<Widget> tabs = List<Widget>();
@@ -193,33 +151,33 @@ class _AanwezigDetailsScreenState extends State<AanwezigDetailsScreen> {
     
     return
       Padding(
-          padding: EdgeInsets.all(20),
-          child: Column(
-            children: <Widget>[
-              Expanded(
-                flex: 3,
-                child :SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: Column (
-                    children: <Widget>[
-                      GUIHelper.showDetailsField("Recency",  "${_recency['startsBarometer']} starts met ${_recency['urenBarometer']} uren"),
-                      Padding(padding: EdgeInsets.all(5)),
+        padding: EdgeInsets.all(20),
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              flex: 3,
+              child :SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Column (
+                  children: <Widget>[
+                    GUIHelper.showDetailsField("Recency",  "${_recency['startsBarometer']} starts, ${_recency['urenBarometer']} uren"),
+                    Padding(padding: EdgeInsets.all(5)),
 
-                      _barometerStatus(),
+                    _barometerStatus(),
 
-                      Padding(padding: EdgeInsets.all(5)),
-                      GUIHelper.showDetailsField("Laatste 3 mnd",  "${_recency['startsDrieMnd']} starts met ${_recency['urenDrieMnd']} uren"),
-                      Padding(padding: EdgeInsets.all(5)),
-                      GUIHelper.showDetailsField(DateTime.now().year.toString() ,  "${_recency['startsDitJaar']} starts met ${_recency['urenDitJaar']} uren"),
-                      Padding(padding: EdgeInsets.all(5)),
-                      GUIHelper.showDetailsField((DateTime.now().year-1).toString(),  "${_recency['startsVorigJaar']} starts met ${_recency['urenVorigJaar']} uren"),
-                    ]
-                  )
+                    Padding(padding: EdgeInsets.all(5)),
+                    GUIHelper.showDetailsField("Laatste 3 mnd", "${_recency['startsDrieMnd']} starts, ${_recency['urenDrieMnd']} uren"),
+                    Padding(padding: EdgeInsets.all(5)),
+                    GUIHelper.showDetailsField(DateTime.now().year.toString(), "${_recency['startsDitJaar']} starts, ${_recency['urenDitJaar']} uren"),
+                    Padding(padding: EdgeInsets.all(5)),
+                    GUIHelper.showDetailsField((DateTime.now().year-1).toString(), "${_recency['startsVorigJaar']} starts, ${_recency['urenVorigJaar']} uren"),
+                  ]
                 )
-              ),
-            ]
-          )
-        );
+              )
+            ),
+          ]
+        )
+      );
   }
 
   Widget _barometerStatus() {
@@ -255,25 +213,29 @@ class _AanwezigDetailsScreenState extends State<AanwezigDetailsScreen> {
       }                
     }
 
-    return 
+    return
       Row (
-        children: <Widget> [            
+        children: <Widget> [          
           SizedBox(
             width: 120,
-              height: 22, 
+            height: 22, 
             child: Text("Status")
           ),
           PhysicalModel(
             borderRadius: BorderRadius.circular(10.0),
             color: statusKleur,
-            child: MaterialButton(
-              minWidth: 150.0,
-              child: Text(tekst,
-                style: TextStyle(color: textKleur, fontSize: MyGlideConst.labelSizeNormal)
+            child: SizedBox(
+              width: 150.0,
+              height: 40,
+              child: Center(
+                child: Text(tekst,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: textKleur, fontSize: MyGlideConst.labelSizeNormal)
+                )
               )
             )
-          )    
+          )
         ]
-      );    
+      );
   }
 }

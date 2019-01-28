@@ -14,6 +14,7 @@ import 'package:my_glide/data/aanwezig.dart';
 
 // my glide own widgets
 import 'package:my_glide/widget/hoofd_menu.dart';
+import 'package:my_glide/widget/my_data_table.dart';
 
 // my glide pages
 import 'package:my_glide/pages/vandaag_details.dart';
@@ -126,8 +127,15 @@ class _VandaagScreenState extends State<VandaagScreen> with TickerProviderStateM
     Storage.getBool('autoLoadLogboek').then((value) { if (value) _ophalenData(false); });
   }
 
+  int _sortVolgorde (Map a, Map b, bool asc) {
+    int va = int.parse(a['VOLGORDE'] ?? 0);
+    int vb = int.parse(b['VOLGORDE'] ?? 0);
+
+    return ((asc) ? va.compareTo(vb) : vb.compareTo(va));
+  }
+
     // Sorteeer de dataset op basis van de keuze van de gebruiker
-  _sortVandaag({int index=-1, bool asc=true}) {
+  void _sortVandaag({int index=-1, bool asc=true}) {
     if (index < 0) {
       index = _sortColIdx;
       asc = _sortAsc;
@@ -137,26 +145,7 @@ class _VandaagScreenState extends State<VandaagScreen> with TickerProviderStateM
     {
       case 0: {
         _ledenAanwezig.sort((a,b) {
-          String sa = a['AANKOMST'] ?? "00:00";
-          String sb = b['AANKOMST'] ?? "00:00";
-
-          int urenA, urenB;
-          int minutenA, minutenB;
-
-          try { urenA = int.parse(sa.substring(0,2)); }
-          catch (e) { urenA = 0; }
-          try { minutenA = int.parse(sa.substring(3,5)); }
-          catch (e) { minutenA = 0; }
-
-          try { urenB = int.parse(sb.substring(0,2)); }
-          catch (e) { urenA = 0; }
-          try { minutenB = int.parse(sb.substring(3,5)); }
-          catch (e) { minutenB = 0; }
-
-          minutenA = urenA * 60 + minutenA;
-          minutenB = urenB * 60 + minutenB;
-
-          return ((asc) ? minutenA.compareTo(minutenB) : minutenB.compareTo(minutenA));
+          return _sortVolgorde(a, b, asc);
         });
         break;        
       }
@@ -164,6 +153,9 @@ class _VandaagScreenState extends State<VandaagScreen> with TickerProviderStateM
         _ledenAanwezig.sort((a,b) {
           String sa = a['NAAM'] ?? " ";
           String sb = b['NAAM'] ?? " ";
+
+          if (sa == sb)
+            return _sortVolgorde(a, b, asc);
 
           return (asc) ? sa.compareTo(sb) : sb.compareTo(sa);
         });
@@ -173,6 +165,9 @@ class _VandaagScreenState extends State<VandaagScreen> with TickerProviderStateM
         _ledenAanwezig.sort((a,b) {
           int va = int.parse(a['STARTLIJST_VANDAAG'] ?? 0);
           int vb = int.parse(b['STARTLIJST_VANDAAG'] ?? 0);
+          
+          if (va == vb)
+            return _sortVolgorde(a, b, asc);
 
           return ((asc) ? va.compareTo(vb) : vb.compareTo(va));
         });
@@ -182,6 +177,9 @@ class _VandaagScreenState extends State<VandaagScreen> with TickerProviderStateM
         _ledenAanwezig.sort((a,b) {
           String sa = a['VLIEGTIJD_VANDAAG'] ?? "00:00";
           String sb = b['VLIEGTIJD_VANDAAG'] ?? "00:00";
+
+          if (sa == sb)
+            return _sortVolgorde(a, b, asc);
 
           int urenA, urenB;
           int minutenA, minutenB;
@@ -208,10 +206,10 @@ class _VandaagScreenState extends State<VandaagScreen> with TickerProviderStateM
 
   // Grid tonen
   Widget _toonGrid(BuildContext context) {
-    List<DataColumn> _columns = List<DataColumn>();
+    List<MyDataColumn> _columns = List<MyDataColumn>();
 
     // Kolom headers
-    _columns.add(DataColumn(
+    _columns.add(MyDataColumn(
       label: Text("#"),
       onSort: (int columnIndex, bool ascending) {
         setState(() {
@@ -222,7 +220,7 @@ class _VandaagScreenState extends State<VandaagScreen> with TickerProviderStateM
       }
     ));
 
-    _columns.add(DataColumn(
+    _columns.add(MyDataColumn(
       label: Text("Naam"),
       onSort: (int columnIndex, bool ascending) 
       {
@@ -234,7 +232,7 @@ class _VandaagScreenState extends State<VandaagScreen> with TickerProviderStateM
       }
     ));
 
-    _columns.add(DataColumn(
+    _columns.add(MyDataColumn(
       label: Text("Starts"),
       onSort: (int columnIndex, bool ascending) {
         setState(() {
@@ -245,7 +243,7 @@ class _VandaagScreenState extends State<VandaagScreen> with TickerProviderStateM
       }
     ));
 
-    _columns.add(DataColumn(
+    _columns.add(MyDataColumn(
       label: Text("Vandaag"),
       onSort: (int columnIndex, bool ascending) {
         setState(() {
@@ -256,31 +254,31 @@ class _VandaagScreenState extends State<VandaagScreen> with TickerProviderStateM
       }
     ));
 
-    _columns.add(DataColumn(
+    _columns.add(MyDataColumn(
       label: Text("V/W/I"),
       tooltip: "Rood = wachttijd, Groen = vliegtijd huidige vlucht, Zwart = ingedeeld op",
       onSort: (int columnIndex, bool ascending) {},
     ));
 
-    _columns.add(DataColumn(
+    _columns.add(MyDataColumn(
       label: Text("Voorkeur"),
       onSort: (int columnIndex, bool ascending) {},
     ));
 
-    _columns.add(DataColumn(
+    _columns.add(MyDataColumn(
       label: Text("Opmerking"),   
       onSort: (int columnIndex, bool ascending) {},
     ));
 
-    List<DataRow> _rows = List.generate(_ledenAanwezig.length, (int index) => DataRow(
+    List<MyDataRow> _rows = List.generate(_ledenAanwezig.length, (int index) => MyDataRow(
         cells: [
-          DataCell(_nummer(index), onTap: () => _showDetails(index)),
-          DataCell(_naam(_ledenAanwezig[index]), onTap: () => _showDetails(index)),
-          DataCell(_startsVandaag(_ledenAanwezig[index]), onTap: () => _showDetails(index)),
-          DataCell(_vliegtijdVandaag(_ledenAanwezig[index]), onTap: () => _showDetails(index)),
-          DataCell(_showVliegtWachtVolgende(_ledenAanwezig[index]), onTap: () => _showDetails(index)),            
-          DataCell(_voorkeurType(_ledenAanwezig[index]), onTap: () => _showDetails(index)),
-          DataCell(_opmerking(_ledenAanwezig[index]), onTap: () => _showDetails(index))
+          MyDataCell(_nummer(_ledenAanwezig[index]), onTap: () => _showDetails(index)),
+          MyDataCell(_naam(_ledenAanwezig[index]), onTap: () => _showDetails(index)),
+          MyDataCell(_startsVandaag(_ledenAanwezig[index]), onTap: () => _showDetails(index)),
+          MyDataCell(_vliegtijdVandaag(_ledenAanwezig[index]), onTap: () => _showDetails(index)),
+          MyDataCell(_showVliegtWachtVolgende(_ledenAanwezig[index]), onTap: () => _showDetails(index)),            
+          MyDataCell(_voorkeurType(_ledenAanwezig[index]), onTap: () => _showDetails(index)),
+          MyDataCell(_opmerking(_ledenAanwezig[index]), onTap: () => _showDetails(index))
         ]
       )
     );
@@ -290,7 +288,7 @@ class _VandaagScreenState extends State<VandaagScreen> with TickerProviderStateM
       children: <Widget>[
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
-          child: DataTable(
+          child: MyDataTable(
             sortColumnIndex: _sortColIdx,
             sortAscending: _sortAsc,
             rows: _rows,
@@ -306,7 +304,6 @@ class _VandaagScreenState extends State<VandaagScreen> with TickerProviderStateM
       MaterialPageRoute(
         builder: (BuildContext context) {
           return AanwezigDetailsScreen(
-            isInTabletLayout: false,
             aanwezig: _ledenAanwezig[index],
           );
         },
@@ -314,12 +311,12 @@ class _VandaagScreenState extends State<VandaagScreen> with TickerProviderStateM
     );
   }
 
-  Widget _nummer(int nr) {
+  Widget _nummer(Map aanwezigData) {
     return CircleAvatar(
       radius: 12.0, 
       backgroundColor: MyGlideConst.backgroundColor,
       child: Text(
-        (nr+1).toString(),
+        aanwezigData['VOLGORDE'] ?? '0',
         style: TextStyle(fontSize: 13.0)
       )
     );

@@ -57,6 +57,7 @@ class _MijnLogboekScreenState extends State<MijnLogboekScreen> with TickerProvid
 
     _autoUpdateTimer.cancel();    // Stop de timer, anders krijgen we parallele sessie
   }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +89,7 @@ class _MijnLogboekScreenState extends State<MijnLogboekScreen> with TickerProvid
         ],
       ),
       drawer: HoofdMenu(),
-      body: StartlijstContainer(starts:_logboekItems) //StartlijstGrid.toonScherm(context, _logboekItems)   // Hier is het om te doen, het logboek van de vlieger
+      body: StartlijstContainer(starts:_logboekItems)   // Hier is het om te doen, het logboek van de vlieger
     );
   }
   
