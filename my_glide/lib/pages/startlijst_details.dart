@@ -203,6 +203,9 @@ class LogboekDetailsScreen extends StatelessWidget {
 
   // email versturen naar beheerder
   void _sendEmail(Map vluchtData) async {
+    if (serverSession.login.userInfo == null)       // we weten niet wie het is
+      return ;
+
     String emailBody = "Goedendag,<br><br>Ik zou graag het volgende willen wijzigen in mijn logboek.<br><br> << hier uw tekst >> <br><br>Met vriendelijke groet,<br><br>";
     emailBody += "${serverSession.login.userInfo['NAAM']}<br><br><br><br>";
 

@@ -16,6 +16,9 @@ class Aanwezig
   // Onszelf aanmelden voor de vliegdag
   // voorkeurVliegtuigType is een CSV string met de ID uit de type tabel
   static Future<bool> aanmeldenLidVandaag(String voorkeurVliegtuigType, String opmerking) async {
+    if (serverSession.login.userInfo == null)       // we weten niet wie het is
+      return false;
+
     try {
         if (serverSession.isDemo)
         {
@@ -62,6 +65,6 @@ class Aanwezig
     {
       print (e);
     }
-    return null;
+    return List();          // exception geeft leeg object terug
   }  
 }

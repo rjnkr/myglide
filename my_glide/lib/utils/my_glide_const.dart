@@ -76,6 +76,9 @@ class MyGlideConst {
   static const double breedteLogoekDetails = 325;
   static const double breedteAanwezigDetails = 1;
 
+  static const double takeOffSpeed = 50 / 3.6;    // takeOffSpeed in m/s,  50 km/h
+  static const double noStallAltitude = 100;      // Onder de 100 mag snelheid niet onder takeOffSpeed komen, anders zijn we geland
+
   static Color appBarBackground() {
     return backgroundColor;
   }

@@ -1,11 +1,13 @@
 // language packages
 import 'package:flutter/material.dart';
+import 'dart:async';
 
 // language add-ons
 
 // my glide utils
 import 'package:my_glide/utils/my_glide_const.dart';
 import 'package:my_glide/utils/my_navigation.dart';
+import 'package:my_glide/utils/gps.dart';
 
 // my glide data providers
 
@@ -16,6 +18,8 @@ import 'package:my_glide/pages/splash_scherm.dart';
 import 'package:my_glide/pages/mijn_logboek_scherm.dart';
 
 void main() async {
+  Timer gpsTimer = Timer.periodic(Duration(seconds: 30), (Timer t) => gpsData.gpsLocatie()); 
+
   runApp(new MaterialApp(
     title: MyGlideConst.AppName,
     debugShowCheckedModeBanner: false,
@@ -23,6 +27,7 @@ void main() async {
     routes: routes
   ));
 }
+
 
 class MyGlideApp extends StatefulWidget {
   @override

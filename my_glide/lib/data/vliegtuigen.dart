@@ -12,7 +12,6 @@ import 'package:my_glide/data/session.dart';
 
 // my glide own widgets
 
-
 class Vliegtuigen {
   
   // Haal van de server welke clubkisten we hebben
@@ -39,6 +38,6 @@ class Vliegtuigen {
     {
       print (e);
     }
-    return null;
+    return Map();       // exception geeft leeg object terug
   }
 }

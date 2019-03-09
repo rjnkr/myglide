@@ -7,10 +7,10 @@ description: Cross platform (iOS / android) app voor start admin, en meer.......
 # Both the version and the builder number may be overridden in flutter
 # build by specifying --build-name and --build-number, respectively.
 # Read more about versioning at semver.org.
-version: 1.0.0+1
+version: 1.1.0+1
 
 environment:
-  sdk: ">=2.0.0-dev.68.0 <3.0.0"
+  sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -54,6 +54,9 @@ dependencies:
 
   #Mailer with HTML support
   flutter_mailer: ^0.3.0
+
+  #GPS locatie
+  geolocator: '^3.0.1'
 
 dev_dependencies:
   flutter_test:

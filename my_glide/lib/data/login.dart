@@ -71,8 +71,8 @@ class Login
     // uitgelogd dus UserInfo niet meer verversen
     if (_userInfoRefreshTimer != null)  _userInfoRefreshTimer.cancel();       
 
-    serverSession.clearCredentials();
     _clearCredentials();
+    serverSession = new Session();    // Gooi alles uit het geheugen weg
   }
 
   // Haal de info van de ingelogde gebruiker op. username is de gebruikte inlognaam
@@ -88,6 +88,7 @@ class Login
       else 
       {
         if (url == null)  url = await serverSession.getLastUrl();
+        
         String request = '$url/php/main.php?Action=Login.getUserInfoJSON';
         http.Response response = await serverSession.get(request);
         parsed = json.decode(response.body);
@@ -111,8 +112,8 @@ class Login
       _lastUserInfoOpgehaald = DateTime.now();
       _setTimerForNextUserInfo();
 
-
       serverSession.ophalenZonOpkomstOndergang();
+      serverSession.getAutoAanmelden();
 
       return true;
     }

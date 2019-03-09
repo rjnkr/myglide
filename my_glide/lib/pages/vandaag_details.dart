@@ -88,7 +88,7 @@ class _AanwezigDetailsScreenState extends State<AanwezigDetailsScreen> {
   Widget _toonTabbladen() {
     List<Widget> tabs = List<Widget>();
 
-    if (serverSession.login.isInstructeur) 
+    if ((serverSession.login.isInstructeur) || (serverSession.login.isBeheerder))
       tabs.add(Icon(Icons.history));
 
     tabs.add(Icon(Icons.today));
@@ -104,7 +104,7 @@ class _AanwezigDetailsScreenState extends State<AanwezigDetailsScreen> {
   Widget _tabbladInhoud() {
     List<Widget> pages = List<Widget>();
 
-    if (serverSession.login.isInstructeur) 
+    if ((serverSession.login.isInstructeur) || (serverSession.login.isBeheerder))
       pages.add(_toonRecency());                                    // Instructeurs zien recente ervaring van vlieger
 
     pages.add(_samenvatting());                                     // tabblad met samenvattign van vandaag
@@ -113,7 +113,7 @@ class _AanwezigDetailsScreenState extends State<AanwezigDetailsScreen> {
     return TabBarView(children: pages);
   }
 
-  // Samenvatting voor deze vlieger, voro vandaag. Eigenlijk meer details als zichtbaar op eerste blad
+  // Samenvatting voor deze vlieger, voor vandaag. Eigenlijk meer details als zichtbaar op eerste blad
   Widget _samenvatting() {
     return
       Padding(

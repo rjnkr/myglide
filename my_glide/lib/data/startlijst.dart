@@ -38,13 +38,19 @@ class Startlijst
         ConnectivityResult connected = await Connectivity().checkConnectivity();
         if (connected == ConnectivityResult.none) {
           String rawJSON = await Storage.getString("startlijst:getLogboek", defaultValue: """{"total":"0","results":[]}""");
-          parsed = json.decode(rawJSON);                                      // geen netwerk gebruik cache
+          parsed = json.decode(rawJSON);                                        // geen netwerk gebruik cache
         }
         else {
-          http.Response response = await serverSession.get(request);
-          parsed = json.decode(response.body);
+          try {
+            http.Response response = await serverSession.get(request);
+            parsed = json.decode(response.body);
 
-          Storage.setString("startlijst:getLogboek", response.body);            // stop json in cache
+            Storage.setString("startlijst:getLogboek", response.body);            // stop json in cache
+          }
+          catch(e) {
+            String rawJSON = await Storage.getString("startlijst:getLogboek", defaultValue: """{"total":"0","results":[]}""");
+            parsed = json.decode(rawJSON);                                        // netwerk error gebruik cache            
+          }
         }
       }
 
@@ -60,7 +66,7 @@ class Startlijst
     {
       print (e);
     }
-    return null;
+    return List();          // exception geeft leeg object terug
   }
 
   // ophalen van het vliegtuig logboek. vliegtuigID bevat ID van vliegtuig uit ref_vliegtuigen
@@ -87,7 +93,7 @@ class Startlijst
     {
       print (e);
     }
-    return null;
+    return List();          // exception geeft leeg object terug
   }
 
   // ophalen van de start van een speciek lid
@@ -115,7 +121,7 @@ class Startlijst
     {
       print (e);
     }
-    return null;
+    return List();          // exception geeft leeg object terug
   }  
 
   // ophalen van de start van een speciek lid
@@ -142,7 +148,7 @@ class Startlijst
     {
       print (e);
     }
-    return null;
+    return Map();          // exception geeft leeg object terug
   }  
 
   // Opslaan van de landings tijd. id bevat het ID van de start uit oper_startlijst

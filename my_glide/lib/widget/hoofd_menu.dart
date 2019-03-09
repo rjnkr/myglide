@@ -106,7 +106,7 @@ class _HoofdMenuState extends State<HoofdMenu> {
                         onTap: (){MyNavigator.goToSettings(context);},
                       ),
                       Divider(color: MyGlideConst.frontColor, height: 6.0),
-                      serverSession.isIngelogd ?
+                      (serverSession.isIngelogd || serverSession.isDemo) ?
                         ListTile(
                           title: Text("Uitloggen",
                           style: TextStyle(color: MyGlideConst.frontColor)
@@ -223,13 +223,18 @@ class _HoofdMenuState extends State<HoofdMenu> {
 
   Widget _toonNaam(BuildContext context)
   {
+    String naam = "";
+
+    if (serverSession.login.userInfo != null)
+      naam = serverSession.login.userInfo['NAAM'] ?? "";
+
     return 
       Row ( 
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget> [
           Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 0)),
-          Text(serverSession.login.userInfo['NAAM'],
+          Text(naam,
             style: TextStyle(
               color: Colors.white70
             )

@@ -21,11 +21,15 @@ class SettingsScreen extends StatefulWidget {
 class SettingsScreenState extends State<SettingsScreen> {
   int _nrLogboekItems;
   bool _autoLoadLogboek;
+  bool _autoAanmelden;
 
   @override
   void initState() {
     super.initState();  
     
+      Storage.getBool('autoAanmelden', defaultValue: true).then((autoAanmelden) { 
+        setState(() { _autoAanmelden = autoAanmelden; }); });
+
       Storage.getBool('autoLoadLogboek', defaultValue: false).then((autoLoad) { 
         setState(() { _autoLoadLogboek = autoLoad; }); });
 
@@ -56,6 +60,26 @@ class SettingsScreenState extends State<SettingsScreen> {
                 children: <Widget>[
                   SizedBox (
                     width: 190,
+                    child: Text("Automatisch aanmelden")
+                  ),
+                  Checkbox(
+                    activeColor: MyGlideConst.frontColor,
+                    value: _autoAanmelden ?? false,
+                    tristate: false,
+                    onChanged: (bool value)
+                    {
+                      setState(() {
+                        _autoAanmelden = value;
+                        Storage.setBool('autoAanmelden', value);        
+                      });
+                    },
+                  )
+                ],
+              ),
+              Row(
+                children: <Widget>[
+                  SizedBox (
+                    width: 190,
                     child: Text("Logboek automatisch verversen")
                   ),
                   Checkbox(
@@ -71,7 +95,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                     },
                   )
                 ],
-              ),
+              ),              
               Row(
                 children: <Widget>[
                   SizedBox (
@@ -91,7 +115,6 @@ class SettingsScreenState extends State<SettingsScreen> {
                   ) 
                 ],
               )
-
             ])
           )
         )

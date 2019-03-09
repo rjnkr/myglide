@@ -51,8 +51,8 @@ class LoginScreenState extends State<LoginScreen>
     _iconAnimationController.forward();
 
     // check iedere seconde of er een netwerk is
-    _statusUpdateTimer = Timer.periodic(Duration(seconds: 1), (Timer t) => _checkConnectionState());  
-
+    _statusUpdateTimer = Timer.periodic(Duration(seconds: 1), (Timer t) => _checkConnectionState()); 
+    
     serverSession.getLastUrl().then((url)
     {
       // als url niet bekend is, of vorige sessie een demo was; gebruik default url
