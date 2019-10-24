@@ -8,7 +8,7 @@ import 'package:connectivity/connectivity.dart';
 // my glide utils
 import 'package:my_glide/utils/my_glide_const.dart';
 import 'package:my_glide/utils/storage.dart';
-
+import 'package:my_glide/utils/debug.dart';
 
 // my glide data providers
 import 'package:my_glide/data/startlijst.dart';
@@ -39,6 +39,7 @@ class _MijnLogboekScreenState extends State<MijnLogboekScreen> with TickerProvid
 
   _MijnLogboekScreenState()
   {
+    MyGlideDebug.info("_MijnLogboekScreenState()");
     // check iedere seconde of we logboek automatisch moeten ophalen
     // reageert daarmee (bijna) direct op instelling
     _autoUpdateTimer = Timer.periodic(Duration(seconds: 1), (Timer t) => _autoOphalenLogboek()); 
@@ -46,6 +47,7 @@ class _MijnLogboekScreenState extends State<MijnLogboekScreen> with TickerProvid
 
   @override
   void initState() {
+    MyGlideDebug.info("_MijnLogboekScreenState.initState()");
     super.initState();
 
     _ophalenLogboek(false);
@@ -53,6 +55,7 @@ class _MijnLogboekScreenState extends State<MijnLogboekScreen> with TickerProvid
 
   @override
   void dispose() {
+    MyGlideDebug.info("_MijnLogboekScreenState.dispose()");
     super.dispose();
 
     _autoUpdateTimer.cancel();    // Stop de timer, anders krijgen we parallele sessie
@@ -61,6 +64,9 @@ class _MijnLogboekScreenState extends State<MijnLogboekScreen> with TickerProvid
 
   @override
   Widget build(BuildContext context) {
+    MyGlideDebug.info("_MijnLogboekScreenState.build(context");
+
+    // Er is nog geen data om te tonen
     if (_logboekItems == null) return GUIHelper.showLoading();
    
     return Scaffold(
@@ -95,18 +101,21 @@ class _MijnLogboekScreenState extends State<MijnLogboekScreen> with TickerProvid
   
   
   void _showAangemeld() {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text("Aanmelding"),
-          content: serverSession.login.isAangemeld ? Text("U bent aangemeld voor de vliegdag van vandaag") : Text("U bent nog NIET aangemeld voor vandaag") ,
-        )
+    MyGlideDebug.info("_MijnLogboekScreenState._showAangemeld()");
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Aanmelding"),
+        content: serverSession.login.isAangemeld ? Text("U bent aangemeld voor de vliegdag van vandaag") : Text("U bent nog NIET aangemeld voor vandaag") ,
+      )
     ); 
   }
 
   void _ophalenLogboek(bool handmatig) {
-    bool volledig = false;
+    MyGlideDebug.info("_MijnLogboekScreenState._ophalenLogboek($handmatig)");
 
+    bool volledig = false;
     if (handmatig)
     {
       final int lastRefresh = DateTime.now().difference(_lastRefreshButton).inSeconds;
@@ -127,6 +136,8 @@ class _MijnLogboekScreenState extends State<MijnLogboekScreen> with TickerProvid
 
   void _autoOphalenLogboek()
   {
+    MyGlideDebug.info("_MijnLogboekScreenState._autoOphalenLogboek()");
+
     final DateTime now = DateTime.now();
     final int lastRefresh = now.difference(_lastRefresh).inSeconds;
 
@@ -163,7 +174,9 @@ class _MijnLogboekScreenState extends State<MijnLogboekScreen> with TickerProvid
           return;
 
     // ophalen logboek indien autoLoadLogboek = true, indien niet gezet dan gebeurd er niets
-    Storage.getBool('autoLoadLogboek').then((value) { if (value) _ophalenLogboek(false); });
+    Storage.getBool('autoLoadLogboek', defaultValue: false).then((value) { 
+      if (value) 
+        _ophalenLogboek(false); 
+    });
   }
-
 }

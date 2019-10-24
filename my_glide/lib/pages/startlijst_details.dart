@@ -4,11 +4,12 @@ import 'package:flutter/material.dart';
 
 // language add-ons
 import 'package:flutter_mailer/flutter_mailer.dart';
-import 'package:flutter_picker/flutter_picker.dart';
 import 'package:intl/intl.dart';
 
 // my glide utils
 import 'package:my_glide/utils/my_glide_const.dart';
+import 'package:my_glide/utils/debug.dart';
+import 'package:my_glide/utils/gps.dart';
 
 // my glide data providers
 import 'package:my_glide/data/session.dart';
@@ -31,6 +32,8 @@ class LogboekDetailsScreen extends StatelessWidget {
   // Toon de details van de vlucht
   @override
   Widget build(BuildContext context) {
+    MyGlideDebug.info("LogboekDetailsScreen.build(context)"); 
+
     if (vlucht == null)
       return Container(width: 0, height: 0);
 
@@ -84,7 +87,7 @@ class LogboekDetailsScreen extends StatelessWidget {
                         onPressed: () => _sendEmail(vlucht),    
                     )
                   ),
-                  _buttonLandingOrDelete(context, vlucht)
+                  _buttonStartLandingOrDelete(context, vlucht),
                 ]
               )
             )
@@ -110,22 +113,8 @@ class LogboekDetailsScreen extends StatelessWidget {
     );
   }
   
-  Widget _buttonLandingOrDelete(BuildContext context, Map vluchtData) {
-    if ((vluchtData['STARTTIJD'] != null) && (vluchtData['LANDINGSTIJD'] == null)) {
-      return
-        PhysicalModel(                                      // toon landingstijd button om vlucht af te sluiten
-          borderRadius: BorderRadius.circular(20.0),
-          color: MyGlideConst.landingstijdColor,
-          child: MaterialButton(
-            height: 50.0,
-            minWidth: 120.0,
-            textColor: MyGlideConst.frontColor,
-            child: Icon(
-              Icons.flight_land, color: MyGlideConst.frontColor ,),
-              onPressed: () => _landingsTijdScherm(context, vluchtData['ID']),    
-          )
-        );
-    }
+  Widget _buttonStartLandingOrDelete(BuildContext context, Map vluchtData) {
+    MyGlideDebug.info("LogboekDetailsScreen._buttonStartLandingOrDelete(context, $vluchtData)"); 
 
     String vandaag = DateFormat('yyyy-MM-dd').format(DateTime.now()).toString();
 
@@ -145,35 +134,113 @@ class LogboekDetailsScreen extends StatelessWidget {
           )
         );
     }
+
+    if ((vluchtData['STARTTIJD'] == null) && (vluchtData['LANDINGSTIJD'] == null) &&
+        (vluchtData['DATUM'] == vandaag)) {
+      return
+        PhysicalModel(                                      // toon landingstijd button om vlucht af te sluiten
+          borderRadius: BorderRadius.circular(20.0),
+          color: MyGlideConst.starttijdColor,
+          child: MaterialButton(
+            height: 50.0,
+            minWidth: 120.0,
+            textColor: Colors.black,
+            child: Icon(
+              Icons.flight_takeoff, color: Colors.black ,),
+              onPressed: () => _startTijdScherm(context, vluchtData['ID']),    
+          )
+        );
+    }    
+
+    if ((vluchtData['STARTTIJD'] != null) && (vluchtData['LANDINGSTIJD'] == null)) {
+      return
+        PhysicalModel(                                      // toon landingstijd button om vlucht af te sluiten
+          borderRadius: BorderRadius.circular(20.0),
+          color: MyGlideConst.landingstijdColor,
+          child: MaterialButton(
+            height: 50.0,
+            minWidth: 120.0,
+            textColor: MyGlideConst.frontColor,
+            child: Icon(
+              Icons.flight_land, color: MyGlideConst.frontColor ,),
+              onPressed: () => _landingsTijdScherm(context, vluchtData['ID']),    
+          )
+        );
+    }    
     
     return Container(width: 0, height: 0);
   }
 
-  void _landingsTijdScherm(BuildContext context, String id) async {
-    Picker(
-      looping: true,
-        adapter: NumberPickerAdapter(data: [
-          NumberPickerColumn(begin: 0, end: 24, initValue: TimeOfDay.now().hour),
-          NumberPickerColumn(begin: 0, end: 59, initValue: TimeOfDay.now().minute),
-        ]),
-        delimiter: [
-          PickerDelimiter(child: Container(
-            width: 30.0,
-            alignment: Alignment.center,
-            child: Text(':',style: TextStyle(fontWeight: FontWeight.bold),)
-          ))
-        ],
-        hideHeader: true,
-        title: Text("Landingstijd"),
-        onConfirm: (Picker picker, List value) {
-          _landingsTijd(context, id, value[0], value[1]);
-        }
-    ).showDialog(context);
+  void _startTijdScherm(BuildContext context, String id) async {
+    MyGlideDebug.info("LogboekDetailsScreen._startTijdScherm(context, $id)"); 
+
+    int uren = TimeOfDay.now().hour;
+    int min = TimeOfDay.now().minute;
+
+    // als we gps landingstijd hebben, dan gebruiken we die als default
+    if (gpsData.startTijd != null)
+    {
+      uren = gpsData.startTijd.hour;
+      min = gpsData.startTijd.minute;
+    }
+
+    String defaultTijd = "$uren:$min";
+
+    GUIHelper.tijdPicker(context, 
+      tijd: defaultTijd, 
+      titel: "Starttijd",
+      onConfirm: (val)
+      {
+        _startTijd(context, id, val);
+      }
+    );
   }
 
-  void _landingsTijd(BuildContext context, String id, int uur, int minuten)
+  void _startTijd(BuildContext context, String id, String tijd)
   {
-    String tijd = "$uur:$minuten";
+    MyGlideDebug.info("LogboekDetailsScreen._startTijd(context, $id, $tijd)"); 
+
+    Startlijst.opslaanStartTijd (id, tijd).then((gelukt)  {
+      Startlijst.getLogboek();
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Starttijd"),
+          content: gelukt ? Text("De starttijd is opgeslagen") : Text("Er is iets mis gegaan, probeer het nogmaals of neem contact op met de beheerder")
+        ));
+    });
+    Navigator.pop(context);
+  }
+
+
+  void _landingsTijdScherm(BuildContext context, String id) async {
+    MyGlideDebug.info("LogboekDetailsScreen._landingsTijdScherm(context, $id)"); 
+
+    int uren = TimeOfDay.now().hour;
+    int min = TimeOfDay.now().minute;
+
+    // als we gps landingstijd hebben, dan gebruiken we die als default
+    if (gpsData.landingsTijd != null)
+    {
+      uren = gpsData.landingsTijd.hour;
+      min = gpsData.landingsTijd.minute;
+    }
+
+    String defaultTijd = "$uren:$min";
+
+    GUIHelper.tijdPicker(context, 
+      tijd: defaultTijd, 
+      titel: "Landingstijd",
+      onConfirm: (val)
+      {
+        _landingsTijd(context, id, val);
+      }
+    );
+  }
+
+  void _landingsTijd(BuildContext context, String id, String tijd)
+  {
+    MyGlideDebug.info("LogboekDetailsScreen._landingsTijd(context, $id, $tijd)"); 
 
     Startlijst.opslaanLandingsTijd (id, tijd).then((gelukt)  {
       Startlijst.getLogboek();
@@ -181,14 +248,17 @@ class LogboekDetailsScreen extends StatelessWidget {
         context: context,
         builder: (context) => AlertDialog(
           title: Text("Landingstijd"),
-          content: gelukt ? Text("De landingstijd is aangepast") : Text("Er is iets mis gegaan, probeer het nogmaals of neem contact op met de beheerder")
-        ));          
+          content: gelukt ? Text("De landingstijd is opgeslagen") : Text("Er is iets mis gegaan, probeer het nogmaals of neem contact op met de beheerder")
+        ));
     });
+
     Navigator.pop(context);
   }
 
   void _verwijderVlucht(BuildContext context, String id)
   {
+    MyGlideDebug.info("LogboekDetailsScreen._verwijderVlucht(context, $id)"); 
+
     Startlijst.verwijderVlucht(id).then((gelukt)  {
       Startlijst.getLogboek();
       showDialog(
@@ -196,13 +266,15 @@ class LogboekDetailsScreen extends StatelessWidget {
         builder: (context) => AlertDialog(
           title: Text("Verwijderen vlucht"),
           content: gelukt ? Text("De vlucht is verwijderd") : Text("Er is iets mis gegaan, probeer het nogmaals of neem contact op met de beheerder")
-        ));          
+        ));
     });
     Navigator.pop(context);
   }
 
   // email versturen naar beheerder
   void _sendEmail(Map vluchtData) async {
+    MyGlideDebug.info("LogboekDetailsScreen._sendEmail(context, $vluchtData)"); 
+
     if (serverSession.login.userInfo == null)       // we weten niet wie het is
       return ;
 
@@ -225,7 +297,6 @@ class LogboekDetailsScreen extends StatelessWidget {
     //  recipients: ['example@example.com'],
       isHTML: true,
     );
-
     await FlutterMailer.send(mailOptions);
   }   
 }

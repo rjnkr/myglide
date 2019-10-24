@@ -8,6 +8,7 @@ import 'package:connectivity/connectivity.dart';
 // my glide utils
 import 'package:my_glide/utils/my_glide_const.dart';
 import 'package:my_glide/utils/my_navigation.dart';
+import 'package:my_glide/utils/debug.dart';
 
 // my glide data providers
 import 'package:my_glide/data/session.dart';
@@ -40,6 +41,8 @@ class LoginScreenState extends State<LoginScreen>
 
   @override
   void initState() {
+    MyGlideDebug.info("LoginScreenState.initState()");
+
     super.initState();
     _iconAnimationController = AnimationController(
         vsync: this, duration: Duration(milliseconds: 500));
@@ -65,6 +68,8 @@ class LoginScreenState extends State<LoginScreen>
 
   @override
   void dispose() {
+    MyGlideDebug.info("LoginScreenState.dispose()");
+
     _iconAnimationController.dispose();
     _statusUpdateTimer.cancel();    // Stop de timer, de class wordt namelijk verwijderd
     super.dispose();
@@ -72,6 +77,8 @@ class LoginScreenState extends State<LoginScreen>
 
   @override
   Widget build(BuildContext context) {  
+    MyGlideDebug.info("LoginScreenState.build()");
+
     int size = 300;
     double labelSize = MyGlideConst.labelSizeExtraLarge;
 
@@ -113,6 +120,9 @@ class LoginScreenState extends State<LoginScreen>
                     validator: this._validateUserName, 
                     onSaved: (val) => _myUsername = val.trim(),
                   ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20.0),
+                  ),                  
                   TextFormField(
                     decoration: InputDecoration(
                       labelText: "Wachtwoord",
@@ -167,6 +177,8 @@ class LoginScreenState extends State<LoginScreen>
   }
 
   TextStyle _hintStyle()  {
+    MyGlideDebug.info("LoginScreenState._hintStyle()");
+
     return TextStyle(
       color: MyGlideConst.hintColorLight,
       fontSize: MyGlideConst.hintSizeSmall
@@ -174,6 +186,7 @@ class LoginScreenState extends State<LoginScreen>
   }
 
   TextStyle _labelStyle()  {
+    MyGlideDebug.info("LoginScreenState._labelStyle()");
     return TextStyle(
       color: MyGlideConst.labelColorLight,
       fontSize: MyGlideConst.labelSizeMedium
@@ -181,6 +194,8 @@ class LoginScreenState extends State<LoginScreen>
   }
 
   TextStyle _inputStyle()  {
+    MyGlideDebug.info("LoginScreenState._inputStyle()");
+
     return TextStyle(
       color: MyGlideConst.textInputLight,
       fontSize: MyGlideConst.textInputSizeMedium
@@ -188,15 +203,18 @@ class LoginScreenState extends State<LoginScreen>
   }
 
   TextStyle _errorStyle()  {
+    MyGlideDebug.info("LoginScreenState._errorStyle()");
+
     return TextStyle(
       color: MyGlideConst.errorColorLight,
-      fontSize: MyGlideConst.errorSizeNormal
+      fontSize: MyGlideConst.errorSizeSmall
     );
   }
 
   // controleer of apparaat nog netwerk verbinding heeft
   void _checkConnectionState()
   {
+    MyGlideDebug.info("LoginScreenState._checkConnectionState()");
     Connectivity().checkConnectivity().then((result)
     {
         setState(() {
@@ -210,6 +228,8 @@ class LoginScreenState extends State<LoginScreen>
 
   // Het icoontje voor de login knop
   Widget _statusIcon() {
+    MyGlideDebug.info("LoginScreenState._statusIcon()");
+
     switch (_buttonState) {
       case -1: {  // geen netwerk
         return Icon(Icons.cloud_off, size: 40, color: Colors.white);
@@ -232,6 +252,8 @@ class LoginScreenState extends State<LoginScreen>
 
   // De kleur van de login knop
   Color _buttonColor() {
+    MyGlideDebug.info("LoginScreenState._buttonColor()");
+
     switch (_buttonState) {
       case -1: {
         return Colors.black;
@@ -253,27 +275,38 @@ class LoginScreenState extends State<LoginScreen>
   }
 
   Widget _showUrlWidget() {
+    MyGlideDebug.info("LoginScreenState._showUrlWidget()");
+
     if (!_showUrl) return Container(width: 0, height: 70);
 
-    return                   
-      TextFormField(
-        decoration: InputDecoration(
-          labelText: "Url",
-          labelStyle: _labelStyle(),
-          hintText: "website van de GeZC start administratie",
-          hintStyle: _hintStyle(),
-          errorStyle: _errorStyle()                      
-        ),
-        style: _inputStyle(),
-        keyboardType: TextInputType.url,
-        initialValue: _url,
-        validator: this._validateUrl,
-        onSaved: (val) => _url = val.trim(),
+    return
+      Column(
+        children: <Widget>[ 
+          Padding(
+            padding: const EdgeInsets.only(top: 20.0),
+          ),                    
+          TextFormField(
+            decoration: InputDecoration(
+              labelText: "Url",
+              labelStyle: _labelStyle(),
+              hintText: "website van de GeZC start administratie",
+              hintStyle: _hintStyle(),
+              errorStyle: _errorStyle()                      
+            ),
+            style: _inputStyle(),
+            keyboardType: TextInputType.url,
+            initialValue: _url,
+            validator: this._validateUrl,
+            onSaved: (val) => _url = val.trim(),
+          )
+        ]
       );
   }  
 
   // Controleer of gebruikersnaam (goed) ingevuld is
   String _validateUserName(String value) {
+    MyGlideDebug.info("LoginScreenState._validateUserName($value)");
+
     if (value.isEmpty) 
       return "Gebruikersnaam kan niet leeg zijn";
 
@@ -285,6 +318,8 @@ class LoginScreenState extends State<LoginScreen>
 
   // Controleer of wachtwoord (goed) ingevuld is
   String _validatePassword(String value) {
+    MyGlideDebug.info("LoginScreenState._validatePassword($value)");
+
     if (value.isEmpty) 
       return "Wachtwoord moet ingevuld worden";
 
@@ -296,6 +331,7 @@ class LoginScreenState extends State<LoginScreen>
 
   // Controleer of Url ingevuld is en voldoet aan het formaat
   String _validateUrl(String value) {
+    MyGlideDebug.info("LoginScreenState._validateUrl($value)");
 
     if (value.isEmpty) 
       return "Url moet ingevuld worden";
@@ -311,12 +347,17 @@ class LoginScreenState extends State<LoginScreen>
     if (regExp.allMatches(value).length < 2)
       return "Url adres is onjuist";
     
-
     return null;
   } 
   
   // Nu gaat het gebeuren, we gaan inloggen
   void _logMeIn() {
+    MyGlideDebug.info("LoginScreenState._logMeIn()");
+
+    // De gebruikersnaam demo, gaat naar demo mode. Bedoelt voor validatie door Apple. Validatie is nodig om app in app store te krijgen
+    if (_myUsername == "demo")
+      return _demo();
+
     if (this._formKey.currentState.validate()) {
       _formKey.currentState.save(); // sla input op in variablen
 
@@ -367,7 +408,8 @@ class LoginScreenState extends State<LoginScreen>
 
 // We maken geen verbinding met de server, maar gaan in demo mode
   void _demo() {
-
+    MyGlideDebug.info("LoginScreenState._demo()");
+    
     GUIHelper.demoDialog(context).then((gebruikersRol)
     {
       setState(() {

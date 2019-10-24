@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 // my glide utils
 import 'package:my_glide/utils/my_glide_const.dart';
+import 'package:my_glide/utils/debug.dart';
 
 // my glide data providers
 
@@ -43,6 +44,8 @@ class _MyGlideLogoState extends State<MyGlideLogo> with SingleTickerProviderStat
 
   @override
   void initState() {
+    MyGlideDebug.info("_MyGlideLogoState.initState()"); 
+
     super.initState();
     _iconAnimationController = AnimationController(
         vsync: this, duration: Duration(milliseconds: 500)
@@ -59,12 +62,16 @@ class _MyGlideLogoState extends State<MyGlideLogo> with SingleTickerProviderStat
 
   @override
   void dispose() {
+    MyGlideDebug.info("_MyGlideLogoState.dispose()"); 
+
     _iconAnimationController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    MyGlideDebug.info("_MyGlideLogoState.build(context)"); 
+
     return Container(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -85,6 +92,8 @@ class _MyGlideLogoState extends State<MyGlideLogo> with SingleTickerProviderStat
   }
 
   Widget _toonLabelInside() {
+    MyGlideDebug.info("_MyGlideLogoState._toonLabelInside()"); 
+
     if ((!widget.labelInside)  || (_iconAnimation.value < 1))
       return Container (height: 0, width: 0);
 
@@ -97,6 +106,8 @@ class _MyGlideLogoState extends State<MyGlideLogo> with SingleTickerProviderStat
   }
 
   Widget _toonLabelOnder() {
+    MyGlideDebug.info("_MyGlideLogoState._toonLabelOnder()"); 
+
     if ((widget.labelInside)  || (_iconAnimation.value < 1))
       return Container (height: 0, width: 0); 
     else 
@@ -104,6 +115,8 @@ class _MyGlideLogoState extends State<MyGlideLogo> with SingleTickerProviderStat
   }
 
   Widget _toonLabel() {
+    MyGlideDebug.info("_MyGlideLogoState._toonLabel()"); 
+
     if (!widget.showLabel) return Container (height: 0, width: 0);
 
     return 

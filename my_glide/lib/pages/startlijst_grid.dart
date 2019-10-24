@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 
 // my glide utils
 import 'package:my_glide/utils/my_glide_const.dart';
+import 'package:my_glide/utils/debug.dart';
 
 // my glide data providers
 
@@ -28,13 +29,15 @@ class StartLijstGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      
-    );
+    MyGlideDebug.info("StartLijstGrid.build(context)"); 
+
+    return Container();
   }
   
   // Toon de basis informatie 
   static Widget vluchtRegel(BuildContext context, Map vluchtData, int nr) { 
+    MyGlideDebug.info("StartLijstGrid.vluchtRegel(context. $vluchtData, $nr)"); 
+
     String datum = vluchtData['DATUM'].substring(8,10) + "-" + vluchtData['DATUM'].substring(5,7) + "-" + vluchtData['DATUM'].substring(0,4);
     
     String vlieger = (vluchtData['VLIEGERNAAM'] != null) ? vluchtData['VLIEGERNAAM']  : vluchtData['VLIEGERNAAM_LID'];
@@ -74,21 +77,21 @@ class StartLijstGrid extends StatelessWidget {
                   width:_breedteDatum, 
                   child: Text(
                   datum.substring(0,5),
-                  style: _gridTextStyle()
+                  style: GUIHelper.gridTextStyle()
                   )
                 ),
                 SizedBox(
                   width: _breedteStartTijd, 
                   child: Text(
                     vluchtData['STARTTIJD'] ?? ' ',
-                    style: _gridTextStyle(color: MyGlideConst.starttijdColor, weight: FontWeight.bold)
+                    style: GUIHelper.gridTextStyle(color: MyGlideConst.starttijdColor, weight: FontWeight.bold)
                   )
                 ),
                 SizedBox(
                   width:_breedteLandingsTijd, 
                   child: Text(
                     vluchtData['LANDINGSTIJD'] ?? ' ',
-                    style: _gridTextStyle(color: MyGlideConst.landingstijdColor, weight: FontWeight.bold)
+                    style: GUIHelper.gridTextStyle(color: MyGlideConst.landingstijdColor, weight: FontWeight.bold, underline: true)
                   )
                 ),
                 _toonVluchtDuur(vluchtData['DUUR']),
@@ -96,7 +99,7 @@ class StartLijstGrid extends StatelessWidget {
                   width: _breedteRegCall, 
                   child: Text(
                     vluchtData['REG_CALL'],
-                    style: _gridTextStyle()
+                    style: GUIHelper.gridTextStyle()
                   )
                 ),
                 _toonVlieger(vlieger),
@@ -120,7 +123,7 @@ class StartLijstGrid extends StatelessWidget {
           width: _breedteDuur, 
           child: Text(
             vliegtijd,
-            style: _gridTextStyle(weight: FontWeight.bold)
+            style: GUIHelper.gridTextStyle(weight: FontWeight.bold)
           )
         );
 
@@ -136,7 +139,7 @@ class StartLijstGrid extends StatelessWidget {
           width: _breedteVlieger, 
           child: Text(
             vliegerNaam,
-            style: _gridTextStyle()
+            style: GUIHelper.gridTextStyle()
           )
         );
 
@@ -152,18 +155,10 @@ class StartLijstGrid extends StatelessWidget {
           width: _breedteInzittende, 
           child: Text(
             inzittendeNaam,
-            style: _gridTextStyle()
+            style: GUIHelper.gridTextStyle()
           )
         );
 
     return Container(width: 0, height: 0);
   }
-
-  static TextStyle _gridTextStyle({color = MyGlideConst.gridTextColor, weight = FontWeight.normal}) {
-    return TextStyle (
-      color: color,
-      fontWeight: weight,
-      fontSize: MyGlideConst.gridTextNormal
-    );
-  }    
 }

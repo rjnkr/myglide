@@ -9,6 +9,7 @@ import 'package:connectivity/connectivity.dart';
 import 'package:my_glide/utils/my_glide_const.dart';
 import 'package:my_glide/utils/my_navigation.dart';
 import 'package:my_glide/utils/storage.dart';
+import 'package:my_glide/utils/debug.dart';
 
 // my glide data providers
 import 'package:my_glide/data/session.dart';
@@ -31,15 +32,17 @@ class _HoofdMenuState extends State<HoofdMenu> {
 
   @override
   void initState() {
+    MyGlideDebug.info("_HoofdMenuState.initState()");
     super.initState();
 
     // check iedere seconde of er een netwerk is
     _checkConnectionState();
-    _statusUpdateTimer = Timer.periodic(Duration(seconds: 1), (Timer t) => _checkConnectionState());   
+    _statusUpdateTimer = Timer.periodic(Duration(seconds: 1), (Timer t) => _checkConnectionState()); 
   }
 
   @override
   void dispose() {
+    MyGlideDebug.info("_HoofdMenuState.dispose()");    
     super.dispose();
 
     _statusUpdateTimer.cancel();    // Stop de timer, de class wordt namelijk verwijderd
@@ -47,6 +50,8 @@ class _HoofdMenuState extends State<HoofdMenu> {
 
   @override
   Widget build(BuildContext context) {
+    MyGlideDebug.info("_HoofdMenuState.build(context)");  
+
     return
       Theme(
         data: ThemeData(
@@ -72,12 +77,11 @@ class _HoofdMenuState extends State<HoofdMenu> {
                           padding: EdgeInsets.all(0),
                           child: Column (
                             children: <Widget>[
-                              
                               MyGlideLogo(
                                 size: 200,
                                 labelTextSize: MyGlideConst.labelSizeMedium,
                                 labelText: serverSession.login.isDDWV ? "DDWV" : "GeZC",
-                              ),
+                              ), 
                               _toonNaam(context),
                             ],
                           ),
@@ -88,6 +92,8 @@ class _HoofdMenuState extends State<HoofdMenu> {
                       ),
                       _aanmeldenMenuItem(),
                       _aanwezigMenuItem(),
+                      _ledenLijst(),
+                      _vliegtuigen(),
                       ListTile(
                         title: Text("Mijn logboek",
                           style: TextStyle(
@@ -97,7 +103,7 @@ class _HoofdMenuState extends State<HoofdMenu> {
                         trailing: Icon(Icons.assignment_ind, color: MyGlideConst.frontColor),
                         onTap: (){MyNavigator.goToMijnLogboek(context);},
                       ),
-                      _vliegtuigLogboekMenuItem(),
+                      _meldingMenuItem(),
                       ListTile(
                         title: Text("Instellingen", 
                           style: TextStyle(color: MyGlideConst.frontColor)
@@ -105,30 +111,9 @@ class _HoofdMenuState extends State<HoofdMenu> {
                         trailing: Icon(Icons.settings, color: MyGlideConst.frontColor),
                         onTap: (){MyNavigator.goToSettings(context);},
                       ),
-                      Divider(color: MyGlideConst.frontColor, height: 6.0),
-                      (serverSession.isIngelogd || serverSession.isDemo) ?
-                        ListTile(
-                          title: Text("Uitloggen",
-                          style: TextStyle(color: MyGlideConst.frontColor)
-                          ),
-                          trailing: Icon(Icons.exit_to_app, color: MyGlideConst.frontColor),
-                          onTap: () {
-                            serverSession.login.logout();
-                            MyNavigator.goToLogin(context);
-                            Storage.clear();
-                          }
-                        )
-                      :
-                        ListTile(
-                          title: Text("Inloggen",
-                          style: TextStyle(color: MyGlideConst.frontColor)
-                          ),
-                          trailing: Icon(Icons.exit_to_app, color: MyGlideConst.frontColor),
-                          onTap: () {
-                            MyNavigator.goToLogin(context);
-                          }
-                        ),
-                      Divider(color: MyGlideConst.frontColor, height: 6.0),
+                      _loginMenuItem()
+                     
+                      
                       ],
                     ),
                     GUIHelper.demoOverlay(context),
@@ -139,8 +124,47 @@ class _HoofdMenuState extends State<HoofdMenu> {
       );
   } 
 
+  // Ton login of logout menu item
+  Widget _loginMenuItem() {
+
+    // als er geen netwerk is kunnen we niet inloggen, maar wel uitloggen (bijv om naar demo mode te gaan)
+    if ((_netwerkStatus == ConnectivityResult.none) && (!serverSession.isIngelogd))   {
+      return Container(width: 0, height: 0);
+    }
+
+// Divider(color: MyGlideConst.frontColor, height: 6.0),
+
+    // als we ingelogd zijn, menu item voor uitloggen
+    if (serverSession.isIngelogd || serverSession.isDemo) {
+      return        
+        ListTile(
+          title: Text("Uitloggen",
+          style: TextStyle(color: MyGlideConst.frontColor)
+          ),
+          trailing: Icon(Icons.exit_to_app, color: MyGlideConst.frontColor),
+          onTap: () {
+            serverSession.login.logout();
+            MyNavigator.goToLogin(context);
+            Storage.clear();
+          }
+        );
+    }
+
+    return
+      ListTile(
+        title: Text("Inloggen",
+        style: TextStyle(color: MyGlideConst.frontColor)
+        ),
+        trailing: Icon(Icons.exit_to_app, color: MyGlideConst.frontColor),
+        onTap: () {
+          MyNavigator.goToLogin(context);
+        }
+      );
+  }
+
   // menu item om te tonen wie er vandaag aanwezig zijn
   Widget _aanwezigMenuItem() {
+    MyGlideDebug.info("_HoofdMenuState._aanwezigMenuItem()");  
 
     // als er geen netwerk is kunnen we niets tonen, behalve in demo mode. Want dan is de data lokaal beschikbaar
     if ((_netwerkStatus == ConnectivityResult.none) && (!serverSession.isDemo)) 
@@ -164,32 +188,9 @@ class _HoofdMenuState extends State<HoofdMenu> {
     return Container(width: 0, height: 0);
   } 
 
-  // menu item om vliegtuig logboeken te tonen
-  Widget _vliegtuigLogboekMenuItem() {
-
-    // als er geen netwerk is kunnen we niets tonen, behalve in demo mode. Want dan is de data lokaal beschikbaar
-    if ((_netwerkStatus == ConnectivityResult.none) && (!serverSession.isDemo)) 
-      return Container(width: 0, height: 0);
-
-
-    if ((serverSession.login.isClubVlieger) ||        // aanmelden is alleen voor leden en donateurs
-        (serverSession.login.isLocal))                // lokale gebruiker mag wel vliegtuig logboeken zien        
-      return                   
-        ListTile(
-          title: Text("Vliegtuig logboek",
-            style: TextStyle(
-              color: MyGlideConst.frontColor,
-            )
-          ),
-          trailing: Icon(Icons.airplanemode_active, color: MyGlideConst.frontColor),
-          onTap: (){MyNavigator.goToVliegtuigen(context);}
-        );
-
-    return Container(width: 0, height: 0);
-  }
-
   // menu item om de gebruiker voor de vliegdag aan te melden
   Widget _aanmeldenMenuItem() {
+    MyGlideDebug.info("_HoofdMenuState._aanmeldenMenuItem()");  
 
     // als er geen netwerk is kunnen we niets tonen, behalve in demo mode. Want dan is de data lokaal beschikbaar
     if ((_netwerkStatus == ConnectivityResult.none) && (!serverSession.isDemo))   
@@ -209,9 +210,71 @@ class _HoofdMenuState extends State<HoofdMenu> {
       );     
   }
 
+  // menu item om de gebruiker de leden lijst te laten zien
+  Widget _ledenLijst() {
+    MyGlideDebug.info("_HoofdMenuState._ledenLijst()");  
+
+    // als er geen netwerk is kunnen we niets tonen, behalve in demo mode. Want dan is de data lokaal beschikbaar
+    if ((_netwerkStatus == ConnectivityResult.none) && (!serverSession.isDemo))   
+      return Container(width: 0, height: 0);
+
+
+    if (!serverSession.login.isClubVlieger)            // ledenlijst is alleen voor leden en donateurs
+        return Container(width: 0, height: 0);       
+
+    return 
+      ListTile(
+        title: Text("Ledenlijst",
+          style: TextStyle(color: MyGlideConst.frontColor)
+        ),
+        trailing: Icon(Icons.people, color: MyGlideConst.frontColor),
+        onTap: (){MyNavigator.goToLedenLijst(context);},
+      );     
+  }
+
+  // menu item voorvliegtuigen
+  Widget _vliegtuigen() {
+    MyGlideDebug.info("_HoofdMenuState._vliegtuigen()");  
+
+    // als er geen netwerk is kunnen we niets tonen, behalve in demo mode. Want dan is de data lokaal beschikbaar
+    if ((_netwerkStatus == ConnectivityResult.none) && (!serverSession.isDemo))   
+      return Container(width: 0, height: 0);
+
+    if (!serverSession.login.isClubVlieger)            // vliegtuigen zijn alleen voor leden en donateurs
+        return Container(width: 0, height: 0);       
+
+    return 
+      ListTile(
+        title: Text("Vliegtuigen",
+          style: TextStyle(color: MyGlideConst.frontColor)
+        ),
+        trailing: Icon(Icons.airplanemode_active, color: MyGlideConst.frontColor),
+        onTap: (){MyNavigator.goToVliegtuigen(context);},
+      );     
+  }  
+
+  Widget _meldingMenuItem() {
+    MyGlideDebug.info("_HoofdMenuState._ledenLijst()");  
+
+    // als er geen netwerk is kunnen we niets tonen, behalve in demo mode. Want dan is de data lokaal beschikbaar
+    if (_netwerkStatus == ConnectivityResult.none)   
+      return Container(width: 0, height: 0);    
+
+    return 
+      ListTile(
+        title: Text("Melding defect / incident", 
+          style: TextStyle(color: MyGlideConst.frontColor)
+        ),
+        trailing: Icon(Icons.message, color: MyGlideConst.frontColor),
+        onTap: (){MyNavigator.goToMelden(context);},
+      );
+  }
+
     // controleer of apparaat nog netwerk verbinding heeft
   void _checkConnectionState()
   {
+    MyGlideDebug.info("_HoofdMenuState._checkConnectionState()");  
+
     Connectivity().checkConnectivity().then((result)
     {
       if (_netwerkStatus != result)
@@ -223,6 +286,8 @@ class _HoofdMenuState extends State<HoofdMenu> {
 
   Widget _toonNaam(BuildContext context)
   {
+    MyGlideDebug.info("_HoofdMenuState._toonNaam(context)");  
+
     String naam = "";
 
     if (serverSession.login.userInfo != null)

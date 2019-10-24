@@ -8,6 +8,7 @@ import "package:http/http.dart" as http;
 
 // my glide utils
 import "package:my_glide/utils/storage.dart";
+import 'package:my_glide/utils/debug.dart';
 
 // my glide data providers
 import "package:my_glide/data/session.dart";
@@ -19,6 +20,9 @@ class Startlijst
 {  
   // Haal de vluchten op van de server
   static Future<List> getLogboek({force = false}) async {
+    String function = "Startlijst.getLogboek";
+    MyGlideDebug.info("$function($force)");
+
     Map parsed;
 
     try {
@@ -33,6 +37,10 @@ class Startlijst
       else
       {
         String url = await serverSession.getLastUrl();
+
+        if (url == null)    // URL is nog niet bekend
+          return List();  
+
         String request = "$url/php/main.php?Action=Startlijst.LogboekJSON&start=0&limit=$maxItems";
 
         ConnectivityResult connected = await Connectivity().checkConnectivity();
@@ -48,6 +56,8 @@ class Startlijst
             Storage.setString("startlijst:getLogboek", response.body);            // stop json in cache
           }
           catch(e) {
+            MyGlideDebug.error("$function:" + e.toString());
+
             String rawJSON = await Storage.getString("startlijst:getLogboek", defaultValue: """{"total":"0","results":[]}""");
             parsed = json.decode(rawJSON);                                        // netwerk error gebruik cache            
           }
@@ -60,17 +70,23 @@ class Startlijst
       if (results.length > maxItems)
         results.removeRange(maxItems-1, results.length-1);
 
+      MyGlideDebug.trace("$function: return " + results.toString());
       return results;
     }
     catch (e)
     {
-      print (e);
+      MyGlideDebug.error("$function:" + e.toString());
     }
+
+    MyGlideDebug.trace("$function: return List()");
     return List();          // exception geeft leeg object terug
   }
 
   // ophalen van het vliegtuig logboek. vliegtuigID bevat ID van vliegtuig uit ref_vliegtuigen
   static Future<List> getVliegtuigLogboek(String vliegtuigID) async {
+    String function = "Startlijst.getVliegtuigLogboek";
+    MyGlideDebug.info("$function($vliegtuigID)");
+
     try {
       List parsed;
 
@@ -87,17 +103,22 @@ class Startlijst
         http.Response response = await serverSession.get(request);
         parsed = json.decode(response.body);
       }
+      MyGlideDebug.trace("$function: return " + parsed.toString());
       return parsed;
     }
     catch (e)
     {
-      print (e);
+      MyGlideDebug.error("$function:" + e.toString());
     }
+    MyGlideDebug.trace("$function: return List()");
     return List();          // exception geeft leeg object terug
   }
 
   // ophalen van de start van een speciek lid
   static Future<List> getStartsVandaag(String lidID) async {
+    String function = "Startlijst.getStartsVandaag";
+    MyGlideDebug.info("$function($lidID)");
+
     try {
       Map parsed;
 
@@ -115,17 +136,22 @@ class Startlijst
         parsed = json.decode(response.body);
       }
       final List results = (parsed["results"]);
+      MyGlideDebug.trace("$function: return " + results.toString());
       return results;
     }
     catch (e)
     {
-      print (e);
+      MyGlideDebug.error("$function:" + e.toString());
     }
+    MyGlideDebug.trace("$function: return List()");
     return List();          // exception geeft leeg object terug
   }  
 
   // ophalen van de start van een speciek lid
   static Future<Map> getRecency(String lidID) async {
+    String function = "Startlijst.getRecency";
+    MyGlideDebug.info("$function($lidID)");
+
     try {
       Map parsed;
 
@@ -142,46 +168,80 @@ class Startlijst
         http.Response response = await serverSession.get(request);
         parsed = json.decode(response.body);
       }
+      MyGlideDebug.trace("$function: return " + parsed.toString());
       return parsed;
     }
     catch (e)
     {
-      print (e);
+      MyGlideDebug.error("$function:" + e.toString());
     }
+    MyGlideDebug.trace("$function: return List()");
     return Map();          // exception geeft leeg object terug
   }  
 
   // Opslaan van de landings tijd. id bevat het ID van de start uit oper_startlijst
   static Future<bool> opslaanLandingsTijd(String id, String landingsTijd) async {
+    String function = "Startlijst.opslaanLandingsTijd";
+    MyGlideDebug.info("$function($id, $landingsTijd)");
+
     try {
       if (serverSession.isDemo)  return true;
 
       String url = await serverSession.getLastUrl();
       String post = "$url/php/main.php?Action=Startlijst.SaveLandingsTijd";
       await serverSession.post(post, {"ID": id, "LANDINGSTIJD": landingsTijd });
+      MyGlideDebug.trace("$function: return true");
       return true;
     }
     catch (e)
     {
-      print (e);
+      MyGlideDebug.error("$function:" + e.toString());
     }
+    MyGlideDebug.trace("$function: return false");
     return false;  
   }
 
+  // Opslaan van de start tijd. id bevat het ID van de start uit oper_startlijst
+  static Future<bool> opslaanStartTijd(String id, String startTijd) async {
+    String function = "Startlijst.opslaanStartTijd";
+    MyGlideDebug.info("$function($id, $startTijd)");
+
+    try {
+      if (serverSession.isDemo)  return true;
+
+      String url = await serverSession.getLastUrl();
+      String post = "$url/php/main.php?Action=Startlijst.SaveStartTijd";
+      await serverSession.post(post, {"ID": id, "STARTTIJD": startTijd });
+      MyGlideDebug.trace("$function: return true");
+      return true;
+    }
+    catch (e)
+    {
+      MyGlideDebug.error("$function:" + e.toString());
+    }
+    MyGlideDebug.trace("$function: return false");
+    return false;  
+  }  
+
   // Verwijderen van een start in het logboek
   static Future<bool> verwijderVlucht(String id) async {
+    String function = "Startlijst.verwijderVlucht";
+    MyGlideDebug.info("$function($id)");
+
     try {
       if (serverSession.isDemo)  return true;
       
       String url = await serverSession.getLastUrl();
       String post = "$url/php/main.php?Action=Startlijst.VerwijderObject";
       await serverSession.post(post, {"ID": id });
+      MyGlideDebug.trace("$function: return true");
       return true;
     }
     catch (e)
     {
-      print (e);
+      MyGlideDebug.error("$function:" + e.toString());
     }
+    MyGlideDebug.trace("$function: return false");
     return false;  
   }                                                   
 }

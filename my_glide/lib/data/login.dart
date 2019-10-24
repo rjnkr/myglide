@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 
 // my glide utils
 import 'package:my_glide/utils/storage.dart';
+import 'package:my_glide/utils/debug.dart';
 
 // my glide data providers
 import 'package:my_glide/data/session.dart';
@@ -35,48 +36,64 @@ class Login
 
   Login ()
   {
+    MyGlideDebug.info("Login()");
+
     // ophalen van laatst gebruikte credentials (vullen lastUsername, lastPassword, lastUrl)
     _getCredentials();
   }
 
   Future<bool> login(String username, String password, String url) async
   {
-      serverSession.setCredentials(username, password);
-      bool succeeded = await getUserInfo(url: url);
+    String function = "Login.login";
+    MyGlideDebug.info("$function($username, $password, $url)");
 
-      if (succeeded) {
-        serverSession.storeUrl(url);            // set url for all new session
-        _storeCredentials(username, password);  // save credentials as well
-      }
-      else
-      {
-        serverSession.clearCredentials();       // het is mislukt dus alles schoonpoetsen
-      }
-      return succeeded;
+    serverSession.setCredentials(username, password);
+    bool succeeded = await getUserInfo(url: url);
+
+    if (succeeded) {
+      serverSession.storeUrl(url);      // set url for all new session
+      _storeCredentials(username, password);  // save credentials as well
+    }
+    else
+    {
+      serverSession.clearCredentials();       // het is mislukt dus alles schoonpoetsen
+    }
+    MyGlideDebug.trace("$function: return $succeeded");
+    return succeeded;
   }
 
   // login with the last known credentials
   Future<bool> lastLogin() async
   {
+    String function = "Login.lastLogin";
+    MyGlideDebug.info("$function()");
+
     await _getCredentials();
     if ((_lastUsername == null) || (_lastPassword == null))
       return false;
 
     String url = await serverSession.getLastUrl();  
-    return login(_lastUsername, _lastPassword, url);
+    bool succeeded = await login(_lastUsername, _lastPassword, url);
+    MyGlideDebug.trace("$function: return $succeeded");
+    return succeeded;
   }
 
   void logout()
   {
+    MyGlideDebug.info("Login.logout()");
+
     // uitgelogd dus UserInfo niet meer verversen
     if (_userInfoRefreshTimer != null)  _userInfoRefreshTimer.cancel();       
-
+                 
     _clearCredentials();
     serverSession = new Session();    // Gooi alles uit het geheugen weg
   }
 
   // Haal de info van de ingelogde gebruiker op. username is de gebruikte inlognaam
   Future<bool> getUserInfo({String url}) async {
+    String function = "Login.getUserInfo";
+    MyGlideDebug.info("$function($url)");
+
     try {
       Map parsed;
 
@@ -112,20 +129,23 @@ class Login
       _lastUserInfoOpgehaald = DateTime.now();
       _setTimerForNextUserInfo();
 
-      serverSession.ophalenZonOpkomstOndergang();
-      serverSession.getAutoAanmelden();
+      serverSession.ophalenZonOpkomstOndergang(url);
+      serverSession.getAutoAanmelden(url);
 
+      MyGlideDebug.trace("$function: return true");
       return true;
     }
     catch (e)
     {
-      print (e);
+      MyGlideDebug.error("$function:" + e.toString());
     }
     return false;
   }
 
   // UserInfo bevat dynamische informatie, moet dus regelmatig geupdate worden
   void _setTimerForNextUserInfo() {
+    MyGlideDebug.info("Login._setTimerForNextUserInfo()");
+
     if (_userInfoRefreshTimer != null)  _userInfoRefreshTimer.cancel();
 
     _userInfoRefreshTimer = Timer.periodic(Duration(hours: 1), (Timer t) {
@@ -145,14 +165,18 @@ class Login
   // Opslaan van de informatie zodat het de volgende keer gebruikt kan worden bij opstarten
   void _storeCredentials(String username, String password)
   {
-      Storage.setString ("username", username);
-      Storage.setString ("password", password);
+    MyGlideDebug.info("Login._storeCredentials($username, $password)");
 
-      _getCredentials();
+    Storage.setString ("username", username);
+    Storage.setString ("password", password);
+
+    _getCredentials();
   }
 
   Future<void> _getCredentials() async
   {
+    MyGlideDebug.info("Login._getCredentials()");
+
     // de gegevens zijn opgeslagen op het device
     _lastUsername = await Storage.getString('username');
     _lastPassword = await Storage.getString('password'); 
@@ -160,17 +184,26 @@ class Login
 
   // Maak gebruikersnaam ook beschikbaar voor andere classes
   String getLastUsername() {
+    String function = "Login.getLastUsername";
+    MyGlideDebug.info("$function()");
+    MyGlideDebug.trace("$function: return $_lastUsername");
+
     return _lastUsername;
   }
 
     // Maak password ook beschikbaar voor andere classes
   String getLastPassword() {
+    String function = "Login.getLastPassword";
+    MyGlideDebug.info("$function()");
+    MyGlideDebug.trace("$function: return $_lastPassword");
+
     return _lastPassword;
   }
 
   // delete information from device
   void _clearCredentials()
   {
+    MyGlideDebug.info("Login._clearCredentials()");
 
     Storage.remove("username");
     Storage.remove("password");
@@ -182,13 +215,16 @@ class Login
   // We are in demo mode
   Future<void> demo({bool ddwv = false, bool lid = false, bool startleider = false, bool instructeur = false}) async
   {
-      await serverSession.storeUrl("demo");            // set url for all new session
-      await getUserInfo();
+    MyGlideDebug.info("Login.demo($ddwv, $lid, $startleider, $instructeur)");
 
-      magSchrijven    = (startleider || instructeur);
-      isStartleider   = startleider;
-      isInstructeur   = instructeur;                      
-      isClubVlieger   = lid;
-      isDDWV          = ddwv;
+    serverSession.isDemo = true;
+    await serverSession.storeUrl("demo");    
+    await getUserInfo();
+
+    magSchrijven    = (startleider || instructeur);
+    isStartleider   = startleider;
+    isInstructeur   = instructeur;                      
+    isClubVlieger   = lid;
+    isDDWV          = ddwv;
   }
 }

@@ -7,7 +7,7 @@ description: Cross platform (iOS / android) app voor start admin, en meer.......
 # Both the version and the builder number may be overridden in flutter
 # build by specifying --build-name and --build-number, respectively.
 # Read more about versioning at semver.org.
-version: 1.1.0+1
+version: 1.3.0+3107
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -30,7 +30,7 @@ dependencies:
   connectivity: ^0.3.2
 
   # store data locally on device
-  shared_preferences: ^0.4.3
+  shared_preferences: ^0.5.3+4
 
   # menu per record
   flutter_slidable: "^0.4.9"
@@ -53,10 +53,20 @@ dependencies:
   url_launcher: ^4.0.3
 
   #Mailer with HTML support
-  flutter_mailer: ^0.3.0
+  flutter_mailer: ^0.4.0
 
   #GPS locatie
   geolocator: '^3.0.1'
+
+  #Shrink text
+  auto_size_text: ^2.0.2+1
+
+  # avatars worden in cache gezet
+  cached_network_image: ^1.1.1
+
+  # toon HTML pagina
+  flutter_html: ^0.10.4
+
 
 dev_dependencies:
   flutter_test:
@@ -84,8 +94,17 @@ flutter:
   - assets/images/gezc_logo_transp.png
   - assets/images/gezc_geel-blauw.png
   - assets/images/demo_marker.png
+  - assets/images/no_avatar.png
+  - assets/images/communicatie.png
+  - assets/images/whatsapp.png
+  - assets/images/chute.png
+  - assets/images/rotate_to_portrait.png
 
+  - assets/incident formulier.html
+  
   - assets/demo/Aanwezig/LedenAanwezigJSON.json
+
+  - assets/demo/Types/TypesJSON_4.json
 
   - assets/demo/Login/getUserInfoJSON.json
 
@@ -121,6 +140,21 @@ flutter:
   - assets/demo/Startlijst/VliegtuigLogboekJSON_604.json
 
   - assets/demo/Vliegtuigen/GetClubkistenJSON.json
+  - assets/demo/Vliegtuigen/GetVliegtuigenJSON.json
+
+  - assets/demo/Leden/LedenJSON.json
+
+  - assets/demo/Leden/avatars/truus_de_mier.jpg
+  - assets/demo/Leden/avatars/bor_de_wolf.png
+  - assets/demo/Leden/avatars/meneer_de_uil.jpg
+  - assets/demo/Leden/avatars/zoef_de_haas.png
+  - assets/demo/Leden/avatars/juffrouw_ooievaar.jpg
+  - assets/demo/Leden/avatars/lowieke_de_vos.png
+  - assets/demo/Leden/avatars/momfer_de_mol.png
+  - assets/demo/Leden/avatars/gerrit_de_postduif.png
+  - assets/demo/Leden/avatars/isadora_paradijsvogel.png
+  - assets/demo/Leden/avatars/meindert_het_paard.jpg
+  - assets/demo/Leden/avatars/willem.png
 
   #  - images/a_dot_ham.jpeg
 

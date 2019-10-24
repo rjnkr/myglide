@@ -1,0 +1,62 @@
+[
+    {
+       "ID":"406",
+       "TYPEGROUP_ID":"4",
+       "CODE":"ASK21",
+       "OMSCHRIJVING":"ASK 21",
+       "VERWIJDERD":"0",
+       "SORTEER_VOLGORDE":"1",
+       "EXT_REF":null,
+       "LAATSTE_AANPASSING":"2019-01-04 23:37:17"
+    },
+    {
+       "ID":"402",
+       "TYPEGROUP_ID":"4",
+       "CODE":"LS4",
+       "OMSCHRIJVING":"LS 4",
+       "VERWIJDERD":"0",
+       "SORTEER_VOLGORDE":"3",
+       "EXT_REF":null,
+       "LAATSTE_AANPASSING":"2019-01-04 23:37:30"
+    },
+    {
+       "ID":"401",
+       "TYPEGROUP_ID":"4",
+       "CODE":"DIS",
+       "OMSCHRIJVING":"Discus CS",
+       "VERWIJDERD":"0",
+       "SORTEER_VOLGORDE":"4",
+       "EXT_REF":null,
+       "LAATSTE_AANPASSING":"2019-01-04 23:37:38"
+    },
+    {
+       "ID":"404",
+       "TYPEGROUP_ID":"4",
+       "CODE":"LS8",
+       "OMSCHRIJVING":"LS8",
+       "VERWIJDERD":"0",
+       "SORTEER_VOLGORDE":"5",
+       "EXT_REF":null,
+       "LAATSTE_AANPASSING":"2019-01-04 23:37:45"
+    },
+    {
+       "ID":"408",
+       "TYPEGROUP_ID":"4",
+       "CODE":"ASG29",
+       "OMSCHRIJVING":"ASG-29",
+       "VERWIJDERD":"0",
+       "SORTEER_VOLGORDE":"6",
+       "EXT_REF":null,
+       "LAATSTE_AANPASSING":"2019-01-04 23:37:51"
+    },
+    {
+       "ID":"405",
+       "TYPEGROUP_ID":"4",
+       "CODE":"Duo",
+       "OMSCHRIJVING":"Duo Discus",
+       "VERWIJDERD":"0",
+       "SORTEER_VOLGORDE":"7",
+       "EXT_REF":null,
+       "LAATSTE_AANPASSING":"2019-01-04 23:37:55"
+    }
+ ]

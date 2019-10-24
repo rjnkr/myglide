@@ -7,6 +7,7 @@ import 'package:numberpicker/numberpicker.dart';
 // my glide utils
 import 'package:my_glide/utils/my_glide_const.dart';
 import 'package:my_glide/utils/storage.dart';
+import 'package:my_glide/utils/debug.dart';
 
 // my glide own widgets
 import 'package:my_glide/widget/hoofd_menu.dart';
@@ -22,9 +23,13 @@ class SettingsScreenState extends State<SettingsScreen> {
   int _nrLogboekItems;
   bool _autoLoadLogboek;
   bool _autoAanmelden;
+  bool _priveVlieger;
+  bool _toonDDWV;
 
   @override
   void initState() {
+    MyGlideDebug.info("SettingsScreenState.initState()");
+
     super.initState();  
     
       Storage.getBool('autoAanmelden', defaultValue: true).then((autoAanmelden) { 
@@ -35,11 +40,19 @@ class SettingsScreenState extends State<SettingsScreen> {
 
       Storage.getInt('nrLogboekItems', defaultValue: 50).then ((logboekItems) {
         setState(() { _nrLogboekItems = logboekItems; }); });
+
+      Storage.getBool('toonDDWV', defaultValue: false).then((toonDDWV) { 
+        setState(() { _toonDDWV = toonDDWV; }); });  
+
+      Storage.getBool('priveVlieger', defaultValue: false).then((priveVlieger) { 
+        setState(() { _priveVlieger = priveVlieger; }); });  
   }
 
 
   @override
   Widget build(BuildContext context) {
+    MyGlideDebug.info("SettingsScreenState.build(context)");
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: MyGlideConst.appBarBackground(),
@@ -56,6 +69,26 @@ class SettingsScreenState extends State<SettingsScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
+              Row(
+                children: <Widget>[
+                  SizedBox (
+                    width: 190,
+                    child: Text("DDWV'ers in ledenlijst")
+                  ),
+                  Checkbox(
+                    activeColor: MyGlideConst.frontColor,
+                    value: _toonDDWV ?? false,
+                    tristate: false,
+                    onChanged: (bool value)
+                    {
+                      setState(() {
+                        _toonDDWV = value;
+                        Storage.setBool('toonDDWV', value);        
+                      });
+                    },
+                  ),
+                ]
+              ),
               Row(
                 children: <Widget>[
                   SizedBox (
@@ -95,7 +128,27 @@ class SettingsScreenState extends State<SettingsScreen> {
                     },
                   )
                 ],
-              ),              
+              ), 
+              Row(
+                children: <Widget>[
+                  SizedBox (
+                    width: 190,
+                    child: Text("Ik ben een prive vlieger")
+                  ),
+                  Checkbox(
+                    activeColor: MyGlideConst.frontColor,
+                    value: _priveVlieger ?? false,
+                    tristate: false,
+                    onChanged: (bool value)
+                    {
+                      setState(() {
+                        _priveVlieger = value;
+                        Storage.setBool('priveVlieger', value);        
+                      });
+                    },
+                  )
+                ],
+              ),
               Row(
                 children: <Widget>[
                   SizedBox (
@@ -122,6 +175,8 @@ class SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _showNrLogboekItemsDialog() {
+    MyGlideDebug.info("SettingsScreenState._showNrLogboekItemsDialog()");
+
     showDialog<int>(
       context: context,
       builder: (BuildContext context) {

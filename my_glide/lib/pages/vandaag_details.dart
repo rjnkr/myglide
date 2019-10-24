@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 
 // my glide utils
 import 'package:my_glide/utils/my_glide_const.dart';
+import 'package:my_glide/utils/debug.dart';
 
 // my glide data providers
 import 'package:my_glide/data/startlijst.dart';
@@ -27,7 +28,6 @@ class AanwezigDetailsScreen extends StatefulWidget {
   _AanwezigDetailsScreenState createState() => _AanwezigDetailsScreenState();
 }
 
-
 class _AanwezigDetailsScreenState extends State<AanwezigDetailsScreen> {
   String _vertoondLidID;
   List _startsVandaag;
@@ -35,11 +35,14 @@ class _AanwezigDetailsScreenState extends State<AanwezigDetailsScreen> {
 
   @override
   void initState() {
+    MyGlideDebug.info("_AanwezigDetailsScreenState.initState()"); 
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    MyGlideDebug.info("_AanwezigDetailsScreenState.build(context)"); 
 
     if (widget.aanwezig == null)
       return Container(width: 0, height: 0);
@@ -67,8 +70,12 @@ class _AanwezigDetailsScreenState extends State<AanwezigDetailsScreen> {
     if (_vertoondLidID != widget.aanwezig['LID_ID']) 
       _vertoondLidID = widget.aanwezig['LID_ID'];
 
+    int aantalTabs = 2;
+    if ((serverSession.login.isInstructeur) || (serverSession.login.isBeheerder))
+      aantalTabs = 3;
+
     return DefaultTabController(
-      length: (serverSession.login.isInstructeur) ? 3 : 2,
+      length: aantalTabs,
       child: 
         Scaffold(
         appBar: AppBar(
@@ -86,6 +93,8 @@ class _AanwezigDetailsScreenState extends State<AanwezigDetailsScreen> {
   }
 
   Widget _toonTabbladen() {
+    MyGlideDebug.info("_AanwezigDetailsScreenState._toonTabbladen()"); 
+
     List<Widget> tabs = List<Widget>();
 
     if ((serverSession.login.isInstructeur) || (serverSession.login.isBeheerder))
@@ -102,6 +111,8 @@ class _AanwezigDetailsScreenState extends State<AanwezigDetailsScreen> {
   }
 
   Widget _tabbladInhoud() {
+    MyGlideDebug.info("_AanwezigDetailsScreenState._tabbladInhoud()"); 
+
     List<Widget> pages = List<Widget>();
 
     if ((serverSession.login.isInstructeur) || (serverSession.login.isBeheerder))
@@ -115,6 +126,8 @@ class _AanwezigDetailsScreenState extends State<AanwezigDetailsScreen> {
 
   // Samenvatting voor deze vlieger, voor vandaag. Eigenlijk meer details als zichtbaar op eerste blad
   Widget _samenvatting() {
+    MyGlideDebug.info("_AanwezigDetailsScreenState._samenvatting()"); 
+
     return
       Padding(
           padding: EdgeInsets.all(20),
@@ -123,7 +136,9 @@ class _AanwezigDetailsScreenState extends State<AanwezigDetailsScreen> {
               Expanded(
                 flex: 3,
                 child :ListView(
-                    children: <Widget>[
+                    children: <Widget>[          
+                      GUIHelper.showDetailsField("Dag status", _vliegStatus()),
+                      Divider(),
                       GUIHelper.showDetailsField("Overland", widget.aanwezig['VOORKEUR_REGCALL'] ?? ' '),
                       GUIHelper.showDetailsField("Voorkeur types", widget.aanwezig['VOORKEUR_TYPE'] ?? ' ', titleTop: true),
                       Divider(),
@@ -147,6 +162,8 @@ class _AanwezigDetailsScreenState extends State<AanwezigDetailsScreen> {
   }
 
   Widget _toonRecency() {
+    MyGlideDebug.info("_AanwezigDetailsScreenState._toonRecency()"); 
+
     if (_recency == null)  return Container(width: 0, height: 0);
     
     return
@@ -170,7 +187,7 @@ class _AanwezigDetailsScreenState extends State<AanwezigDetailsScreen> {
                     Padding(padding: EdgeInsets.all(5)),
                     GUIHelper.showDetailsField(DateTime.now().year.toString(), "${_recency['startsDitJaar']} starts, ${_recency['urenDitJaar']} uren"),
                     Padding(padding: EdgeInsets.all(5)),
-                    GUIHelper.showDetailsField((DateTime.now().year-1).toString(), "${_recency['startsVorigJaar']} starts, ${_recency['urenVorigJaar']} uren"),
+                    GUIHelper.showDetailsField((DateTime.now().year-1).toString(), "${_recency['startsVorigJaar']} starts, ${_recency['urenVorigJaar']} uren")
                   ]
                 )
               )
@@ -181,6 +198,8 @@ class _AanwezigDetailsScreenState extends State<AanwezigDetailsScreen> {
   }
 
   Widget _barometerStatus() {
+    MyGlideDebug.info("_AanwezigDetailsScreenState._barometerStatus()"); 
+
     Color statusKleur;
     Color textKleur;
     String tekst;
@@ -237,5 +256,35 @@ class _AanwezigDetailsScreenState extends State<AanwezigDetailsScreen> {
           )
         ]
       );
+  }
+
+  String _vliegStatus() {
+    if (_startsVandaag == null)
+      return "Aanwezig";
+
+    if (_startsVandaag.length == 0)
+      return "Aanwezig";
+
+    bool ingedeeld = false;
+    bool vliegt = false;   
+
+    _startsVandaag.forEach((vlucht)
+    {
+      if (vlucht['STARTTIJD'] == null) {
+        ingedeeld = true;
+      }
+
+      if ((vlucht['STARTTIJD'] != null) && (vlucht['LANDINGSTIJD'] == null)) {
+        vliegt = true;
+      }
+    });
+
+    if (vliegt)
+      return "Vliegt";
+
+    if (ingedeeld)
+      return "Ingedeeld";
+
+    return "Geland";    
   }
 }

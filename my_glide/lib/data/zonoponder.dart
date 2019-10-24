@@ -4,6 +4,7 @@
 import 'package:http/http.dart' as http;
 
 // my glide utils
+import 'package:my_glide/utils/debug.dart';
 
 // my glide data providers
 import 'package:my_glide/data/session.dart';
@@ -13,46 +14,52 @@ import 'package:my_glide/data/session.dart';
 class ZonOpkomstOndergang {
   
   // Haal van de server hoe laat de zon opkomt
-  static Future<DateTime> zonOpkomst() async {
-    final now = DateTime.now();
+  static Future<DateTime> zonOpkomst(String url) async {
+    String function = "ZonOpkomstOndergang.zonOpkomst";
+    MyGlideDebug.info("$function($url)");
 
+    final now = DateTime.now();
+    DateTime retVal = DateTime(now.year, now.month, now.day, 5);       // Zon komt nooit eerder op dan 5 uur
     try { 
       if (!serverSession.isDemo) 
       {
-        String url = await serverSession.getLastUrl();
         String request = '$url/php/main.php?Action=ZonOpOnder.ZonOpkomst';
 
         http.Response response = await serverSession.get(request);
-        return DateTime(now.year, now.month, now.day, int.parse(response.body.substring(0,2)), int.parse(response.body.substring(3,5)));
+        retVal = DateTime(now.year, now.month, now.day, int.parse(response.body.substring(0,2)), int.parse(response.body.substring(3,5)));
       }
     }
     catch (e)
     {
-      print (e);
+      MyGlideDebug.error("$function:" + e.toString());
     }
-    
-    return DateTime(now.year, now.month, now.day, 5);       // Zon komt nooit eerder op dan 5 uur
+
+    MyGlideDebug.trace("$function: return $retVal");
+    return retVal;
   }
 
   // Haal van de server hoe laat de zon onder gaat
-  static Future<DateTime> zonOndergang() async {
-    final now = DateTime.now();
+  static Future<DateTime> zonOndergang(String url) async {
+    String function = "ZonOpkomstOndergang.zonOndergang";
+    MyGlideDebug.info("$function($url)");
 
+    final now = DateTime.now();
+    DateTime retVal = DateTime(now.year, now.month, now.day, 23);    // Zon gaat nooit na 23 uur onder
+    
     try {
       if (!serverSession.isDemo) 
       {
-        String url = await serverSession.getLastUrl();
-        String request = '$url/php/main.php?Action=ZonOpOnder.ZonOndergang';
+        String request = '$url/php/main.php?Action=ZonOpOnder.ZonOnder';
 
         http.Response response = await serverSession.get(request);
-        return DateTime(now.year, now.month, now.day, int.parse(response.body.substring(0,2)), int.parse(response.body.substring(3,5)));
+        retVal = DateTime(now.year, now.month, now.day, int.parse(response.body.substring(0,2)), int.parse(response.body.substring(3,5)));
       }
     }
     catch (e)
     {
-      print (e);
+      MyGlideDebug.error("$function:" + e.toString());
     }
-    
-    return DateTime(now.year, now.month, now.day, 23);    // Zon gaat nooit na 23 uur onder
+    MyGlideDebug.trace("$function: return $retVal");
+    return retVal;
   }  
 }

@@ -8,6 +8,7 @@ import 'package:connectivity/connectivity.dart';
 // my glide utils
 import 'package:my_glide/utils/my_glide_const.dart';
 import 'package:my_glide/utils/storage.dart';
+import 'package:my_glide/utils/debug.dart';
 
 // my glide data providers
 import 'package:my_glide/data/aanwezig.dart';
@@ -41,6 +42,8 @@ class _VandaagScreenState extends State<VandaagScreen> with TickerProviderStateM
 
   _VandaagScreenState()
   {
+    MyGlideDebug.info("_VandaagScreenState()"); 
+
     // check iedere 10 seconden we data automatisch moeten ophalen
     // reageert daarmee (bijna) direct op instelling
     _autoUpdateTimer = Timer.periodic(Duration(seconds: 10), (Timer t) => _autoOphalenData()); 
@@ -48,6 +51,7 @@ class _VandaagScreenState extends State<VandaagScreen> with TickerProviderStateM
 
   @override
   void initState() {
+    MyGlideDebug.info("_VandaagScreenState.initState()"); 
     super.initState();
 
     _ophalenData(false);
@@ -55,6 +59,8 @@ class _VandaagScreenState extends State<VandaagScreen> with TickerProviderStateM
 
   @override
   void dispose() {
+    MyGlideDebug.info("_VandaagScreenState.dispose()"); 
+
     super.dispose();
 
     _autoUpdateTimer.cancel();    // Stop de timer, de class wordt verwijderd
@@ -62,6 +68,8 @@ class _VandaagScreenState extends State<VandaagScreen> with TickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
+    MyGlideDebug.info("_VandaagScreenState.build(context)"); 
+
     if (_ledenAanwezig == null) return GUIHelper.showLoading();
    
     return Scaffold(
@@ -89,8 +97,9 @@ class _VandaagScreenState extends State<VandaagScreen> with TickerProviderStateM
   }
 
   void _ophalenData(bool handmatig) {
-    bool volledig = false;
+    MyGlideDebug.info("_VandaagScreenState._ophalenData($handmatig)"); 
 
+    bool volledig = false;
     if (handmatig)
     {
       int lastRefresh = DateTime.now().difference(_lastRefreshButton).inSeconds;
@@ -108,6 +117,8 @@ class _VandaagScreenState extends State<VandaagScreen> with TickerProviderStateM
 
   void _autoOphalenData()
   {
+    MyGlideDebug.info("_VandaagScreenState._autoOphalenData()"); 
+
     int lastRefresh = DateTime.now().difference(_lastRefresh).inSeconds;
 
     Connectivity().checkConnectivity().then((result)
@@ -136,6 +147,8 @@ class _VandaagScreenState extends State<VandaagScreen> with TickerProviderStateM
 
     // Sorteeer de dataset op basis van de keuze van de gebruiker
   void _sortVandaag({int index=-1, bool asc=true}) {
+    MyGlideDebug.info("_VandaagScreenState._sortVandaag($index, $asc)"); 
+    
     if (index < 0) {
       index = _sortColIdx;
       asc = _sortAsc;
@@ -206,6 +219,8 @@ class _VandaagScreenState extends State<VandaagScreen> with TickerProviderStateM
 
   // Grid tonen
   Widget _toonGrid(BuildContext context) {
+    MyGlideDebug.info("_VandaagScreenState._toonGrid(context)"); 
+
     List<MyDataColumn> _columns = List<MyDataColumn>();
 
     // Kolom headers
@@ -299,6 +314,8 @@ class _VandaagScreenState extends State<VandaagScreen> with TickerProviderStateM
   }
 
   void _showDetails(int index) {
+    MyGlideDebug.info("_VandaagScreenState._showDetails(context)"); 
+
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -312,6 +329,40 @@ class _VandaagScreenState extends State<VandaagScreen> with TickerProviderStateM
   }
 
   Widget _nummer(Map aanwezigData) {
+    MyGlideDebug.info("_VandaagScreenState._nummer($aanwezigData)"); 
+
+    // Kleuren schema voor status vliegen
+    Color backgroundColor = MyGlideConst.starttijdColor;
+    Color textColor = Colors.white;
+
+ // Kleuren schema voor status ingedeeld
+    if ((aanwezigData['ACTUELE_VLIEGTIJD'] == null) || (aanwezigData['VOLGEND_CALLSIGN'] != null))
+    {
+      backgroundColor = Colors.white;
+      textColor = Colors.black;     
+    }
+
+    if ((aanwezigData['ACTUELE_VLIEGTIJD'] != null) || (aanwezigData['VOLGEND_CALLSIGN'] != null))
+    {
+      return Container(
+        width: 24,
+        height: 24,
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: new BorderRadius.all(Radius.circular(5)),
+          border: Border.all(
+            color:MyGlideConst.starttijdColor
+          )
+        ),
+        child: Center(
+          child: Text(
+            aanwezigData['VOLGORDE'] ?? '0',
+            style: TextStyle(fontSize: 13.0, color: textColor)
+          )
+        )
+      );
+    }
+
     return CircleAvatar(
       radius: 12.0, 
       backgroundColor: MyGlideConst.backgroundColor,
@@ -319,67 +370,83 @@ class _VandaagScreenState extends State<VandaagScreen> with TickerProviderStateM
         aanwezigData['VOLGORDE'] ?? '0',
         style: TextStyle(fontSize: 13.0)
       )
-    );
+    ); 
   }
 
   Widget _naam(Map aanwezigData) {
+    MyGlideDebug.info("_VandaagScreenState._naam($aanwezigData)"); 
+
     return Text(
       aanwezigData['NAAM'],
-      style: _gridTextStyle()
+      style: GUIHelper.gridTextStyle()
     );
   }
 
   Widget _startsVandaag(Map aanwezigData) {
+    MyGlideDebug.info("_VandaagScreenState._startsVandaag($aanwezigData)"); 
+
     return Text(
       aanwezigData['STARTLIJST_VANDAAG'] ?? '0',
-      style: _gridTextStyle(weight: FontWeight.bold)
+      style: GUIHelper.gridTextStyle(weight: FontWeight.bold)
     );
   }
 
   Widget _vliegtijdVandaag(Map aanwezigData) {
+    MyGlideDebug.info("_VandaagScreenState._vliegtijdVandaag($aanwezigData)");
+
     return Text(
       aanwezigData['VLIEGTIJD_VANDAAG'] ?? ' '.toString().replaceFirst(new RegExp(r'0'), ''),
-      style: _gridTextStyle(weight: FontWeight.bold)
+      style: GUIHelper.gridTextStyle(weight: FontWeight.bold)
     );
   }
 
   Widget _voorkeurType(Map aanwezigData)
   {
+    MyGlideDebug.info("_VandaagScreenState._voorkeurType($aanwezigData)");
+
     return Text(
       aanwezigData['VOORKEUR_TYPE'] ?? ' ',
-      style: _gridTextStyle()
+      style: GUIHelper.gridTextStyle()
     );
   }
 
   Widget _wachtTijd(Map aanwezigData)
   {
+    MyGlideDebug.info("_VandaagScreenState._wachtTijd($aanwezigData)");
+
     return Text(
       aanwezigData['WACHTTIJD'] ?? ' ',
-      style: _gridTextStyle(color: MyGlideConst.landingstijdColor)
+      style: GUIHelper.gridTextStyle(color: MyGlideConst.landingstijdColor, underline: true)
     );
   }
 
   Widget _vliegtijdTijd(Map aanwezigData)
   {
+    MyGlideDebug.info("_VandaagScreenState._vliegtijdTijd($aanwezigData)");
+
     return Text(
       aanwezigData['ACTUELE_VLIEGTIJD'] ?? ' ',
-      style: _gridTextStyle(color: MyGlideConst.starttijdColor)
+      style: GUIHelper.gridTextStyle(color: MyGlideConst.starttijdColor)
     );
   }
 
   Widget _ingedeeldOp(Map aanwezigData)
   {
+    MyGlideDebug.info("_VandaagScreenState._ingedeeldOp($aanwezigData)");
+        
     return Text(
       aanwezigData['VOLGEND_CALLSIGN'] ?? ' ',
-      style: _gridTextStyle()
+      style: GUIHelper.gridTextStyle()
     );
   }  
 
   Widget _opmerking(Map aanwezigData)
   {
+    MyGlideDebug.info("_VandaagScreenState._opmerking($aanwezigData)");
+
     return Text(
       aanwezigData['OPMERKING'] ?? ' ',
-      style: _gridTextStyle()
+      style: GUIHelper.gridTextStyle()
     );
   }   
 
@@ -388,6 +455,8 @@ class _VandaagScreenState extends State<VandaagScreen> with TickerProviderStateM
   // (b) op welke kist hij/zij is ingedeeld voor de volgende vlucht
   // (c) Hoe lang hij al staat te wachten 
   Widget _showVliegtWachtVolgende(Map aanwezigData) {
+    MyGlideDebug.info("_VandaagScreenState._showVliegtWachtVolgende($aanwezigData)");
+
     if (aanwezigData['ACTUELE_VLIEGTIJD'] != null)
       return _vliegtijdTijd(aanwezigData);
     else if (aanwezigData['VOLGEND_CALLSIGN'] != null)
@@ -395,13 +464,4 @@ class _VandaagScreenState extends State<VandaagScreen> with TickerProviderStateM
     else
       return _wachtTijd(aanwezigData);
   }
-
-  // Hoe wordt het veld in het grid vertoond
-  TextStyle _gridTextStyle({color = MyGlideConst.gridTextColor, weight = FontWeight.normal, fontSize = MyGlideConst.gridTextNormal}) {
-    return TextStyle (
-      color: color,
-      fontWeight: weight,
-      fontSize: fontSize
-    );
-  }    
 }

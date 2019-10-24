@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 
 // my glide utils
 import 'package:my_glide/utils/my_glide_const.dart';
+import 'package:my_glide/utils/debug.dart';
 
 // my glide data providers
 
@@ -32,6 +33,8 @@ class _StartlijstContainerState extends State<StartlijstContainer> {
   @override
   Widget build(BuildContext context) 
   {
+    MyGlideDebug.info("_StartlijstContainerState.build(context)");    
+
     if (widget.starts == null) return GUIHelper.showLoading();
 
     if (GUIHelper.isTablet(context)) 
@@ -40,7 +43,10 @@ class _StartlijstContainerState extends State<StartlijstContainer> {
       return _buildMobileLayout();
   }  
 
+  // Laat startlijst zien op een mobiel
   Widget _buildMobileLayout() {
+    MyGlideDebug.info("_StartlijstContainerState._buildMobileLayout()"); 
+
     return VluchtListing(
       starts: widget.starts,
       vluchtSelectedCallback: (start) {
@@ -59,7 +65,10 @@ class _StartlijstContainerState extends State<StartlijstContainer> {
     );
   }
 
+  // Laat startlijst zien op een tablet
   Widget _buildTabletLayout() {
+    MyGlideDebug.info("_StartlijstContainerState._buildTabletLayout()"); 
+
     double breedteScherm = MediaQuery.of(context).size.width; 
     int flexDetails = (100 * MyGlideConst.breedteLogoekDetails / breedteScherm).round();
 
@@ -95,6 +104,7 @@ class _StartlijstContainerState extends State<StartlijstContainer> {
 
 // Toon de master data
 class VluchtListing extends StatelessWidget {
+
   VluchtListing({
     @required this.vluchtSelectedCallback,
     @required this.starts,
@@ -107,15 +117,17 @@ class VluchtListing extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    MyGlideDebug.info("VluchtListing.build(context)"); 
+
     int i=0;
     return ListView(
       children: starts.map((vlucht) {
         return 
-          new ListTile(
-          title: StartLijstGrid.vluchtRegel(context, vlucht, i++),
-          onTap: () => vluchtSelectedCallback(vlucht),
-          selected: selectedVlucht == vlucht,
-          contentPadding: EdgeInsets.fromLTRB(2, 0, 0, 0),
+          ListTile(
+            title: StartLijstGrid.vluchtRegel(context, vlucht, i++),
+            onTap: () => vluchtSelectedCallback(vlucht),
+            selected: selectedVlucht == vlucht,
+            contentPadding: EdgeInsets.fromLTRB(2, 0, 0, 0),
         );
       }).toList(),
     );

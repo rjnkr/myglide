@@ -10,6 +10,7 @@ import 'package:connectivity/connectivity.dart';
 import 'package:my_glide/utils/my_glide_const.dart';
 import 'package:my_glide/utils/my_navigation.dart';
 import 'package:my_glide/utils/storage.dart';
+import 'package:my_glide/utils/debug.dart';
 
 // my glide data providers
 import 'package:my_glide/data/session.dart';
@@ -40,6 +41,8 @@ class _SplashScreenState extends State<SplashScreen> {
   
   @override
   void initState()  {
+    MyGlideDebug.info("_SplashScreenState.initState()");
+
     super.initState();
 
     Timer.periodic(Duration(seconds: 3), (Timer t)
@@ -48,9 +51,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
       if ((_netwerkStatus != null) && (_lastLoginResult != "init"))
       {
-        t.cancel();
-
-        Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => widget.navigateTo));
+        t.cancel(); 
         
         if (_netwerkStatus == ConnectivityResult.none)   // geen netwerk
         {
@@ -67,8 +68,12 @@ class _SplashScreenState extends State<SplashScreen> {
           else if (_lastLoginResult == "false")   
             MyNavigator.goToLogin(context);                // mislukt om opnieuw in te loggen, of nog geen inlog gevens bekend. Toon inlogscherm           
           else if (_lastLoginResult == "true")  {
+            // hoofdpagina
+            Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => widget.navigateTo));
             if (!serverSession.login.isAangemeld)
-              MyNavigator.goToAanmelden(context, pop: false);
+            {
+              MyNavigator.goToAanmelden(context, pop: false); // Vlieger is nog niet aangemeld voor vandaag
+            }
           }  
         });
       }
@@ -86,6 +91,8 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    MyGlideDebug.info("_SplashScreenState.build(contexy)");
+
     int size = 300;
     double labelSize = MyGlideConst.labelSizeExtraLarge;
 
@@ -141,6 +148,8 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void _resetCredentialsDialog() {
+    MyGlideDebug.info("_SplashScreenState._resetCredentialsDialog()");
+
     _suspent = true;
     GUIHelper.confirmDialog(context, "Reset instellingen", "Alle informatie op het apparaat wissen?").then((response) {
       if (response == ConfirmAction.NEE) {

@@ -1,6 +1,6 @@
 // language packages
 import 'package:flutter/material.dart';
-import 'dart:async';
+import 'package:my_glide/pages/gui_helpers.dart';
 
 // language add-ons
 
@@ -17,17 +17,40 @@ import 'package:my_glide/utils/gps.dart';
 import 'package:my_glide/pages/splash_scherm.dart';
 import 'package:my_glide/pages/mijn_logboek_scherm.dart';
 
+
+ThemeData myGlideTheme() {
+
+  final ThemeData base = ThemeData();
+  return base.copyWith(
+
+    accentColor: Colors.red,
+    hintColor: MyGlideConst.hintColorLight,
+    primaryColor: MyGlideConst.frontColor,
+
+    textTheme: MyGlideConst.myGlideTextTheme,
+
+    inputDecorationTheme: InputDecorationTheme(
+      contentPadding: EdgeInsets.all(10),
+      border: OutlineInputBorder(),
+      hintStyle: GUIHelper.hintStyle(),
+      labelStyle: GUIHelper.labelStyle(),
+      errorStyle: GUIHelper.errorStyle()
+    ),
+    
+  );
+}
+
 void main() async {
-  Timer gpsTimer = Timer.periodic(Duration(seconds: 30), (Timer t) => gpsData.gpsLocatie()); 
+  gpsData.start();
 
   runApp(new MaterialApp(
     title: MyGlideConst.AppName,
     debugShowCheckedModeBanner: false,
     home: MyGlideApp(),
-    routes: routes
+    routes: routes,
+    theme: myGlideTheme()
   ));
 }
-
 
 class MyGlideApp extends StatefulWidget {
   @override
