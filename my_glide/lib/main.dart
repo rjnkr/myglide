@@ -7,7 +7,6 @@ import 'package:my_glide/pages/gui_helpers.dart';
 // my glide utils
 import 'package:my_glide/utils/my_glide_const.dart';
 import 'package:my_glide/utils/my_navigation.dart';
-import 'package:my_glide/utils/gps.dart';
 
 // my glide data providers
 
@@ -41,8 +40,6 @@ ThemeData myGlideTheme() {
 }
 
 void main() async {
-  gpsData.start();
-
   runApp(new MaterialApp(
     title: MyGlideConst.AppName,
     debugShowCheckedModeBanner: false,

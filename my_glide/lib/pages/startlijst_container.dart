@@ -1,6 +1,7 @@
 
 // language packages
 import 'package:flutter/material.dart';
+import 'package:my_glide/data/startlijst.dart';
 
 // language add-ons
 
@@ -60,7 +61,8 @@ class _StartlijstContainerState extends State<StartlijstContainer> {
               );
             },
           ),
-        );
+        );  
+        MyGlideDebug.info("msg"); //TODO
       },
     );
   }

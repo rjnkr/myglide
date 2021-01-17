@@ -30,12 +30,12 @@ class _MijnLogboekScreenState extends State<MijnLogboekScreen> with TickerProvid
   List _logboekItems;
     
   DateTime _lastRefresh = DateTime.now();
-  DateTime _lastRefreshButton = DateTime.now().add(Duration(days: -1));
 
   ConnectivityResult _netwerkStatus;
   bool _isAangemeld;
 
   Timer _autoUpdateTimer;
+  DateTime _lastLogboekGeladen;
 
   _MijnLogboekScreenState()
   {
@@ -114,21 +114,15 @@ class _MijnLogboekScreenState extends State<MijnLogboekScreen> with TickerProvid
 
   void _ophalenLogboek(bool handmatig) {
     MyGlideDebug.info("_MijnLogboekScreenState._ophalenLogboek($handmatig)");
-
-    bool volledig = false;
-    if (handmatig)
-    {
-      final int lastRefresh = DateTime.now().difference(_lastRefreshButton).inSeconds;
-      if (lastRefresh < 5) volledig = true;
-    }
     
-    Startlijst.getLogboek(force: volledig).then((response) {
+    Startlijst.getLogboek().then((response) {
       // setState alleen als dit scherm er nog is
       if (mounted)      
       {
         setState(() {
           _logboekItems = response;
           _lastRefresh = DateTime.now();
+          _lastLogboekGeladen = Startlijst.lastLogboekGeladen();
         });
       }
     });
@@ -136,11 +130,13 @@ class _MijnLogboekScreenState extends State<MijnLogboekScreen> with TickerProvid
 
   void _autoOphalenLogboek()
   {
-    MyGlideDebug.info("_MijnLogboekScreenState._autoOphalenLogboek()");
+
+  // TODO   MyGlideDebug.info("_MijnLogboekScreenState._autoOphalenLogboek()");
 
     final DateTime now = DateTime.now();
     final int lastRefresh = now.difference(_lastRefresh).inSeconds;
-
+    DateTime lastLogboekGeladen = Startlijst.lastLogboekGeladen();
+    
     if (_isAangemeld != serverSession.login.isAangemeld)
     {
       // setState alleen als dit scherm er nog is
@@ -163,6 +159,11 @@ class _MijnLogboekScreenState extends State<MijnLogboekScreen> with TickerProvid
         }
       }       
     });
+
+    if (lastLogboekGeladen != _lastLogboekGeladen)
+    {
+        _ophalenLogboek(false);
+    }
 
     // We halen iedere 5 miniuten
     if (lastRefresh < MyGlideConst.logboekRefreshRate)

@@ -219,7 +219,7 @@ class _IncidentMeldingScreenState extends State<IncidentMeldingScreen> {
       _datumVoorval = DateTime.now();
       _tijdVoorval.text = DateFormat('kk:00').format(DateTime.now());
     });
-    rootBundle.loadString("assets/incident formulier.html").then((html) => _htmlPagina = html); 
+    rootBundle.loadString("assets/incident-formulier.html").then((html) => _htmlPagina = html); 
     super.initState();
   }
 
@@ -601,10 +601,10 @@ class _IncidentMeldingScreenState extends State<IncidentMeldingScreen> {
     retVal = retVal.replaceAll("{_mitigatie}", _mitigatie.text); 
 
     // scherm 5
-    retVal = retVal.replaceAll("{naam}", (_anoniemVerzenden == true) ? "anoniem" : serverSession.login.userInfo['NAAM']);   
-    retVal = retVal.replaceAll("{email}", (_anoniemVerzenden == true) ? "-" : serverSession.login.userInfo['EMAIL']); 
-    retVal = retVal.replaceAll("{telefoon}", (_anoniemVerzenden) == true ? "-" : serverSession.login.userInfo['TELEFOON']); 
-    retVal = retVal.replaceAll("{mobiel}", (_anoniemVerzenden == true) ? "-" : serverSession.login.userInfo['MOBIEL']); 
+    retVal = retVal.replaceAll("{naam}", (_anoniemVerzenden == true) ? "anoniem" : serverSession.login.userInfo['NAAM'] ?? '');   
+    retVal = retVal.replaceAll("{email}", (_anoniemVerzenden == true) ? "-" : serverSession.login.userInfo['EMAIL'] ?? ''); 
+    retVal = retVal.replaceAll("{telefoon}", (_anoniemVerzenden) == true ? "-" : serverSession.login.userInfo['TELEFOON'] ?? ''); 
+    retVal = retVal.replaceAll("{mobiel}", (_anoniemVerzenden == true) ? "-" : serverSession.login.userInfo['MOBIEL'] ?? ''); 
 
     retVal = retVal.replaceAll("{datum}", DateFormat('dd-MM-yyyy').format(DateTime.now()));     
 
@@ -629,10 +629,10 @@ class _IncidentMeldingScreenState extends State<IncidentMeldingScreen> {
             
             Text("Gegevens melder", style: TextStyle(color: MyGlideConst.frontColor)),
             Container(height: 10),     // Geef ruimte
-            Text(serverSession.login.userInfo['NAAM']),
-            Text(serverSession.login.userInfo['EMAIL']),
-            Text(serverSession.login.userInfo['TELEFOON']),
-            Text(serverSession.login.userInfo['MOBIEL'])
+            Text(serverSession.login.userInfo['NAAM'] ?? ''),
+            Text(serverSession.login.userInfo['EMAIL'] ?? ''),
+            Text(serverSession.login.userInfo['TELEFOON'] ?? ''),
+            Text(serverSession.login.userInfo['MOBIEL'] ?? '')
           ])
         )
       );

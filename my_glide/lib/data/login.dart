@@ -130,7 +130,6 @@ class Login
       _setTimerForNextUserInfo();
 
       serverSession.ophalenZonOpkomstOndergang(url);
-      serverSession.getAutoAanmelden(url);
 
       MyGlideDebug.trace("$function: return true");
       return true;

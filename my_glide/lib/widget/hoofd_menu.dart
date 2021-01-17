@@ -56,7 +56,6 @@ class _HoofdMenuState extends State<HoofdMenu> {
       Theme(
         data: ThemeData(
           primaryTextTheme: TextTheme(
-            title: TextStyle(color: Colors.pink)
           )
         ),
         isMaterialAppTheme: true,

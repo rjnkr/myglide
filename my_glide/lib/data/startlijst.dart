@@ -5,6 +5,7 @@ import "dart:convert";
 // language add-ons
 import "package:connectivity/connectivity.dart";
 import "package:http/http.dart" as http;
+import 'package:intl/intl.dart';
 
 // my glide utils
 import "package:my_glide/utils/storage.dart";
@@ -17,11 +18,13 @@ import "package:my_glide/data/session.dart";
 
 
 class Startlijst 
-{  
+{ 
+  static DateTime _lastLogboekGeladen;
+
   // Haal de vluchten op van de server
-  static Future<List> getLogboek({force = false}) async {
+  static Future<List> getLogboek() async {
     String function = "Startlijst.getLogboek";
-    MyGlideDebug.info("$function($force)");
+    MyGlideDebug.info("$function()");
 
     Map parsed;
 
@@ -70,6 +73,7 @@ class Startlijst
       if (results.length > maxItems)
         results.removeRange(maxItems-1, results.length-1);
 
+      _lastLogboekGeladen = DateTime.now();
       MyGlideDebug.trace("$function: return " + results.toString());
       return results;
     }
@@ -80,6 +84,12 @@ class Startlijst
 
     MyGlideDebug.trace("$function: return List()");
     return List();          // exception geeft leeg object terug
+  }
+
+  // Wanneer is logboek voor de laatste keer geladen
+  static DateTime lastLogboekGeladen()
+  {
+    return _lastLogboekGeladen;
   }
 
   // ophalen van het vliegtuig logboek. vliegtuigID bevat ID van vliegtuig uit ref_vliegtuigen
@@ -163,6 +173,7 @@ class Startlijst
       else
       {
         String url = await serverSession.getLastUrl();
+
         String request = "$url/php/main.php?Action=Startlijst.VliegerRecencyJSON&_:id=$lidID";
 
         http.Response response = await serverSession.get(request);
@@ -190,6 +201,8 @@ class Startlijst
       String url = await serverSession.getLastUrl();
       String post = "$url/php/main.php?Action=Startlijst.SaveLandingsTijd";
       await serverSession.post(post, {"ID": id, "LANDINGSTIJD": landingsTijd });
+      _lastLogboekGeladen = null;                                                 // Indicatie dat logboek verandert is
+
       MyGlideDebug.trace("$function: return true");
       return true;
     }
@@ -212,6 +225,8 @@ class Startlijst
       String url = await serverSession.getLastUrl();
       String post = "$url/php/main.php?Action=Startlijst.SaveStartTijd";
       await serverSession.post(post, {"ID": id, "STARTTIJD": startTijd });
+      _lastLogboekGeladen = null;                                                 // Indicatie dat logboek verandert is
+
       MyGlideDebug.trace("$function: return true");
       return true;
     }

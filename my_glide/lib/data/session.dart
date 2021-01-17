@@ -11,7 +11,6 @@ import 'package:http/http.dart' as http;
 // my glide utils
 import 'package:my_glide/utils/storage.dart';
 import 'package:my_glide/utils/debug.dart';
-import 'package:my_glide/utils/gps.dart';
 
 // my glide data providers
 import 'package:my_glide/data/login.dart';
@@ -32,7 +31,6 @@ class Session {
   Map<String, String> _headers = {};                        // opslaan van header data
   http.Client _client = http.Client();                      // verbinding naar web server
   Timer _endClientSessionTimer;                             // Wanneer _client sessie afgesloten moet worden
-  List<Point> vliegveld;                                    // Polygoon van vliegveld, voor automatisch aanmelden
   DateTime zonOpkomst;                                      // Hoe laat komt de zon op
   DateTime zonOndergang;                                    // Hoe laat gaat de zon onder
   DateTime _lastZonOpOnder = DateTime.now().subtract(Duration(days: 5));      // wanneer hebben de laaste keer zon opkomst ondergang gelden, default 5 dagen geleden (is lang genoeg)
@@ -217,47 +215,5 @@ class Session {
     String retVal = await rootBundle.loadString(file);
     MyGlideDebug.trace("$function: return $retVal");
     return retVal;
-  }
-
-  // Ophalen van het gebied waar gebruiker automatisch aangemeld wordt
-  Future<bool> getAutoAanmelden(String url) async {
-    String function = "Session.getAutoAanmelden";
-    MyGlideDebug.info("$function($url)");
-
-    if (serverSession.isDemo) {
-      MyGlideDebug.trace("$function: return false (demo)");
-      return false;
-    }
-
-    String request = '$url/php/main.php?Config';
-
-    http.Response response = await serverSession.get(request);
-    Map parsed = json.decode(response.body);    
-    List gebied = parsed['Vliegveld'];
-
-    if (gebied == null) {
-      MyGlideDebug.trace("$function: return false");
-      return false;
-    }
-
-    vliegveld = new List();
-
-    try {
-      gebied.forEach((punt)
-      {
-        Point p = Point();
-        p.latitude = punt[1];
-        p.longitude = punt[0];
-
-        vliegveld.add(p);
-      });
-    }
-    catch (e) 
-    {
-      MyGlideDebug.error("Session.getAutoAanmelden:" + e.toString());
-      return false;
-    }
-    MyGlideDebug.trace("$function: return true");
-    return true;
   }
 }

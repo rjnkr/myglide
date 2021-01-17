@@ -83,14 +83,14 @@ class StartLijstGrid extends StatelessWidget {
                 SizedBox(
                   width: _breedteStartTijd, 
                   child: Text(
-                    vluchtData['STARTTIJD'] ?? ' ',
+                    vluchtData['STARTTIJD'] ?? '',
                     style: GUIHelper.gridTextStyle(color: MyGlideConst.starttijdColor, weight: FontWeight.bold)
                   )
                 ),
                 SizedBox(
                   width:_breedteLandingsTijd, 
                   child: Text(
-                    vluchtData['LANDINGSTIJD'] ?? ' ',
+                    vluchtData['LANDINGSTIJD'] ?? '',
                     style: GUIHelper.gridTextStyle(color: MyGlideConst.landingstijdColor, weight: FontWeight.bold, underline: true)
                   )
                 ),

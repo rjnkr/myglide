@@ -81,12 +81,7 @@ class _LedenLijstScreenState extends State<LedenLijstScreen> {
           style: MyGlideConst.appBarTextColor()
         ),
         actions: <Widget>[
-          IconButton(
-            onPressed: () => _sendEmail(),
-            padding: const EdgeInsets.only(right: 20.0), 
-            icon: Icon(Icons.email,
-              color: MyGlideConst.frontColor),
-          ),
+          _emailButton(),
           IconButton (
             onPressed: () { _filterLedenLijst(context); },
             icon: Icon(Icons.tune,
@@ -123,6 +118,21 @@ class _LedenLijstScreenState extends State<LedenLijstScreen> {
         )
     );
   }      
+
+  Widget _emailButton()
+  {
+    // je kan geen email sturen als er geen filter aan staat
+    if ((!_lierist) && (!_startleider) && (!_startleider))
+      return Container(width: 0, height: 0);
+
+     return 
+      IconButton(
+        onPressed: () => _sendEmail(),
+        padding: const EdgeInsets.only(right: 20.0), 
+        icon: Icon(Icons.email,
+          color: MyGlideConst.frontColor),
+      );
+  }
 
   void _filterLedenLijst(BuildContext context) async {
     String result = await showDialog(

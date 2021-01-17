@@ -354,12 +354,12 @@ class LoginScreenState extends State<LoginScreen>
   void _logMeIn() {
     MyGlideDebug.info("LoginScreenState._logMeIn()");
 
-    // De gebruikersnaam demo, gaat naar demo mode. Bedoelt voor validatie door Apple. Validatie is nodig om app in app store te krijgen
-    if (_myUsername == "demo")
-      return _demo();
-
     if (this._formKey.currentState.validate()) {
       _formKey.currentState.save(); // sla input op in variablen
+
+      // De gebruikersnaam demo, gaat naar demo mode. Bedoelt voor validatie door Apple. Validatie is nodig om app in app store te krijgen
+      if (_myUsername == "demo")
+        return _demo();
 
       setState(() {
         _buttonState = 1;     // bezig

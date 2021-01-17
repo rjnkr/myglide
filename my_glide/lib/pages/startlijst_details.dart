@@ -9,7 +9,6 @@ import 'package:intl/intl.dart';
 // my glide utils
 import 'package:my_glide/utils/my_glide_const.dart';
 import 'package:my_glide/utils/debug.dart';
-import 'package:my_glide/utils/gps.dart';
 
 // my glide data providers
 import 'package:my_glide/data/session.dart';
@@ -177,13 +176,6 @@ class LogboekDetailsScreen extends StatelessWidget {
     int uren = TimeOfDay.now().hour;
     int min = TimeOfDay.now().minute;
 
-    // als we gps landingstijd hebben, dan gebruiken we die als default
-    if (gpsData.startTijd != null)
-    {
-      uren = gpsData.startTijd.hour;
-      min = gpsData.startTijd.minute;
-    }
-
     String defaultTijd = "$uren:$min";
 
     GUIHelper.tijdPicker(context, 
@@ -219,13 +211,6 @@ class LogboekDetailsScreen extends StatelessWidget {
     int uren = TimeOfDay.now().hour;
     int min = TimeOfDay.now().minute;
 
-    // als we gps landingstijd hebben, dan gebruiken we die als default
-    if (gpsData.landingsTijd != null)
-    {
-      uren = gpsData.landingsTijd.hour;
-      min = gpsData.landingsTijd.minute;
-    }
-
     String defaultTijd = "$uren:$min";
 
     GUIHelper.tijdPicker(context, 
@@ -243,7 +228,6 @@ class LogboekDetailsScreen extends StatelessWidget {
     MyGlideDebug.info("LogboekDetailsScreen._landingsTijd(context, $id, $tijd)"); 
 
     Startlijst.opslaanLandingsTijd (id, tijd).then((gelukt)  {
-      Startlijst.getLogboek();
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -260,7 +244,6 @@ class LogboekDetailsScreen extends StatelessWidget {
     MyGlideDebug.info("LogboekDetailsScreen._verwijderVlucht(context, $id)"); 
 
     Startlijst.verwijderVlucht(id).then((gelukt)  {
-      Startlijst.getLogboek();
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -294,7 +277,7 @@ class LogboekDetailsScreen extends StatelessWidget {
     final MailOptions mailOptions = MailOptions(
       body: emailBody,
       subject: 'Verzoek wijziging van mijn logboek',
-    //  recipients: ['example@example.com'],
+      recipients: [MyGlideConst.emailStartAdmin],
       isHTML: true,
     );
     await FlutterMailer.send(mailOptions);

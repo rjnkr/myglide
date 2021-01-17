@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 
 // language add-ons
 import 'package:connectivity/connectivity.dart';
-import 'package:my_glide/utils/gps.dart';
 
 // my glide utils
 import 'package:my_glide/utils/my_glide_const.dart';
@@ -116,7 +115,7 @@ class _LedenLijstFilterScreenState extends State<LedenLijstFilterScreen> {
     if (_netwerkStatus == ConnectivityResult.none)
         return Container();
 
-    if ((gpsData.insideArea(serverSession.vliegveld)) || (serverSession.login.isBeheerder) || (serverSession.login.isBeheerderDDWV) ||
+    if ((serverSession.login.isBeheerder) || (serverSession.login.isBeheerderDDWV) ||
         (serverSession.login.isInstructeur) || (serverSession.login.isStartleider) || (serverSession.login.isLocal)) {
       return 
         CheckboxListTile(
